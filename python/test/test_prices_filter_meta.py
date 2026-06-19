@@ -35,6 +35,7 @@ class TestPricesFilterMeta(unittest.TestCase):
         model = PricesFilterMeta()
         if include_optional:
             return PricesFilterMeta(
+                item_id = 56,
                 market_hash_name = '',
                 phase = '',
                 requested_providers = [

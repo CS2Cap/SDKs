@@ -11,6 +11,7 @@ Name | Type | Description | Notes
 **endpoint_id** | **str** | Webhook destination identifier. | 
 **endpoint_label** | **str** | Snapshot of the destination label used for this delivery. | 
 **endpoint_url** | **str** | Snapshot of the destination URL used for this delivery. | 
+**platform** | **str** | Snapshot of the delivery platform used for this delivery. | 
 **event_type** | **str** | Outbound event type. | 
 **status** | **str** | Current delivery status. | 
 **attempt_count** | **int** | Number of delivery attempts recorded so far. | 

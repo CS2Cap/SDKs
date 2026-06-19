@@ -12,6 +12,7 @@ Name | Type
 `endpointId` | string
 `endpointLabel` | string
 `endpointUrl` | string
+`platform` | string
 `eventType` | string
 `status` | string
 `attemptCount` | number
@@ -35,6 +36,7 @@ const example = {
   "endpointId": null,
   "endpointLabel": null,
   "endpointUrl": null,
+  "platform": null,
   "eventType": null,
   "status": null,
   "attemptCount": null,

@@ -19,6 +19,7 @@ import type {
   BuyOrderProvider,
   ErrorResponse,
   MarketArbitrageResponse,
+  MarketHistoryChartResponse,
   MarketIndexesResponse,
   MarketIndicatorsItemResponse,
   MarketItemAnalyticsResponse,
@@ -34,6 +35,8 @@ import {
     ErrorResponseToJSON,
     MarketArbitrageResponseFromJSON,
     MarketArbitrageResponseToJSON,
+    MarketHistoryChartResponseFromJSON,
+    MarketHistoryChartResponseToJSON,
     MarketIndexesResponseFromJSON,
     MarketIndexesResponseToJSON,
     MarketIndicatorsItemResponseFromJSON,
@@ -52,6 +55,17 @@ export interface GetArbitrageOpportunitiesRequest {
     minSpreadPct?: number;
     providersBuy?: Array<AllProviders> | null;
     providersSell?: Array<BuyOrderProvider> | null;
+}
+
+export interface GetDeepPriceHistoryChartRequest {
+    itemId?: number | null;
+    marketHashName?: string | null;
+    providers?: Array<string> | null;
+    start?: Date | null;
+    end?: Date | null;
+    lookback?: number | null;
+    currency?: string;
+    includeDefunct?: boolean;
 }
 
 export interface GetIndicatorsRequest {
@@ -123,7 +137,7 @@ export class MarketIntelligenceApi extends runtime.BaseAPI {
     }
 
     /**
-     * Scan providers for cross-market arbitrage opportunities.  Filters: - `min_spread_pct` - `providers_buy` and `providers_sell` (sell-side limited to buy-order providers) - offset pagination via `offset`  Response: - opportunities ranked by estimated net profit in USD with buy-side and sell-side provider context  Tier: Quant-only.
+     * Scan providers for cross-market arbitrage opportunities.  Filters: - `min_spread_pct` - `providers_buy` and `providers_sell` (sell-side limited to buy-order providers) - offset pagination via `offset`  Response: - opportunities ranked by estimated net profit in USD with buy-side and sell-side provider context - pagination total reflects the capped set of ranked opportunities, not a count of all possible matches  Tier: Quant-only.
      * Get Arbitrage Opportunities
      */
     async getArbitrageOpportunitiesRaw(requestParameters: GetArbitrageOpportunitiesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MarketArbitrageResponse>> {
@@ -134,11 +148,90 @@ export class MarketIntelligenceApi extends runtime.BaseAPI {
     }
 
     /**
-     * Scan providers for cross-market arbitrage opportunities.  Filters: - `min_spread_pct` - `providers_buy` and `providers_sell` (sell-side limited to buy-order providers) - offset pagination via `offset`  Response: - opportunities ranked by estimated net profit in USD with buy-side and sell-side provider context  Tier: Quant-only.
+     * Scan providers for cross-market arbitrage opportunities.  Filters: - `min_spread_pct` - `providers_buy` and `providers_sell` (sell-side limited to buy-order providers) - offset pagination via `offset`  Response: - opportunities ranked by estimated net profit in USD with buy-side and sell-side provider context - pagination total reflects the capped set of ranked opportunities, not a count of all possible matches  Tier: Quant-only.
      * Get Arbitrage Opportunities
      */
     async getArbitrageOpportunities(requestParameters: GetArbitrageOpportunitiesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<MarketArbitrageResponse> {
         const response = await this.getArbitrageOpportunitiesRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for getDeepPriceHistoryChart without sending the request
+     */
+    async getDeepPriceHistoryChartRequestOpts(requestParameters: GetDeepPriceHistoryChartRequest): Promise<runtime.RequestOpts> {
+        const queryParameters: any = {};
+
+        if (requestParameters['itemId'] != null) {
+            queryParameters['item_id'] = requestParameters['itemId'];
+        }
+
+        if (requestParameters['marketHashName'] != null) {
+            queryParameters['market_hash_name'] = requestParameters['marketHashName'];
+        }
+
+        if (requestParameters['providers'] != null) {
+            queryParameters['providers'] = requestParameters['providers'];
+        }
+
+        if (requestParameters['start'] != null) {
+            queryParameters['start'] = (requestParameters['start'] as any).toISOString();
+        }
+
+        if (requestParameters['end'] != null) {
+            queryParameters['end'] = (requestParameters['end'] as any).toISOString();
+        }
+
+        if (requestParameters['lookback'] != null) {
+            queryParameters['lookback'] = requestParameters['lookback'];
+        }
+
+        if (requestParameters['currency'] != null) {
+            queryParameters['currency'] = requestParameters['currency'];
+        }
+
+        if (requestParameters['includeDefunct'] != null) {
+            queryParameters['include_defunct'] = requestParameters['includeDefunct'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("BearerAuth", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/market/history/chart`;
+
+        return {
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * Per-provider daily price history.  Returns one price point per provider per UTC day, spanning years of history up to the present. Prices are in minor units of the response currency; ``qty`` is nullable.  Providers that have shut down are excluded by default; pass ``include_defunct=true`` to include their historical series.  **Tier**: Quant-only.
+     * Get Deep Price History Chart
+     */
+    async getDeepPriceHistoryChartRaw(requestParameters: GetDeepPriceHistoryChartRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MarketHistoryChartResponse>> {
+        const requestOptions = await this.getDeepPriceHistoryChartRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => MarketHistoryChartResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Per-provider daily price history.  Returns one price point per provider per UTC day, spanning years of history up to the present. Prices are in minor units of the response currency; ``qty`` is nullable.  Providers that have shut down are excluded by default; pass ``include_defunct=true`` to include their historical series.  **Tier**: Quant-only.
+     * Get Deep Price History Chart
+     */
+    async getDeepPriceHistoryChart(requestParameters: GetDeepPriceHistoryChartRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<MarketHistoryChartResponse> {
+        const response = await this.getDeepPriceHistoryChartRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -245,7 +338,7 @@ export class MarketIntelligenceApi extends runtime.BaseAPI {
     }
 
     /**
-     * Return per-item market analytics across providers.  Includes: - best ask, best bid, and spread summary - item-level liquidity summary and provider-level price/depth/volume metrics - coverage diagnostics showing which providers contributed data  Liquidity is always scored against the 24h horizon. Provider volume fields remain literal trailing 24h/7d depletion metrics.  Tier: Pro and Quant.
+     * Return per-item market analytics across providers.  Includes: - best ask, best bid, and spread summary - item-level liquidity summary and provider-level price/depth/volume metrics - coverage diagnostics showing which providers contributed data  Liquidity is always scored against the 24h horizon. Provider volume fields are trailing 24h and 7d totals.  Tier: Pro and Quant.
      * Get Item Analytics
      */
     async getItemAnalyticsRaw(requestParameters: GetItemAnalyticsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MarketItemAnalyticsResponse>> {
@@ -256,7 +349,7 @@ export class MarketIntelligenceApi extends runtime.BaseAPI {
     }
 
     /**
-     * Return per-item market analytics across providers.  Includes: - best ask, best bid, and spread summary - item-level liquidity summary and provider-level price/depth/volume metrics - coverage diagnostics showing which providers contributed data  Liquidity is always scored against the 24h horizon. Provider volume fields remain literal trailing 24h/7d depletion metrics.  Tier: Pro and Quant.
+     * Return per-item market analytics across providers.  Includes: - best ask, best bid, and spread summary - item-level liquidity summary and provider-level price/depth/volume metrics - coverage diagnostics showing which providers contributed data  Liquidity is always scored against the 24h horizon. Provider volume fields are trailing 24h and 7d totals.  Tier: Pro and Quant.
      * Get Item Analytics
      */
     async getItemAnalytics(requestParameters: GetItemAnalyticsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<MarketItemAnalyticsResponse> {
@@ -292,7 +385,7 @@ export class MarketIntelligenceApi extends runtime.BaseAPI {
     }
 
     /**
-     * Return the full market as a cached, summary-only snapshot.  Includes: - one row per catalog item with the same summary fields exposed by the detail route - no pagination and no provider-level payloads - rank-ordered output using `rank asc, item_id asc`  Window selection uses preset `timeframe` only. The selected timeframe affects liquidity fields only. Trade windows remain fixed at 24h, 7d, and 30d.  Tier: Pro and Quant.
+     * Return the full market as a summary-only snapshot.  Includes: - one row per catalog item with the same summary fields exposed by the detail route - no pagination and no provider-level payloads - rank-ordered output using `rank asc, item_id asc`  Liquidity reflects the 24h horizon; trade windows are 24h, 7d, and 30d.  Tier: Pro and Quant.
      * Get Market Analytics Snapshot
      */
     async getMarketAnalyticsSnapshotRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MarketItemsSnapshotResponse>> {
@@ -303,7 +396,7 @@ export class MarketIntelligenceApi extends runtime.BaseAPI {
     }
 
     /**
-     * Return the full market as a cached, summary-only snapshot.  Includes: - one row per catalog item with the same summary fields exposed by the detail route - no pagination and no provider-level payloads - rank-ordered output using `rank asc, item_id asc`  Window selection uses preset `timeframe` only. The selected timeframe affects liquidity fields only. Trade windows remain fixed at 24h, 7d, and 30d.  Tier: Pro and Quant.
+     * Return the full market as a summary-only snapshot.  Includes: - one row per catalog item with the same summary fields exposed by the detail route - no pagination and no provider-level payloads - rank-ordered output using `rank asc, item_id asc`  Liquidity reflects the 24h horizon; trade windows are 24h, 7d, and 30d.  Tier: Pro and Quant.
      * Get Market Analytics Snapshot
      */
     async getMarketAnalyticsSnapshot(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<MarketItemsSnapshotResponse> {
@@ -343,7 +436,7 @@ export class MarketIntelligenceApi extends runtime.BaseAPI {
     }
 
     /**
-     * Aggregate the cached 24h market snapshot into category-level indexes.  Supports grouping by `item_type` or `weapon_type`. Items are excluded from market cap totals when bid/ask/marketcap data is incomplete or spread exceeds the internal spread threshold.  Response: - no pagination - groups sorted by `marketcap_usd desc` - totals computed from the same filtered item set  Tier: Quant-only.
+     * Aggregate the 24h market into category-level indexes.  Supports grouping by `item_type` or `weapon_type`. Items are excluded from market cap totals when bid/ask/marketcap data is incomplete or spread exceeds the minimum threshold.  Response: - no pagination - groups sorted by `marketcap_usd desc` - totals computed from the same filtered item set  Tier: Quant-only.
      * Get Market Cap Indexes
      */
     async getMarketCapIndexesRaw(requestParameters: GetMarketCapIndexesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MarketIndexesResponse>> {
@@ -354,7 +447,7 @@ export class MarketIntelligenceApi extends runtime.BaseAPI {
     }
 
     /**
-     * Aggregate the cached 24h market snapshot into category-level indexes.  Supports grouping by `item_type` or `weapon_type`. Items are excluded from market cap totals when bid/ask/marketcap data is incomplete or spread exceeds the internal spread threshold.  Response: - no pagination - groups sorted by `marketcap_usd desc` - totals computed from the same filtered item set  Tier: Quant-only.
+     * Aggregate the 24h market into category-level indexes.  Supports grouping by `item_type` or `weapon_type`. Items are excluded from market cap totals when bid/ask/marketcap data is incomplete or spread exceeds the minimum threshold.  Response: - no pagination - groups sorted by `marketcap_usd desc` - totals computed from the same filtered item set  Tier: Quant-only.
      * Get Market Cap Indexes
      */
     async getMarketCapIndexes(requestParameters: GetMarketCapIndexesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<MarketIndexesResponse> {

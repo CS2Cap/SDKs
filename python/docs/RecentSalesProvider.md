@@ -4,8 +4,6 @@ Provider keys that support Recent Sales.
 
 ## Enum
 
-* `BITSKINS` (value: `'bitskins'`)
-
 * `BUFF163` (value: `'buff163'`)
 
 * `C5` (value: `'c5'`)

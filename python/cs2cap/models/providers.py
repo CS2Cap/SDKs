@@ -18,17 +18,19 @@ import re  # noqa: F401
 import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
-from typing import Any, ClassVar, Dict, List
+from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
 
 class Providers(BaseModel):
     """
-    Provider provenance for composite candle extremes.
+    Provider provenance for composite candle values.
     """ # noqa: E501
+    o: Optional[StrictStr] = Field(default='unknown', description="Provider key that contributed the returned open value.")
     h: StrictStr = Field(description="Provider key that contributed the returned high value.")
     l: StrictStr = Field(description="Provider key that contributed the returned low value.")
-    __properties: ClassVar[List[str]] = ["h", "l"]
+    c: Optional[StrictStr] = Field(default='unknown', description="Provider key that contributed the returned close value.")
+    __properties: ClassVar[List[str]] = ["o", "h", "l", "c"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -81,8 +83,10 @@ class Providers(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
+            "o": obj.get("o") if obj.get("o") is not None else 'unknown',
             "h": obj.get("h"),
-            "l": obj.get("l")
+            "l": obj.get("l"),
+            "c": obj.get("c") if obj.get("c") is not None else 'unknown'
         })
         return _obj
 

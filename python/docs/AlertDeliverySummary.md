@@ -11,6 +11,7 @@ Name | Type | Description | Notes
 **delivery_id** | **str** |  | [optional] 
 **endpoint_id** | **str** |  | [optional] 
 **endpoint_label** | **str** |  | [optional] 
+**platform** | **str** |  | [optional] 
 **attempt_count** | **int** |  | [optional] 
 **last_http_status** | **int** |  | [optional] 
 **next_attempt_at** | **datetime** |  | [optional] 

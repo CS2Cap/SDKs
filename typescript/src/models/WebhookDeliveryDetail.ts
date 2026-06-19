@@ -58,6 +58,12 @@ export interface WebhookDeliveryDetail {
      */
     endpointUrl: string;
     /**
+     * Snapshot of the delivery platform used for this delivery.
+     * @type {string}
+     * @memberof WebhookDeliveryDetail
+     */
+    platform: string;
+    /**
      * Outbound event type.
      * @type {string}
      * @memberof WebhookDeliveryDetail
@@ -128,6 +134,7 @@ export function instanceOfWebhookDeliveryDetail(value: object): value is Webhook
     if (!('endpointId' in value) || value['endpointId'] === undefined) return false;
     if (!('endpointLabel' in value) || value['endpointLabel'] === undefined) return false;
     if (!('endpointUrl' in value) || value['endpointUrl'] === undefined) return false;
+    if (!('platform' in value) || value['platform'] === undefined) return false;
     if (!('eventType' in value) || value['eventType'] === undefined) return false;
     if (!('status' in value) || value['status'] === undefined) return false;
     if (!('attemptCount' in value) || value['attemptCount'] === undefined) return false;
@@ -152,6 +159,7 @@ export function WebhookDeliveryDetailFromJSONTyped(json: any, ignoreDiscriminato
         'endpointId': json['endpoint_id'],
         'endpointLabel': json['endpoint_label'],
         'endpointUrl': json['endpoint_url'],
+        'platform': json['platform'],
         'eventType': json['event_type'],
         'status': json['status'],
         'attemptCount': json['attempt_count'],
@@ -181,6 +189,7 @@ export function WebhookDeliveryDetailToJSONTyped(value?: WebhookDeliveryDetail |
         'endpoint_id': value['endpointId'],
         'endpoint_label': value['endpointLabel'],
         'endpoint_url': value['endpointUrl'],
+        'platform': value['platform'],
         'event_type': value['eventType'],
         'status': value['status'],
         'attempt_count': value['attemptCount'],

@@ -15,12 +15,14 @@ from pydantic import validate_call, Field, StrictFloat, StrictStr, StrictInt
 from typing import Any, Dict, List, Optional, Tuple, Union
 from typing_extensions import Annotated
 
-from pydantic import Field, StrictInt, StrictStr, field_validator
+from datetime import datetime
+from pydantic import Field, StrictBool, StrictInt, StrictStr, field_validator
 from typing import List, Optional, Union
 from typing_extensions import Annotated
 from cs2cap.models.all_providers import AllProviders
 from cs2cap.models.buy_order_provider import BuyOrderProvider
 from cs2cap.models.market_arbitrage_response import MarketArbitrageResponse
+from cs2cap.models.market_history_chart_response import MarketHistoryChartResponse
 from cs2cap.models.market_indexes_response import MarketIndexesResponse
 from cs2cap.models.market_indicators_item_response import MarketIndicatorsItemResponse
 from cs2cap.models.market_item_analytics_response import MarketItemAnalyticsResponse
@@ -67,7 +69,7 @@ class MarketIntelligenceApi:
     ) -> MarketArbitrageResponse:
         """Get Arbitrage Opportunities
 
-        Scan providers for cross-market arbitrage opportunities.  Filters: - `min_spread_pct` - `providers_buy` and `providers_sell` (sell-side limited to buy-order providers) - offset pagination via `offset`  Response: - opportunities ranked by estimated net profit in USD with buy-side and sell-side provider context  Tier: Quant-only.
+        Scan providers for cross-market arbitrage opportunities.  Filters: - `min_spread_pct` - `providers_buy` and `providers_sell` (sell-side limited to buy-order providers) - offset pagination via `offset`  Response: - opportunities ranked by estimated net profit in USD with buy-side and sell-side provider context - pagination total reflects the capped set of ranked opportunities, not a count of all possible matches  Tier: Quant-only.
 
         :param limit: Maximum number of results to return. Defaults to the effective tier cap.
         :type limit: int
@@ -155,7 +157,7 @@ class MarketIntelligenceApi:
     ) -> ApiResponse[MarketArbitrageResponse]:
         """Get Arbitrage Opportunities
 
-        Scan providers for cross-market arbitrage opportunities.  Filters: - `min_spread_pct` - `providers_buy` and `providers_sell` (sell-side limited to buy-order providers) - offset pagination via `offset`  Response: - opportunities ranked by estimated net profit in USD with buy-side and sell-side provider context  Tier: Quant-only.
+        Scan providers for cross-market arbitrage opportunities.  Filters: - `min_spread_pct` - `providers_buy` and `providers_sell` (sell-side limited to buy-order providers) - offset pagination via `offset`  Response: - opportunities ranked by estimated net profit in USD with buy-side and sell-side provider context - pagination total reflects the capped set of ranked opportunities, not a count of all possible matches  Tier: Quant-only.
 
         :param limit: Maximum number of results to return. Defaults to the effective tier cap.
         :type limit: int
@@ -243,7 +245,7 @@ class MarketIntelligenceApi:
     ) -> RESTResponseType:
         """Get Arbitrage Opportunities
 
-        Scan providers for cross-market arbitrage opportunities.  Filters: - `min_spread_pct` - `providers_buy` and `providers_sell` (sell-side limited to buy-order providers) - offset pagination via `offset`  Response: - opportunities ranked by estimated net profit in USD with buy-side and sell-side provider context  Tier: Quant-only.
+        Scan providers for cross-market arbitrage opportunities.  Filters: - `min_spread_pct` - `providers_buy` and `providers_sell` (sell-side limited to buy-order providers) - offset pagination via `offset`  Response: - opportunities ranked by estimated net profit in USD with buy-side and sell-side provider context - pagination total reflects the capped set of ranked opportunities, not a count of all possible matches  Tier: Quant-only.
 
         :param limit: Maximum number of results to return. Defaults to the effective tier cap.
         :type limit: int
@@ -377,6 +379,425 @@ class MarketIntelligenceApi:
         return self.api_client.param_serialize(
             method='GET',
             resource_path='/v1/market/arbitrage',
+            path_params=_path_params,
+            query_params=_query_params,
+            header_params=_header_params,
+            body=_body_params,
+            post_params=_form_params,
+            files=_files,
+            auth_settings=_auth_settings,
+            collection_formats=_collection_formats,
+            _host=_host,
+            _request_auth=_request_auth
+        )
+
+
+
+
+    @validate_call
+    def get_deep_price_history_chart(
+        self,
+        item_id: Annotated[Optional[StrictInt], Field(description="Normalized catalog item ID (or use market_hash_name).")] = None,
+        market_hash_name: Annotated[Optional[StrictStr], Field(description="Market hash name (alternative to item_id).")] = None,
+        providers: Annotated[Optional[List[StrictStr]], Field(description="Provider key(s). Repeatable. Omit for all providers with data.")] = None,
+        start: Annotated[Optional[datetime], Field(description="ISO 8601 UTC start of the window.")] = None,
+        end: Annotated[Optional[datetime], Field(description="ISO 8601 UTC end of the window.")] = None,
+        lookback: Annotated[Optional[Annotated[int, Field(strict=True, ge=1)]], Field(description="Window length in days; overrides start.")] = None,
+        currency: Annotated[Optional[StrictStr], Field(description="Target currency for returned prices. Default: USD.")] = None,
+        include_defunct: Annotated[Optional[StrictBool], Field(description="Include providers that have shut down but still have historical data (e.g. GamerPay, BitSkins). Defaults to false.")] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> MarketHistoryChartResponse:
+        """Get Deep Price History Chart
+
+        Per-provider daily price history.  Returns one price point per provider per UTC day, spanning years of history up to the present. Prices are in minor units of the response currency; ``qty`` is nullable.  Providers that have shut down are excluded by default; pass ``include_defunct=true`` to include their historical series.  **Tier**: Quant-only.
+
+        :param item_id: Normalized catalog item ID (or use market_hash_name).
+        :type item_id: int
+        :param market_hash_name: Market hash name (alternative to item_id).
+        :type market_hash_name: str
+        :param providers: Provider key(s). Repeatable. Omit for all providers with data.
+        :type providers: List[str]
+        :param start: ISO 8601 UTC start of the window.
+        :type start: datetime
+        :param end: ISO 8601 UTC end of the window.
+        :type end: datetime
+        :param lookback: Window length in days; overrides start.
+        :type lookback: int
+        :param currency: Target currency for returned prices. Default: USD.
+        :type currency: str
+        :param include_defunct: Include providers that have shut down but still have historical data (e.g. GamerPay, BitSkins). Defaults to false.
+        :type include_defunct: bool
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._get_deep_price_history_chart_serialize(
+            item_id=item_id,
+            market_hash_name=market_hash_name,
+            providers=providers,
+            start=start,
+            end=end,
+            lookback=lookback,
+            currency=currency,
+            include_defunct=include_defunct,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "MarketHistoryChartResponse",
+            '401': "ErrorResponse",
+            '403': "ErrorResponse",
+            '429': "ErrorResponse",
+            '422': "ValidationErrorResponse",
+            '400': "ErrorResponse",
+            '404': "ErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        ).data
+
+
+    @validate_call
+    def get_deep_price_history_chart_with_http_info(
+        self,
+        item_id: Annotated[Optional[StrictInt], Field(description="Normalized catalog item ID (or use market_hash_name).")] = None,
+        market_hash_name: Annotated[Optional[StrictStr], Field(description="Market hash name (alternative to item_id).")] = None,
+        providers: Annotated[Optional[List[StrictStr]], Field(description="Provider key(s). Repeatable. Omit for all providers with data.")] = None,
+        start: Annotated[Optional[datetime], Field(description="ISO 8601 UTC start of the window.")] = None,
+        end: Annotated[Optional[datetime], Field(description="ISO 8601 UTC end of the window.")] = None,
+        lookback: Annotated[Optional[Annotated[int, Field(strict=True, ge=1)]], Field(description="Window length in days; overrides start.")] = None,
+        currency: Annotated[Optional[StrictStr], Field(description="Target currency for returned prices. Default: USD.")] = None,
+        include_defunct: Annotated[Optional[StrictBool], Field(description="Include providers that have shut down but still have historical data (e.g. GamerPay, BitSkins). Defaults to false.")] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> ApiResponse[MarketHistoryChartResponse]:
+        """Get Deep Price History Chart
+
+        Per-provider daily price history.  Returns one price point per provider per UTC day, spanning years of history up to the present. Prices are in minor units of the response currency; ``qty`` is nullable.  Providers that have shut down are excluded by default; pass ``include_defunct=true`` to include their historical series.  **Tier**: Quant-only.
+
+        :param item_id: Normalized catalog item ID (or use market_hash_name).
+        :type item_id: int
+        :param market_hash_name: Market hash name (alternative to item_id).
+        :type market_hash_name: str
+        :param providers: Provider key(s). Repeatable. Omit for all providers with data.
+        :type providers: List[str]
+        :param start: ISO 8601 UTC start of the window.
+        :type start: datetime
+        :param end: ISO 8601 UTC end of the window.
+        :type end: datetime
+        :param lookback: Window length in days; overrides start.
+        :type lookback: int
+        :param currency: Target currency for returned prices. Default: USD.
+        :type currency: str
+        :param include_defunct: Include providers that have shut down but still have historical data (e.g. GamerPay, BitSkins). Defaults to false.
+        :type include_defunct: bool
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._get_deep_price_history_chart_serialize(
+            item_id=item_id,
+            market_hash_name=market_hash_name,
+            providers=providers,
+            start=start,
+            end=end,
+            lookback=lookback,
+            currency=currency,
+            include_defunct=include_defunct,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "MarketHistoryChartResponse",
+            '401': "ErrorResponse",
+            '403': "ErrorResponse",
+            '429': "ErrorResponse",
+            '422': "ValidationErrorResponse",
+            '400': "ErrorResponse",
+            '404': "ErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        response_data.read()
+        return self.api_client.response_deserialize(
+            response_data=response_data,
+            response_types_map=_response_types_map,
+        )
+
+
+    @validate_call
+    def get_deep_price_history_chart_without_preload_content(
+        self,
+        item_id: Annotated[Optional[StrictInt], Field(description="Normalized catalog item ID (or use market_hash_name).")] = None,
+        market_hash_name: Annotated[Optional[StrictStr], Field(description="Market hash name (alternative to item_id).")] = None,
+        providers: Annotated[Optional[List[StrictStr]], Field(description="Provider key(s). Repeatable. Omit for all providers with data.")] = None,
+        start: Annotated[Optional[datetime], Field(description="ISO 8601 UTC start of the window.")] = None,
+        end: Annotated[Optional[datetime], Field(description="ISO 8601 UTC end of the window.")] = None,
+        lookback: Annotated[Optional[Annotated[int, Field(strict=True, ge=1)]], Field(description="Window length in days; overrides start.")] = None,
+        currency: Annotated[Optional[StrictStr], Field(description="Target currency for returned prices. Default: USD.")] = None,
+        include_defunct: Annotated[Optional[StrictBool], Field(description="Include providers that have shut down but still have historical data (e.g. GamerPay, BitSkins). Defaults to false.")] = None,
+        _request_timeout: Union[
+            None,
+            Annotated[StrictFloat, Field(gt=0)],
+            Tuple[
+                Annotated[StrictFloat, Field(gt=0)],
+                Annotated[StrictFloat, Field(gt=0)]
+            ]
+        ] = None,
+        _request_auth: Optional[Dict[StrictStr, Any]] = None,
+        _content_type: Optional[StrictStr] = None,
+        _headers: Optional[Dict[StrictStr, Any]] = None,
+        _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
+    ) -> RESTResponseType:
+        """Get Deep Price History Chart
+
+        Per-provider daily price history.  Returns one price point per provider per UTC day, spanning years of history up to the present. Prices are in minor units of the response currency; ``qty`` is nullable.  Providers that have shut down are excluded by default; pass ``include_defunct=true`` to include their historical series.  **Tier**: Quant-only.
+
+        :param item_id: Normalized catalog item ID (or use market_hash_name).
+        :type item_id: int
+        :param market_hash_name: Market hash name (alternative to item_id).
+        :type market_hash_name: str
+        :param providers: Provider key(s). Repeatable. Omit for all providers with data.
+        :type providers: List[str]
+        :param start: ISO 8601 UTC start of the window.
+        :type start: datetime
+        :param end: ISO 8601 UTC end of the window.
+        :type end: datetime
+        :param lookback: Window length in days; overrides start.
+        :type lookback: int
+        :param currency: Target currency for returned prices. Default: USD.
+        :type currency: str
+        :param include_defunct: Include providers that have shut down but still have historical data (e.g. GamerPay, BitSkins). Defaults to false.
+        :type include_defunct: bool
+        :param _request_timeout: timeout setting for this request. If one
+                                 number provided, it will be total request
+                                 timeout. It can also be a pair (tuple) of
+                                 (connection, read) timeouts.
+        :type _request_timeout: int, tuple(int, int), optional
+        :param _request_auth: set to override the auth_settings for an a single
+                              request; this effectively ignores the
+                              authentication in the spec for a single request.
+        :type _request_auth: dict, optional
+        :param _content_type: force content-type for the request.
+        :type _content_type: str, Optional
+        :param _headers: set to override the headers for a single
+                         request; this effectively ignores the headers
+                         in the spec for a single request.
+        :type _headers: dict, optional
+        :param _host_index: set to override the host_index for a single
+                            request; this effectively ignores the host_index
+                            in the spec for a single request.
+        :type _host_index: int, optional
+        :return: Returns the result object.
+        """ # noqa: E501
+
+        _param = self._get_deep_price_history_chart_serialize(
+            item_id=item_id,
+            market_hash_name=market_hash_name,
+            providers=providers,
+            start=start,
+            end=end,
+            lookback=lookback,
+            currency=currency,
+            include_defunct=include_defunct,
+            _request_auth=_request_auth,
+            _content_type=_content_type,
+            _headers=_headers,
+            _host_index=_host_index
+        )
+
+        _response_types_map: Dict[str, Optional[str]] = {
+            '200': "MarketHistoryChartResponse",
+            '401': "ErrorResponse",
+            '403': "ErrorResponse",
+            '429': "ErrorResponse",
+            '422': "ValidationErrorResponse",
+            '400': "ErrorResponse",
+            '404': "ErrorResponse",
+        }
+        response_data = self.api_client.call_api(
+            *_param,
+            _request_timeout=_request_timeout
+        )
+        return response_data.response
+
+
+    def _get_deep_price_history_chart_serialize(
+        self,
+        item_id,
+        market_hash_name,
+        providers,
+        start,
+        end,
+        lookback,
+        currency,
+        include_defunct,
+        _request_auth,
+        _content_type,
+        _headers,
+        _host_index,
+    ) -> RequestSerialized:
+
+        _host = None
+
+        _collection_formats: Dict[str, str] = {
+            'providers': 'multi',
+        }
+
+        _path_params: Dict[str, str] = {}
+        _query_params: List[Tuple[str, str]] = []
+        _header_params: Dict[str, Optional[str]] = _headers or {}
+        _form_params: List[Tuple[str, str]] = []
+        _files: Dict[
+            str, Union[str, bytes, List[str], List[bytes], List[Tuple[str, bytes]]]
+        ] = {}
+        _body_params: Optional[bytes] = None
+
+        # process the path parameters
+        # process the query parameters
+        if item_id is not None:
+            
+            _query_params.append(('item_id', item_id))
+            
+        if market_hash_name is not None:
+            
+            _query_params.append(('market_hash_name', market_hash_name))
+            
+        if providers is not None:
+            
+            _query_params.append(('providers', providers))
+            
+        if start is not None:
+            if isinstance(start, datetime):
+                _query_params.append(
+                    (
+                        'start',
+                        start.strftime(
+                            self.api_client.configuration.datetime_format
+                        )
+                    )
+                )
+            else:
+                _query_params.append(('start', start))
+            
+        if end is not None:
+            if isinstance(end, datetime):
+                _query_params.append(
+                    (
+                        'end',
+                        end.strftime(
+                            self.api_client.configuration.datetime_format
+                        )
+                    )
+                )
+            else:
+                _query_params.append(('end', end))
+            
+        if lookback is not None:
+            
+            _query_params.append(('lookback', lookback))
+            
+        if currency is not None:
+            
+            _query_params.append(('currency', currency))
+            
+        if include_defunct is not None:
+            
+            _query_params.append(('include_defunct', include_defunct))
+            
+        # process the header parameters
+        # process the form parameters
+        # process the body parameter
+
+
+        # set the HTTP header `Accept`
+        if 'Accept' not in _header_params:
+            _header_params['Accept'] = self.api_client.select_header_accept(
+                [
+                    'application/json'
+                ]
+            )
+
+
+        # authentication setting
+        _auth_settings: List[str] = [
+            'BearerAuth'
+        ]
+
+        return self.api_client.param_serialize(
+            method='GET',
+            resource_path='/v1/market/history/chart',
             path_params=_path_params,
             query_params=_query_params,
             header_params=_header_params,
@@ -757,7 +1178,7 @@ class MarketIntelligenceApi:
     ) -> MarketItemAnalyticsResponse:
         """Get Item Analytics
 
-        Return per-item market analytics across providers.  Includes: - best ask, best bid, and spread summary - item-level liquidity summary and provider-level price/depth/volume metrics - coverage diagnostics showing which providers contributed data  Liquidity is always scored against the 24h horizon. Provider volume fields remain literal trailing 24h/7d depletion metrics.  Tier: Pro and Quant.
+        Return per-item market analytics across providers.  Includes: - best ask, best bid, and spread summary - item-level liquidity summary and provider-level price/depth/volume metrics - coverage diagnostics showing which providers contributed data  Liquidity is always scored against the 24h horizon. Provider volume fields are trailing 24h and 7d totals.  Tier: Pro and Quant.
 
         :param item_id: Item ID. (required)
         :type item_id: int
@@ -829,7 +1250,7 @@ class MarketIntelligenceApi:
     ) -> ApiResponse[MarketItemAnalyticsResponse]:
         """Get Item Analytics
 
-        Return per-item market analytics across providers.  Includes: - best ask, best bid, and spread summary - item-level liquidity summary and provider-level price/depth/volume metrics - coverage diagnostics showing which providers contributed data  Liquidity is always scored against the 24h horizon. Provider volume fields remain literal trailing 24h/7d depletion metrics.  Tier: Pro and Quant.
+        Return per-item market analytics across providers.  Includes: - best ask, best bid, and spread summary - item-level liquidity summary and provider-level price/depth/volume metrics - coverage diagnostics showing which providers contributed data  Liquidity is always scored against the 24h horizon. Provider volume fields are trailing 24h and 7d totals.  Tier: Pro and Quant.
 
         :param item_id: Item ID. (required)
         :type item_id: int
@@ -901,7 +1322,7 @@ class MarketIntelligenceApi:
     ) -> RESTResponseType:
         """Get Item Analytics
 
-        Return per-item market analytics across providers.  Includes: - best ask, best bid, and spread summary - item-level liquidity summary and provider-level price/depth/volume metrics - coverage diagnostics showing which providers contributed data  Liquidity is always scored against the 24h horizon. Provider volume fields remain literal trailing 24h/7d depletion metrics.  Tier: Pro and Quant.
+        Return per-item market analytics across providers.  Includes: - best ask, best bid, and spread summary - item-level liquidity summary and provider-level price/depth/volume metrics - coverage diagnostics showing which providers contributed data  Liquidity is always scored against the 24h horizon. Provider volume fields are trailing 24h and 7d totals.  Tier: Pro and Quant.
 
         :param item_id: Item ID. (required)
         :type item_id: int
@@ -1032,7 +1453,7 @@ class MarketIntelligenceApi:
     ) -> MarketItemsSnapshotResponse:
         """Get Market Analytics Snapshot
 
-        Return the full market as a cached, summary-only snapshot.  Includes: - one row per catalog item with the same summary fields exposed by the detail route - no pagination and no provider-level payloads - rank-ordered output using `rank asc, item_id asc`  Window selection uses preset `timeframe` only. The selected timeframe affects liquidity fields only. Trade windows remain fixed at 24h, 7d, and 30d.  Tier: Pro and Quant.
+        Return the full market as a summary-only snapshot.  Includes: - one row per catalog item with the same summary fields exposed by the detail route - no pagination and no provider-level payloads - rank-ordered output using `rank asc, item_id asc`  Liquidity reflects the 24h horizon; trade windows are 24h, 7d, and 30d.  Tier: Pro and Quant.
 
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -1100,7 +1521,7 @@ class MarketIntelligenceApi:
     ) -> ApiResponse[MarketItemsSnapshotResponse]:
         """Get Market Analytics Snapshot
 
-        Return the full market as a cached, summary-only snapshot.  Includes: - one row per catalog item with the same summary fields exposed by the detail route - no pagination and no provider-level payloads - rank-ordered output using `rank asc, item_id asc`  Window selection uses preset `timeframe` only. The selected timeframe affects liquidity fields only. Trade windows remain fixed at 24h, 7d, and 30d.  Tier: Pro and Quant.
+        Return the full market as a summary-only snapshot.  Includes: - one row per catalog item with the same summary fields exposed by the detail route - no pagination and no provider-level payloads - rank-ordered output using `rank asc, item_id asc`  Liquidity reflects the 24h horizon; trade windows are 24h, 7d, and 30d.  Tier: Pro and Quant.
 
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -1168,7 +1589,7 @@ class MarketIntelligenceApi:
     ) -> RESTResponseType:
         """Get Market Analytics Snapshot
 
-        Return the full market as a cached, summary-only snapshot.  Includes: - one row per catalog item with the same summary fields exposed by the detail route - no pagination and no provider-level payloads - rank-ordered output using `rank asc, item_id asc`  Window selection uses preset `timeframe` only. The selected timeframe affects liquidity fields only. Trade windows remain fixed at 24h, 7d, and 30d.  Tier: Pro and Quant.
+        Return the full market as a summary-only snapshot.  Includes: - one row per catalog item with the same summary fields exposed by the detail route - no pagination and no provider-level payloads - rank-ordered output using `rank asc, item_id asc`  Liquidity reflects the 24h horizon; trade windows are 24h, 7d, and 30d.  Tier: Pro and Quant.
 
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
@@ -1294,7 +1715,7 @@ class MarketIntelligenceApi:
     ) -> MarketIndexesResponse:
         """Get Market Cap Indexes
 
-        Aggregate the cached 24h market snapshot into category-level indexes.  Supports grouping by `item_type` or `weapon_type`. Items are excluded from market cap totals when bid/ask/marketcap data is incomplete or spread exceeds the internal spread threshold.  Response: - no pagination - groups sorted by `marketcap_usd desc` - totals computed from the same filtered item set  Tier: Quant-only.
+        Aggregate the 24h market into category-level indexes.  Supports grouping by `item_type` or `weapon_type`. Items are excluded from market cap totals when bid/ask/marketcap data is incomplete or spread exceeds the minimum threshold.  Response: - no pagination - groups sorted by `marketcap_usd desc` - totals computed from the same filtered item set  Tier: Quant-only.
 
         :param group_by: Catalog dimension used to group snapshot items.
         :type group_by: str
@@ -1366,7 +1787,7 @@ class MarketIntelligenceApi:
     ) -> ApiResponse[MarketIndexesResponse]:
         """Get Market Cap Indexes
 
-        Aggregate the cached 24h market snapshot into category-level indexes.  Supports grouping by `item_type` or `weapon_type`. Items are excluded from market cap totals when bid/ask/marketcap data is incomplete or spread exceeds the internal spread threshold.  Response: - no pagination - groups sorted by `marketcap_usd desc` - totals computed from the same filtered item set  Tier: Quant-only.
+        Aggregate the 24h market into category-level indexes.  Supports grouping by `item_type` or `weapon_type`. Items are excluded from market cap totals when bid/ask/marketcap data is incomplete or spread exceeds the minimum threshold.  Response: - no pagination - groups sorted by `marketcap_usd desc` - totals computed from the same filtered item set  Tier: Quant-only.
 
         :param group_by: Catalog dimension used to group snapshot items.
         :type group_by: str
@@ -1438,7 +1859,7 @@ class MarketIntelligenceApi:
     ) -> RESTResponseType:
         """Get Market Cap Indexes
 
-        Aggregate the cached 24h market snapshot into category-level indexes.  Supports grouping by `item_type` or `weapon_type`. Items are excluded from market cap totals when bid/ask/marketcap data is incomplete or spread exceeds the internal spread threshold.  Response: - no pagination - groups sorted by `marketcap_usd desc` - totals computed from the same filtered item set  Tier: Quant-only.
+        Aggregate the 24h market into category-level indexes.  Supports grouping by `item_type` or `weapon_type`. Items are excluded from market cap totals when bid/ask/marketcap data is incomplete or spread exceeds the minimum threshold.  Response: - no pagination - groups sorted by `marketcap_usd desc` - totals computed from the same filtered item set  Tier: Quant-only.
 
         :param group_by: Catalog dimension used to group snapshot items.
         :type group_by: str

@@ -23,6 +23,7 @@ export const BuyOrderProvider = {
     C5: 'c5',
     Csfloat: 'csfloat',
     Dmarket: 'dmarket',
+    Dupefi: 'dupefi',
     Ecosteam: 'ecosteam',
     Marketcsgo: 'marketcsgo',
     Steam: 'steam',

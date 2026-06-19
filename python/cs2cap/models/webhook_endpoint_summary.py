@@ -30,6 +30,7 @@ class WebhookEndpointSummary(BaseModel):
     id: StrictStr = Field(description="Unique webhook destination identifier.")
     label: StrictStr = Field(description="User-defined label for this destination.")
     url: StrictStr = Field(description="Destination URL.")
+    platform: StrictStr = Field(description="Delivery platform key for this destination.")
     secret_last4: StrictStr = Field(description="Last four characters of the current signing secret.")
     is_active: StrictBool = Field(description="Whether new events fan out to this destination.")
     last_success_at: Optional[datetime] = None
@@ -37,7 +38,7 @@ class WebhookEndpointSummary(BaseModel):
     last_failure_message: Optional[StrictStr] = None
     created_at: datetime = Field(description="ISO 8601 UTC timestamp when this destination was created.")
     updated_at: datetime = Field(description="ISO 8601 UTC timestamp when this destination was last updated.")
-    __properties: ClassVar[List[str]] = ["id", "label", "url", "secret_last4", "is_active", "last_success_at", "last_failure_at", "last_failure_message", "created_at", "updated_at"]
+    __properties: ClassVar[List[str]] = ["id", "label", "url", "platform", "secret_last4", "is_active", "last_success_at", "last_failure_at", "last_failure_message", "created_at", "updated_at"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -108,6 +109,7 @@ class WebhookEndpointSummary(BaseModel):
             "id": obj.get("id"),
             "label": obj.get("label"),
             "url": obj.get("url"),
+            "platform": obj.get("platform"),
             "secret_last4": obj.get("secret_last4"),
             "is_active": obj.get("is_active"),
             "last_success_at": obj.get("last_success_at"),

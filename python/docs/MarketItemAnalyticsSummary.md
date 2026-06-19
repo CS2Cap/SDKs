@@ -29,6 +29,8 @@ Name | Type | Description | Notes
 **listing_score** | **int** |  | [optional] 
 **gap_score** | **int** |  | [optional] 
 **volume_score** | **int** |  | [optional] 
+**stability_score** | **int** |  | [optional] 
+**external_score** | **int** |  | [optional] 
 **liquidity_last_updated** | **datetime** |  | [optional] 
 
 ## Example

@@ -358,7 +358,7 @@ class PricesApi:
     ) -> PricesPaginatedResponseMarketItem:
         """List Prices
 
-        Return current lowest ask listings.  Parameters: - `item_id`: Exact item ID (recommended when known). - `market_hash_name`: Exact market name. - `phase`: Optional Doppler phase filter. - `providers`: Optional provider-key enum list (repeat `providers` to pass multiple values). - `currency`: Quote currency for prices (default `USD`). - `limit`, `offset`: Offset pagination controls.  Behavior: - If no filters are provided, returns a broad paginated listing. - If `market_hash_name` is Doppler and `phase` is omitted, results aggregate across phases per provider. - If `market_hash_name` and `phase` are both provided, only that exact phase is returned. - If the item resolves in the catalog but none of the queried providers currently has a   listing, returns `200` with an empty `items` array.  Response: - `meta`: Applied filters, requested providers, returned providers, currency. - `items`: Per-provider lowest ask entries. - `pagination`: `limit`, `offset`, `total`, `has_next`, `has_prev`.  Requirements: - Valid API key with access to `/v1/prices`. - `limit` is capped by your tier.
+        Return current lowest ask listings.  Parameters: - `item_id`: Exact item ID (recommended when known). - `market_hash_name`: Exact market name. - `phase`: Optional Doppler phase filter. - `providers`: Optional provider-key enum list (repeat `providers` to pass multiple values). - `currency`: Quote currency for prices (default `USD`). - `limit`, `offset`: Offset pagination controls.  Behavior: - If no filters are provided, returns a broad paginated listing. - If `market_hash_name` is Doppler and `phase` is omitted, results aggregate across phases per provider. - If `market_hash_name` and `phase` are both provided, only that exact phase is returned. - If the item exists in the catalog but none of the queried providers currently has a   listing, returns `200` with an empty `items` array.  Response: - `meta`: Applied filters, requested providers, returned providers, currency. - `items`: Per-provider lowest ask entries. - `pagination`: `limit`, `offset`, `total`, `has_next`, `has_prev`.  Requirements: - Valid API key with access to `/v1/prices`. - `limit` is capped by your tier.
 
         :param item_id: Item ID (fastest lookup). Use /v1/items to search for IDs.
         :type item_id: int
@@ -454,7 +454,7 @@ class PricesApi:
     ) -> ApiResponse[PricesPaginatedResponseMarketItem]:
         """List Prices
 
-        Return current lowest ask listings.  Parameters: - `item_id`: Exact item ID (recommended when known). - `market_hash_name`: Exact market name. - `phase`: Optional Doppler phase filter. - `providers`: Optional provider-key enum list (repeat `providers` to pass multiple values). - `currency`: Quote currency for prices (default `USD`). - `limit`, `offset`: Offset pagination controls.  Behavior: - If no filters are provided, returns a broad paginated listing. - If `market_hash_name` is Doppler and `phase` is omitted, results aggregate across phases per provider. - If `market_hash_name` and `phase` are both provided, only that exact phase is returned. - If the item resolves in the catalog but none of the queried providers currently has a   listing, returns `200` with an empty `items` array.  Response: - `meta`: Applied filters, requested providers, returned providers, currency. - `items`: Per-provider lowest ask entries. - `pagination`: `limit`, `offset`, `total`, `has_next`, `has_prev`.  Requirements: - Valid API key with access to `/v1/prices`. - `limit` is capped by your tier.
+        Return current lowest ask listings.  Parameters: - `item_id`: Exact item ID (recommended when known). - `market_hash_name`: Exact market name. - `phase`: Optional Doppler phase filter. - `providers`: Optional provider-key enum list (repeat `providers` to pass multiple values). - `currency`: Quote currency for prices (default `USD`). - `limit`, `offset`: Offset pagination controls.  Behavior: - If no filters are provided, returns a broad paginated listing. - If `market_hash_name` is Doppler and `phase` is omitted, results aggregate across phases per provider. - If `market_hash_name` and `phase` are both provided, only that exact phase is returned. - If the item exists in the catalog but none of the queried providers currently has a   listing, returns `200` with an empty `items` array.  Response: - `meta`: Applied filters, requested providers, returned providers, currency. - `items`: Per-provider lowest ask entries. - `pagination`: `limit`, `offset`, `total`, `has_next`, `has_prev`.  Requirements: - Valid API key with access to `/v1/prices`. - `limit` is capped by your tier.
 
         :param item_id: Item ID (fastest lookup). Use /v1/items to search for IDs.
         :type item_id: int
@@ -550,7 +550,7 @@ class PricesApi:
     ) -> RESTResponseType:
         """List Prices
 
-        Return current lowest ask listings.  Parameters: - `item_id`: Exact item ID (recommended when known). - `market_hash_name`: Exact market name. - `phase`: Optional Doppler phase filter. - `providers`: Optional provider-key enum list (repeat `providers` to pass multiple values). - `currency`: Quote currency for prices (default `USD`). - `limit`, `offset`: Offset pagination controls.  Behavior: - If no filters are provided, returns a broad paginated listing. - If `market_hash_name` is Doppler and `phase` is omitted, results aggregate across phases per provider. - If `market_hash_name` and `phase` are both provided, only that exact phase is returned. - If the item resolves in the catalog but none of the queried providers currently has a   listing, returns `200` with an empty `items` array.  Response: - `meta`: Applied filters, requested providers, returned providers, currency. - `items`: Per-provider lowest ask entries. - `pagination`: `limit`, `offset`, `total`, `has_next`, `has_prev`.  Requirements: - Valid API key with access to `/v1/prices`. - `limit` is capped by your tier.
+        Return current lowest ask listings.  Parameters: - `item_id`: Exact item ID (recommended when known). - `market_hash_name`: Exact market name. - `phase`: Optional Doppler phase filter. - `providers`: Optional provider-key enum list (repeat `providers` to pass multiple values). - `currency`: Quote currency for prices (default `USD`). - `limit`, `offset`: Offset pagination controls.  Behavior: - If no filters are provided, returns a broad paginated listing. - If `market_hash_name` is Doppler and `phase` is omitted, results aggregate across phases per provider. - If `market_hash_name` and `phase` are both provided, only that exact phase is returned. - If the item exists in the catalog but none of the queried providers currently has a   listing, returns `200` with an empty `items` array.  Response: - `meta`: Applied filters, requested providers, returned providers, currency. - `items`: Per-provider lowest ask entries. - `pagination`: `limit`, `offset`, `total`, `has_next`, `has_prev`.  Requirements: - Valid API key with access to `/v1/prices`. - `limit` is capped by your tier.
 
         :param item_id: Item ID (fastest lookup). Use /v1/items to search for IDs.
         :type item_id: int
@@ -722,7 +722,7 @@ class PricesApi:
         phase: Annotated[Optional[Any], Field(description="Filter by phase (e.g., Phase 1, Ruby, Sapphire)")] = None,
         start: Annotated[Optional[datetime], Field(description="Start timestamp (ISO 8601, inclusive)")] = None,
         end: Annotated[Optional[datetime], Field(description="End timestamp (ISO 8601, exclusive)")] = None,
-        lookback: Annotated[Optional[StrictStr], Field(description="Lookback window in days. Use `7d` or plain `7`; both mean 7 days and set start=now-lookback. Free tiers cap this at 30 days.")] = None,
+        lookback: Annotated[Optional[StrictStr], Field(description="Lookback window in days. Use `7d` or plain `7`; both mean 7 days and select a completed candle-bucket window. Free tiers cap this at 30 days.")] = None,
         interval: Annotated[Optional[StrictStr], Field(description="Time bucket interval (default: `1d`)")] = None,
         fill: Annotated[Optional[StrictBool], Field(description="Fill gaps with forward-filled data (default: false for sparse data)")] = None,
         currency: Annotated[Optional[StrictStr], Field(description="Target currency. Any ISO 4217 code supported by `/v1/fx` (see `/v1/fx` for the full list). Invalid codes return a 422 validation error.")] = None,
@@ -741,7 +741,7 @@ class PricesApi:
     ) -> PriceCandlesPage:
         """Price Candles
 
-        Return composite OHLCV candle data for a single item across all providers.  Parameters: - Item filter: `item_id` or `market_hash_name` (one is required). - Optional filter: `phase`. - Time window: `start`/`end` (ISO 8601) or `lookback` (for example `7d` or `7`). - `interval`: `5m`, `1h`, or `1d`. - `fill`: Include empty buckets with carry-forward prices when `true`. - `currency`: Quote currency (default `USD`).  Notes: - If both `start` and `lookback` are sent, `lookback` takes precedence. - Maximum lookback depends on `interval`:   `5m` up to 7 days, `1h` up to 30 days, `1d` up to 365 days. - Free tiers are additionally capped by their tier restrictions and default   to the maximum allowed window when no explicit lookback is supplied.  Response: - `meta`: Item, provider scope, interval, phase, currency, start/end timestamps. - `data`: Candle buckets in oldest-to-newest order   (`t`, `o`, `h`, `l`, `c`, `v`, `q`, `providers`).   `o`/`c` are the lowest effective provider prices, `l` is the minimum provider   low, `h` is capped at `median(provider_highs) * 1.5`, `v` is the non-negative depletion   flow between buckets, and `q` is the summed close-side inventory at bucket end when   available. `providers.l` and `providers.h` identify the provider keys contributing the   returned low/high values. For `1d` requests starting more than 30 days back, `v` falls   back to legacy depletion-derived `volume_qty` and `q` is `null`.  Requirements: - Valid API key with access to `/v1/prices/candles`. - `item_id` or `market_hash_name` is required. - `start`/`end` must be valid ISO 8601 timestamps.
+        Return composite OHLCV candle data for a single item across all providers.  Parameters: - Item filter: `item_id` or `market_hash_name` (one is required). - Optional filter: `phase`. - Time window: `start`/`end` (ISO 8601) or `lookback` (for example `7d` or `7`). - `interval`: `5m`, `1h`, or `1d`. - `fill`: Include empty buckets with carry-forward prices when `true`. - `currency`: Quote currency (default `USD`).  Notes: - If `lookback` is sent with `start` or `end`, `lookback` takes precedence.   Lookback requests are aligned to completed candle buckets; `1h` lookback   windows use a 15-minute freshness buffer before flooring to the hour. - Maximum lookback depends on `interval`:   `5m` up to 7 days, `1h` up to 30 days, `1d` up to 365 days. - Free tiers are additionally capped by their tier restrictions and default   to the maximum allowed window when no explicit lookback is supplied.  Response: - `meta`: Item, provider scope, interval, phase, currency, and effective query-window   start/end timestamps. - `data`: Candle buckets in oldest-to-newest order   (`t`, `o`, `h`, `l`, `c`, `v`, `q`, `providers`).   `o`/`c` are the best ask prices at the start/end of the bucket, `l` is the   lowest ask, `h` is the highest ask (capped to reduce the impact of outliers), `v`   is the estimated trade volume derived from inventory changes, and `q` is the total   active listings at bucket end when available. `providers.o`, `providers.h`,   `providers.l`, and `providers.c` identify the provider keys contributing the   returned open/high/low/close values. For `1d` requests starting more than 30 days   back, `v` uses an alternate volume estimate and `q` is `null`.  Requirements: - Valid API key with access to `/v1/prices/candles`. - `item_id` or `market_hash_name` is required. - `start`/`end` must be valid ISO 8601 timestamps.
 
         :param item_id: Filter by item ID
         :type item_id: int
@@ -753,7 +753,7 @@ class PricesApi:
         :type start: datetime
         :param end: End timestamp (ISO 8601, exclusive)
         :type end: datetime
-        :param lookback: Lookback window in days. Use `7d` or plain `7`; both mean 7 days and set start=now-lookback. Free tiers cap this at 30 days.
+        :param lookback: Lookback window in days. Use `7d` or plain `7`; both mean 7 days and select a completed candle-bucket window. Free tiers cap this at 30 days.
         :type lookback: str
         :param interval: Time bucket interval (default: `1d`)
         :type interval: str
@@ -826,7 +826,7 @@ class PricesApi:
         phase: Annotated[Optional[Any], Field(description="Filter by phase (e.g., Phase 1, Ruby, Sapphire)")] = None,
         start: Annotated[Optional[datetime], Field(description="Start timestamp (ISO 8601, inclusive)")] = None,
         end: Annotated[Optional[datetime], Field(description="End timestamp (ISO 8601, exclusive)")] = None,
-        lookback: Annotated[Optional[StrictStr], Field(description="Lookback window in days. Use `7d` or plain `7`; both mean 7 days and set start=now-lookback. Free tiers cap this at 30 days.")] = None,
+        lookback: Annotated[Optional[StrictStr], Field(description="Lookback window in days. Use `7d` or plain `7`; both mean 7 days and select a completed candle-bucket window. Free tiers cap this at 30 days.")] = None,
         interval: Annotated[Optional[StrictStr], Field(description="Time bucket interval (default: `1d`)")] = None,
         fill: Annotated[Optional[StrictBool], Field(description="Fill gaps with forward-filled data (default: false for sparse data)")] = None,
         currency: Annotated[Optional[StrictStr], Field(description="Target currency. Any ISO 4217 code supported by `/v1/fx` (see `/v1/fx` for the full list). Invalid codes return a 422 validation error.")] = None,
@@ -845,7 +845,7 @@ class PricesApi:
     ) -> ApiResponse[PriceCandlesPage]:
         """Price Candles
 
-        Return composite OHLCV candle data for a single item across all providers.  Parameters: - Item filter: `item_id` or `market_hash_name` (one is required). - Optional filter: `phase`. - Time window: `start`/`end` (ISO 8601) or `lookback` (for example `7d` or `7`). - `interval`: `5m`, `1h`, or `1d`. - `fill`: Include empty buckets with carry-forward prices when `true`. - `currency`: Quote currency (default `USD`).  Notes: - If both `start` and `lookback` are sent, `lookback` takes precedence. - Maximum lookback depends on `interval`:   `5m` up to 7 days, `1h` up to 30 days, `1d` up to 365 days. - Free tiers are additionally capped by their tier restrictions and default   to the maximum allowed window when no explicit lookback is supplied.  Response: - `meta`: Item, provider scope, interval, phase, currency, start/end timestamps. - `data`: Candle buckets in oldest-to-newest order   (`t`, `o`, `h`, `l`, `c`, `v`, `q`, `providers`).   `o`/`c` are the lowest effective provider prices, `l` is the minimum provider   low, `h` is capped at `median(provider_highs) * 1.5`, `v` is the non-negative depletion   flow between buckets, and `q` is the summed close-side inventory at bucket end when   available. `providers.l` and `providers.h` identify the provider keys contributing the   returned low/high values. For `1d` requests starting more than 30 days back, `v` falls   back to legacy depletion-derived `volume_qty` and `q` is `null`.  Requirements: - Valid API key with access to `/v1/prices/candles`. - `item_id` or `market_hash_name` is required. - `start`/`end` must be valid ISO 8601 timestamps.
+        Return composite OHLCV candle data for a single item across all providers.  Parameters: - Item filter: `item_id` or `market_hash_name` (one is required). - Optional filter: `phase`. - Time window: `start`/`end` (ISO 8601) or `lookback` (for example `7d` or `7`). - `interval`: `5m`, `1h`, or `1d`. - `fill`: Include empty buckets with carry-forward prices when `true`. - `currency`: Quote currency (default `USD`).  Notes: - If `lookback` is sent with `start` or `end`, `lookback` takes precedence.   Lookback requests are aligned to completed candle buckets; `1h` lookback   windows use a 15-minute freshness buffer before flooring to the hour. - Maximum lookback depends on `interval`:   `5m` up to 7 days, `1h` up to 30 days, `1d` up to 365 days. - Free tiers are additionally capped by their tier restrictions and default   to the maximum allowed window when no explicit lookback is supplied.  Response: - `meta`: Item, provider scope, interval, phase, currency, and effective query-window   start/end timestamps. - `data`: Candle buckets in oldest-to-newest order   (`t`, `o`, `h`, `l`, `c`, `v`, `q`, `providers`).   `o`/`c` are the best ask prices at the start/end of the bucket, `l` is the   lowest ask, `h` is the highest ask (capped to reduce the impact of outliers), `v`   is the estimated trade volume derived from inventory changes, and `q` is the total   active listings at bucket end when available. `providers.o`, `providers.h`,   `providers.l`, and `providers.c` identify the provider keys contributing the   returned open/high/low/close values. For `1d` requests starting more than 30 days   back, `v` uses an alternate volume estimate and `q` is `null`.  Requirements: - Valid API key with access to `/v1/prices/candles`. - `item_id` or `market_hash_name` is required. - `start`/`end` must be valid ISO 8601 timestamps.
 
         :param item_id: Filter by item ID
         :type item_id: int
@@ -857,7 +857,7 @@ class PricesApi:
         :type start: datetime
         :param end: End timestamp (ISO 8601, exclusive)
         :type end: datetime
-        :param lookback: Lookback window in days. Use `7d` or plain `7`; both mean 7 days and set start=now-lookback. Free tiers cap this at 30 days.
+        :param lookback: Lookback window in days. Use `7d` or plain `7`; both mean 7 days and select a completed candle-bucket window. Free tiers cap this at 30 days.
         :type lookback: str
         :param interval: Time bucket interval (default: `1d`)
         :type interval: str
@@ -930,7 +930,7 @@ class PricesApi:
         phase: Annotated[Optional[Any], Field(description="Filter by phase (e.g., Phase 1, Ruby, Sapphire)")] = None,
         start: Annotated[Optional[datetime], Field(description="Start timestamp (ISO 8601, inclusive)")] = None,
         end: Annotated[Optional[datetime], Field(description="End timestamp (ISO 8601, exclusive)")] = None,
-        lookback: Annotated[Optional[StrictStr], Field(description="Lookback window in days. Use `7d` or plain `7`; both mean 7 days and set start=now-lookback. Free tiers cap this at 30 days.")] = None,
+        lookback: Annotated[Optional[StrictStr], Field(description="Lookback window in days. Use `7d` or plain `7`; both mean 7 days and select a completed candle-bucket window. Free tiers cap this at 30 days.")] = None,
         interval: Annotated[Optional[StrictStr], Field(description="Time bucket interval (default: `1d`)")] = None,
         fill: Annotated[Optional[StrictBool], Field(description="Fill gaps with forward-filled data (default: false for sparse data)")] = None,
         currency: Annotated[Optional[StrictStr], Field(description="Target currency. Any ISO 4217 code supported by `/v1/fx` (see `/v1/fx` for the full list). Invalid codes return a 422 validation error.")] = None,
@@ -949,7 +949,7 @@ class PricesApi:
     ) -> RESTResponseType:
         """Price Candles
 
-        Return composite OHLCV candle data for a single item across all providers.  Parameters: - Item filter: `item_id` or `market_hash_name` (one is required). - Optional filter: `phase`. - Time window: `start`/`end` (ISO 8601) or `lookback` (for example `7d` or `7`). - `interval`: `5m`, `1h`, or `1d`. - `fill`: Include empty buckets with carry-forward prices when `true`. - `currency`: Quote currency (default `USD`).  Notes: - If both `start` and `lookback` are sent, `lookback` takes precedence. - Maximum lookback depends on `interval`:   `5m` up to 7 days, `1h` up to 30 days, `1d` up to 365 days. - Free tiers are additionally capped by their tier restrictions and default   to the maximum allowed window when no explicit lookback is supplied.  Response: - `meta`: Item, provider scope, interval, phase, currency, start/end timestamps. - `data`: Candle buckets in oldest-to-newest order   (`t`, `o`, `h`, `l`, `c`, `v`, `q`, `providers`).   `o`/`c` are the lowest effective provider prices, `l` is the minimum provider   low, `h` is capped at `median(provider_highs) * 1.5`, `v` is the non-negative depletion   flow between buckets, and `q` is the summed close-side inventory at bucket end when   available. `providers.l` and `providers.h` identify the provider keys contributing the   returned low/high values. For `1d` requests starting more than 30 days back, `v` falls   back to legacy depletion-derived `volume_qty` and `q` is `null`.  Requirements: - Valid API key with access to `/v1/prices/candles`. - `item_id` or `market_hash_name` is required. - `start`/`end` must be valid ISO 8601 timestamps.
+        Return composite OHLCV candle data for a single item across all providers.  Parameters: - Item filter: `item_id` or `market_hash_name` (one is required). - Optional filter: `phase`. - Time window: `start`/`end` (ISO 8601) or `lookback` (for example `7d` or `7`). - `interval`: `5m`, `1h`, or `1d`. - `fill`: Include empty buckets with carry-forward prices when `true`. - `currency`: Quote currency (default `USD`).  Notes: - If `lookback` is sent with `start` or `end`, `lookback` takes precedence.   Lookback requests are aligned to completed candle buckets; `1h` lookback   windows use a 15-minute freshness buffer before flooring to the hour. - Maximum lookback depends on `interval`:   `5m` up to 7 days, `1h` up to 30 days, `1d` up to 365 days. - Free tiers are additionally capped by their tier restrictions and default   to the maximum allowed window when no explicit lookback is supplied.  Response: - `meta`: Item, provider scope, interval, phase, currency, and effective query-window   start/end timestamps. - `data`: Candle buckets in oldest-to-newest order   (`t`, `o`, `h`, `l`, `c`, `v`, `q`, `providers`).   `o`/`c` are the best ask prices at the start/end of the bucket, `l` is the   lowest ask, `h` is the highest ask (capped to reduce the impact of outliers), `v`   is the estimated trade volume derived from inventory changes, and `q` is the total   active listings at bucket end when available. `providers.o`, `providers.h`,   `providers.l`, and `providers.c` identify the provider keys contributing the   returned open/high/low/close values. For `1d` requests starting more than 30 days   back, `v` uses an alternate volume estimate and `q` is `null`.  Requirements: - Valid API key with access to `/v1/prices/candles`. - `item_id` or `market_hash_name` is required. - `start`/`end` must be valid ISO 8601 timestamps.
 
         :param item_id: Filter by item ID
         :type item_id: int
@@ -961,7 +961,7 @@ class PricesApi:
         :type start: datetime
         :param end: End timestamp (ISO 8601, exclusive)
         :type end: datetime
-        :param lookback: Lookback window in days. Use `7d` or plain `7`; both mean 7 days and set start=now-lookback. Free tiers cap this at 30 days.
+        :param lookback: Lookback window in days. Use `7d` or plain `7`; both mean 7 days and select a completed candle-bucket window. Free tiers cap this at 30 days.
         :type lookback: str
         :param interval: Time bucket interval (default: `1d`)
         :type interval: str
@@ -1597,7 +1597,7 @@ class PricesApi:
     ) -> str:
         """Stream Full Prices Snapshot
 
-        Return the full live prices snapshot as an NDJSON stream.  Behavior: - pro and quant tiers only - requires a real `sk_*` API key; session JWTs are not accepted - optional `providers` filter; omit to stream all providers - fixed USD output - `lowest_ask` values are returned in USD minor units - one JSON object per line using the `MarketItem` field set - the live index is copied into temporary Redis keys so the export is stable for the duration of the stream - per-API-key cooldown of 30 seconds for this POST operation
+        Return the full live prices snapshot as an NDJSON stream.  Behavior: - pro and quant tiers only - requires an API key (not a session token) - optional `providers` filter; omit to stream all providers - fixed USD output - `lowest_ask` values are returned in USD minor units - one JSON object per line using the `MarketItem` field set - per-API-key rolling 24h quota of successful stream starts (pro: 50, quant: 300, per endpoint) - max 1 concurrent stream per API key for this endpoint (409 otherwise)
 
         :param providers:
         :type providers: List[AllProviders]
@@ -1638,6 +1638,7 @@ class PricesApi:
             '429': "ErrorResponse",
             '422': "ValidationErrorResponse",
             '503': "ErrorResponse",
+            '409': "ErrorResponse",
         }
         response_data = self.api_client.call_api(
             *_param,
@@ -1669,7 +1670,7 @@ class PricesApi:
     ) -> ApiResponse[str]:
         """Stream Full Prices Snapshot
 
-        Return the full live prices snapshot as an NDJSON stream.  Behavior: - pro and quant tiers only - requires a real `sk_*` API key; session JWTs are not accepted - optional `providers` filter; omit to stream all providers - fixed USD output - `lowest_ask` values are returned in USD minor units - one JSON object per line using the `MarketItem` field set - the live index is copied into temporary Redis keys so the export is stable for the duration of the stream - per-API-key cooldown of 30 seconds for this POST operation
+        Return the full live prices snapshot as an NDJSON stream.  Behavior: - pro and quant tiers only - requires an API key (not a session token) - optional `providers` filter; omit to stream all providers - fixed USD output - `lowest_ask` values are returned in USD minor units - one JSON object per line using the `MarketItem` field set - per-API-key rolling 24h quota of successful stream starts (pro: 50, quant: 300, per endpoint) - max 1 concurrent stream per API key for this endpoint (409 otherwise)
 
         :param providers:
         :type providers: List[AllProviders]
@@ -1710,6 +1711,7 @@ class PricesApi:
             '429': "ErrorResponse",
             '422': "ValidationErrorResponse",
             '503': "ErrorResponse",
+            '409': "ErrorResponse",
         }
         response_data = self.api_client.call_api(
             *_param,
@@ -1741,7 +1743,7 @@ class PricesApi:
     ) -> RESTResponseType:
         """Stream Full Prices Snapshot
 
-        Return the full live prices snapshot as an NDJSON stream.  Behavior: - pro and quant tiers only - requires a real `sk_*` API key; session JWTs are not accepted - optional `providers` filter; omit to stream all providers - fixed USD output - `lowest_ask` values are returned in USD minor units - one JSON object per line using the `MarketItem` field set - the live index is copied into temporary Redis keys so the export is stable for the duration of the stream - per-API-key cooldown of 30 seconds for this POST operation
+        Return the full live prices snapshot as an NDJSON stream.  Behavior: - pro and quant tiers only - requires an API key (not a session token) - optional `providers` filter; omit to stream all providers - fixed USD output - `lowest_ask` values are returned in USD minor units - one JSON object per line using the `MarketItem` field set - per-API-key rolling 24h quota of successful stream starts (pro: 50, quant: 300, per endpoint) - max 1 concurrent stream per API key for this endpoint (409 otherwise)
 
         :param providers:
         :type providers: List[AllProviders]
@@ -1782,6 +1784,7 @@ class PricesApi:
             '429': "ErrorResponse",
             '422': "ValidationErrorResponse",
             '503': "ErrorResponse",
+            '409': "ErrorResponse",
         }
         response_data = self.api_client.call_api(
             *_param,

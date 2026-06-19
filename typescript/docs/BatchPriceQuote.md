@@ -9,6 +9,7 @@ Name | Type
 ------------ | -------------
 `provider` | string
 `lowestAsk` | number
+`lowestAskDecimal` | string
 `quantity` | number
 `timestamp` | Date
 `lastUpdated` | Date
@@ -22,6 +23,7 @@ import type { BatchPriceQuote } from 'cs2cap'
 const example = {
   "provider": null,
   "lowestAsk": null,
+  "lowestAskDecimal": null,
   "quantity": null,
   "timestamp": null,
   "lastUpdated": null,

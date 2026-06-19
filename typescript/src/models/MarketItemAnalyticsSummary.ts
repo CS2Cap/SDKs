@@ -159,6 +159,18 @@ export interface MarketItemAnalyticsSummary {
     volumeScore?: number | null;
     /**
      * 
+     * @type {number}
+     * @memberof MarketItemAnalyticsSummary
+     */
+    stabilityScore?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof MarketItemAnalyticsSummary
+     */
+    externalScore?: number | null;
+    /**
+     * 
      * @type {Date}
      * @memberof MarketItemAnalyticsSummary
      */
@@ -210,6 +222,8 @@ export function MarketItemAnalyticsSummaryFromJSONTyped(json: any, ignoreDiscrim
         'listingScore': json['listing_score'] == null ? undefined : json['listing_score'],
         'gapScore': json['gap_score'] == null ? undefined : json['gap_score'],
         'volumeScore': json['volume_score'] == null ? undefined : json['volume_score'],
+        'stabilityScore': json['stability_score'] == null ? undefined : json['stability_score'],
+        'externalScore': json['external_score'] == null ? undefined : json['external_score'],
         'liquidityLastUpdated': json['liquidity_last_updated'] == null ? undefined : (new Date(json['liquidity_last_updated'])),
     };
 }
@@ -248,6 +262,8 @@ export function MarketItemAnalyticsSummaryToJSONTyped(value?: MarketItemAnalytic
         'listing_score': value['listingScore'],
         'gap_score': value['gapScore'],
         'volume_score': value['volumeScore'],
+        'stability_score': value['stabilityScore'],
+        'external_score': value['externalScore'],
         'liquidity_last_updated': value['liquidityLastUpdated'] == null ? value['liquidityLastUpdated'] : value['liquidityLastUpdated'].toISOString(),
     };
 }

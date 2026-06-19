@@ -18,7 +18,7 @@
           "Prices"
         ],
         "summary": "List Prices",
-        "description": "Return current lowest ask listings.\n\nParameters:\n- `item_id`: Exact item ID (recommended when known).\n- `market_hash_name`: Exact market name.\n- `phase`: Optional Doppler phase filter.\n- `providers`: Optional provider-key enum list (repeat `providers` to pass multiple values).\n- `currency`: Quote currency for prices (default `USD`).\n- `limit`, `offset`: Offset pagination controls.\n\nBehavior:\n- If no filters are provided, returns a broad paginated listing.\n- If `market_hash_name` is Doppler and `phase` is omitted, results aggregate across phases per provider.\n- If `market_hash_name` and `phase` are both provided, only that exact phase is returned.\n- If the item resolves in the catalog but none of the queried providers currently has a\n  listing, returns `200` with an empty `items` array.\n\nResponse:\n- `meta`: Applied filters, requested providers, returned providers, currency.\n- `items`: Per-provider lowest ask entries.\n- `pagination`: `limit`, `offset`, `total`, `has_next`, `has_prev`.\n\nRequirements:\n- Valid API key with access to `/v1/prices`.\n- `limit` is capped by your tier.",
+        "description": "Return current lowest ask listings.\n\nParameters:\n- `item_id`: Exact item ID (recommended when known).\n- `market_hash_name`: Exact market name.\n- `phase`: Optional Doppler phase filter.\n- `providers`: Optional provider-key enum list (repeat `providers` to pass multiple values).\n- `currency`: Quote currency for prices (default `USD`).\n- `limit`, `offset`: Offset pagination controls.\n\nBehavior:\n- If no filters are provided, returns a broad paginated listing.\n- If `market_hash_name` is Doppler and `phase` is omitted, results aggregate across phases per provider.\n- If `market_hash_name` and `phase` are both provided, only that exact phase is returned.\n- If the item exists in the catalog but none of the queried providers currently has a\n  listing, returns `200` with an empty `items` array.\n\nResponse:\n- `meta`: Applied filters, requested providers, returned providers, currency.\n- `items`: Per-provider lowest ask entries.\n- `pagination`: `limit`, `offset`, `total`, `has_next`, `has_prev`.\n\nRequirements:\n- Valid API key with access to `/v1/prices`.\n- `limit` is capped by your tier.",
         "operationId": "listPrices",
         "security": [
           {
@@ -158,7 +158,7 @@
                   "meta": {
                     "currency": "USD",
                     "filters": {},
-                    "returned_providers": [
+                    "providers_queried": [
                       "avanmarket"
                     ]
                   },
@@ -338,11 +338,11 @@
             }
           },
           "503": {
-            "description": "Indexed prices data unavailable.",
+            "description": "Price data is temporarily unavailable; retry shortly.",
             "content": {
               "application/json": {
                 "example": {
-                  "detail": "Indexed prices data unavailable. reason=index_missing. Try again shortly."
+                  "detail": "Prices data is temporarily unavailable. Try again shortly."
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
@@ -357,7 +357,7 @@
           "Prices"
         ],
         "summary": "Stream Full Prices Snapshot",
-        "description": "Return the full live prices snapshot as an NDJSON stream.\n\nBehavior:\n- pro and quant tiers only\n- requires a real `sk_*` API key; session JWTs are not accepted\n- optional `providers` filter; omit to stream all providers\n- fixed USD output\n- `lowest_ask` values are returned in USD minor units\n- one JSON object per line using the `MarketItem` field set\n- the live index is copied into temporary Redis keys so the export is stable for the duration of the stream\n- per-API-key cooldown of 30 seconds for this POST operation",
+        "description": "Return the full live prices snapshot as an NDJSON stream.\n\nBehavior:\n- pro and quant tiers only\n- requires an API key (not a session token)\n- optional `providers` filter; omit to stream all providers\n- fixed USD output\n- `lowest_ask` values are returned in USD minor units\n- one JSON object per line using the `MarketItem` field set\n- per-API-key rolling 24h quota of successful stream starts (pro: 50, quant: 300, per endpoint)\n- max 1 concurrent stream per API key for this endpoint (409 otherwise)",
         "operationId": "streamFullPricesSnapshot",
         "security": [
           {
@@ -404,10 +404,31 @@
                 }
               },
               "X-Snapshot-Total": {
-                "description": "Total indexed rows at stream start, when known.",
+                "description": "Total rows in the stream at start, when known.",
                 "schema": {
                   "type": "integer",
                   "minimum": 0
+                }
+              },
+              "X-RateLimit-Limit": {
+                "description": "Daily quota of successful stream starts for this endpoint.",
+                "schema": {
+                  "type": "integer",
+                  "example": 300
+                }
+              },
+              "X-RateLimit-Remaining": {
+                "description": "Remaining stream starts in the rolling 24h window.",
+                "schema": {
+                  "type": "integer",
+                  "example": 299
+                }
+              },
+              "X-RateLimit-Reset": {
+                "description": "Seconds until the oldest counted start leaves the window.",
+                "schema": {
+                  "type": "integer",
+                  "example": 86400
                 }
               }
             },
@@ -449,21 +470,42 @@
             }
           },
           "429": {
-            "description": "Bulk snapshot cooldown active for this API key.",
+            "description": "Daily bulk stream quota exhausted for this API key.",
             "headers": {
               "Retry-After": {
-                "description": "Seconds until this API key may request another prices snapshot.",
+                "description": "Seconds until this API key may start another prices stream.",
                 "schema": {
                   "type": "integer",
                   "minimum": 1
+                }
+              },
+              "X-RateLimit-Limit": {
+                "description": "Daily quota of successful stream starts for this endpoint.",
+                "schema": {
+                  "type": "integer",
+                  "example": 300
+                }
+              },
+              "X-RateLimit-Remaining": {
+                "description": "Remaining stream starts in the rolling 24h window.",
+                "schema": {
+                  "type": "integer",
+                  "example": 0
+                }
+              },
+              "X-RateLimit-Reset": {
+                "description": "Seconds until the oldest counted start leaves the window.",
+                "schema": {
+                  "type": "integer",
+                  "example": 1800
                 }
               }
             },
             "content": {
               "application/json": {
                 "example": {
-                  "code": "RATE_LIMIT_EXCEEDED",
-                  "detail": "Bulk snapshot cooldown active for /v1/prices. Retry after 30 seconds."
+                  "code": "RATE_LIMIT_STREAM_QUOTA_EXCEEDED",
+                  "detail": "Bulk stream quota exhausted for /v1/prices. Limit 300 per 24 hours."
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
@@ -513,12 +555,35 @@
             }
           },
           "503": {
-            "description": "Indexed prices data unavailable.",
+            "description": "Price data is temporarily unavailable; retry shortly.",
             "content": {
               "application/json": {
                 "example": {
                   "code": "PRICES_INDEX_UNAVAILABLE",
-                  "detail": "Indexed prices data unavailable. reason=index_missing. Try again shortly."
+                  "detail": "Prices data is temporarily unavailable. Try again shortly."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "A streaming request is already active for this API key.",
+            "headers": {
+              "Retry-After": {
+                "description": "Suggested seconds to wait before retrying.",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": "STREAM_ALREADY_ACTIVE",
+                  "detail": "A streaming request is already active for this API key."
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
@@ -912,7 +977,7 @@
           "Prices"
         ],
         "summary": "Price Candles",
-        "description": "Return composite OHLCV candle data for a single item across all providers.\n\nParameters:\n- Item filter: `item_id` or `market_hash_name` (one is required).\n- Optional filter: `phase`.\n- Time window: `start`/`end` (ISO 8601) or `lookback` (for example `7d` or `7`).\n- `interval`: `5m`, `1h`, or `1d`.\n- `fill`: Include empty buckets with carry-forward prices when `true`.\n- `currency`: Quote currency (default `USD`).\n\nNotes:\n- If both `start` and `lookback` are sent, `lookback` takes precedence.\n- Maximum lookback depends on `interval`:\n  `5m` up to 7 days, `1h` up to 30 days, `1d` up to 365 days.\n- Free tiers are additionally capped by their tier restrictions and default\n  to the maximum allowed window when no explicit lookback is supplied.\n\nResponse:\n- `meta`: Item, provider scope, interval, phase, currency, start/end timestamps.\n- `data`: Candle buckets in oldest-to-newest order\n  (`t`, `o`, `h`, `l`, `c`, `v`, `q`, `providers`).\n  `o`/`c` are the lowest effective provider prices, `l` is the minimum provider\n  low, `h` is capped at `median(provider_highs) * 1.5`, `v` is the non-negative depletion\n  flow between buckets, and `q` is the summed close-side inventory at bucket end when\n  available. `providers.l` and `providers.h` identify the provider keys contributing the\n  returned low/high values. For `1d` requests starting more than 30 days back, `v` falls\n  back to legacy depletion-derived `volume_qty` and `q` is `null`.\n\nRequirements:\n- Valid API key with access to `/v1/prices/candles`.\n- `item_id` or `market_hash_name` is required.\n- `start`/`end` must be valid ISO 8601 timestamps.",
+        "description": "Return composite OHLCV candle data for a single item across all providers.\n\nParameters:\n- Item filter: `item_id` or `market_hash_name` (one is required).\n- Optional filter: `phase`.\n- Time window: `start`/`end` (ISO 8601) or `lookback` (for example `7d` or `7`).\n- `interval`: `5m`, `1h`, or `1d`.\n- `fill`: Include empty buckets with carry-forward prices when `true`.\n- `currency`: Quote currency (default `USD`).\n\nNotes:\n- If `lookback` is sent with `start` or `end`, `lookback` takes precedence.\n  Lookback requests are aligned to completed candle buckets; `1h` lookback\n  windows use a 15-minute freshness buffer before flooring to the hour.\n- Maximum lookback depends on `interval`:\n  `5m` up to 7 days, `1h` up to 30 days, `1d` up to 365 days.\n- Free tiers are additionally capped by their tier restrictions and default\n  to the maximum allowed window when no explicit lookback is supplied.\n\nResponse:\n- `meta`: Item, provider scope, interval, phase, currency, and effective query-window\n  start/end timestamps.\n- `data`: Candle buckets in oldest-to-newest order\n  (`t`, `o`, `h`, `l`, `c`, `v`, `q`, `providers`).\n  `o`/`c` are the best ask prices at the start/end of the bucket, `l` is the\n  lowest ask, `h` is the highest ask (capped to reduce the impact of outliers), `v`\n  is the estimated trade volume derived from inventory changes, and `q` is the total\n  active listings at bucket end when available. `providers.o`, `providers.h`,\n  `providers.l`, and `providers.c` identify the provider keys contributing the\n  returned open/high/low/close values. For `1d` requests starting more than 30 days\n  back, `v` uses an alternate volume estimate and `q` is `null`.\n\nRequirements:\n- Valid API key with access to `/v1/prices/candles`.\n- `item_id` or `market_hash_name` is required.\n- `start`/`end` must be valid ISO 8601 timestamps.",
         "operationId": "priceCandles",
         "security": [
           {
@@ -1025,10 +1090,10 @@
                   "type": "null"
                 }
               ],
-              "description": "Lookback window in days. Use `7d` or plain `7`; both mean 7 days and set start=now-lookback. Free tiers cap this at 30 days.",
+              "description": "Lookback window in days. Use `7d` or plain `7`; both mean 7 days and select a completed candle-bucket window. Free tiers cap this at 30 days.",
               "title": "Lookback"
             },
-            "description": "Lookback window in days. Use `7d` or plain `7`; both mean 7 days and set start=now-lookback. Free tiers cap this at 30 days.",
+            "description": "Lookback window in days. Use `7d` or plain `7`; both mean 7 days and select a completed candle-bucket window. Free tiers cap this at 30 days.",
             "examples": {
               "stringDays": {
                 "summary": "String shorthand",
@@ -1102,7 +1167,7 @@
                   },
                   "data": [
                     {
-                      "t": 1768906800,
+                      "t": 1768867200,
                       "o": 2508,
                       "h": 2535,
                       "l": 2460,
@@ -1110,12 +1175,14 @@
                       "v": 24,
                       "q": 179,
                       "providers": {
+                        "o": "csfloat",
                         "h": "steam",
-                        "l": "csfloat"
+                        "l": "csfloat",
+                        "c": "csfloat"
                       }
                     },
                     {
-                      "t": 1768910400,
+                      "t": 1768953600,
                       "o": 2522,
                       "h": 2560,
                       "l": 2490,
@@ -1123,8 +1190,10 @@
                       "v": 18,
                       "q": 176,
                       "providers": {
+                        "o": "skinport",
                         "h": "skinport",
-                        "l": "steam"
+                        "l": "steam",
+                        "c": "skinport"
                       }
                     }
                   ]
@@ -1504,7 +1573,7 @@
           "Bids"
         ],
         "summary": "List Bids",
-        "description": "Return current highest bids from providers that support buy orders.\n\nFilters:\n- `item_id` or `market_hash_name`\n- optional `phase`\n- `providers` limited to buy-order-capable provider keys\n- `currency`, `limit`, and `offset`\n\nBehavior:\n- broad listings use the indexed pagination path\n- item-specific requests use direct indexed lookup\n- unsupported providers return `400`\n\nResponse:\n- `meta` with filters and providers queried\n- flattened per-provider bid rows\n- offset pagination metadata",
+        "description": "Return current highest bids from providers that support buy orders.\n\nFilters:\n- `item_id` or `market_hash_name`\n- optional `phase`\n- `providers` limited to buy-order-capable provider keys\n- `currency`, `limit`, and `offset`\n\nBehavior:\n- requesting a provider that does not support buy orders returns `400`\n\nResponse:\n- `meta` with filters and providers queried\n- flattened per-provider bid rows\n- offset pagination metadata",
         "operationId": "listBids",
         "security": [
           {
@@ -1847,11 +1916,11 @@
             }
           },
           "503": {
-            "description": "Indexed bids data unavailable.",
+            "description": "Bid data is temporarily unavailable; retry shortly.",
             "content": {
               "application/json": {
                 "example": {
-                  "detail": "Indexed bids data unavailable. reason=index_missing. Try again shortly."
+                  "detail": "Bids data is temporarily unavailable. Try again shortly."
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
@@ -1866,7 +1935,7 @@
           "Bids"
         ],
         "summary": "Stream Full Bids Snapshot",
-        "description": "Return the full live bids snapshot as an NDJSON stream.\n\nBehavior:\n- pro and quant tiers only\n- requires a real `sk_*` API key; session JWTs are not accepted\n- optional `providers` filter; omit to stream all providers\n- fixed USD output\n- `highest_bid` values are returned in USD minor units\n- one JSON object per line using the `BuyOrderItem` field set\n- the live index is copied into temporary Redis keys so the export is stable for the duration of the stream\n- per-API-key cooldown of 30 seconds for this POST operation",
+        "description": "Return the full live bids snapshot as an NDJSON stream.\n\nBehavior:\n- pro and quant tiers only\n- requires an API key (not a session token)\n- optional `providers` filter; omit to stream all providers\n- fixed USD output\n- `highest_bid` values are returned in USD minor units\n- one JSON object per line using the `BuyOrderItem` field set\n- per-API-key rolling 24h quota of successful stream starts (pro: 50, quant: 300, per endpoint)\n- max 1 concurrent stream per API key for this endpoint (409 otherwise)",
         "operationId": "streamFullBidsSnapshot",
         "security": [
           {
@@ -1913,10 +1982,31 @@
                 }
               },
               "X-Snapshot-Total": {
-                "description": "Total indexed rows at stream start, when known.",
+                "description": "Total rows in the stream at start, when known.",
                 "schema": {
                   "type": "integer",
                   "minimum": 0
+                }
+              },
+              "X-RateLimit-Limit": {
+                "description": "Daily quota of successful stream starts for this endpoint.",
+                "schema": {
+                  "type": "integer",
+                  "example": 300
+                }
+              },
+              "X-RateLimit-Remaining": {
+                "description": "Remaining stream starts in the rolling 24h window.",
+                "schema": {
+                  "type": "integer",
+                  "example": 299
+                }
+              },
+              "X-RateLimit-Reset": {
+                "description": "Seconds until the oldest counted start leaves the window.",
+                "schema": {
+                  "type": "integer",
+                  "example": 86400
                 }
               }
             },
@@ -1958,21 +2048,42 @@
             }
           },
           "429": {
-            "description": "Bulk snapshot cooldown active for this API key.",
+            "description": "Daily bulk stream quota exhausted for this API key.",
             "headers": {
               "Retry-After": {
-                "description": "Seconds until this API key may request another bids snapshot.",
+                "description": "Seconds until this API key may start another bids stream.",
                 "schema": {
                   "type": "integer",
                   "minimum": 1
+                }
+              },
+              "X-RateLimit-Limit": {
+                "description": "Daily quota of successful stream starts for this endpoint.",
+                "schema": {
+                  "type": "integer",
+                  "example": 300
+                }
+              },
+              "X-RateLimit-Remaining": {
+                "description": "Remaining stream starts in the rolling 24h window.",
+                "schema": {
+                  "type": "integer",
+                  "example": 0
+                }
+              },
+              "X-RateLimit-Reset": {
+                "description": "Seconds until the oldest counted start leaves the window.",
+                "schema": {
+                  "type": "integer",
+                  "example": 1800
                 }
               }
             },
             "content": {
               "application/json": {
                 "example": {
-                  "code": "RATE_LIMIT_EXCEEDED",
-                  "detail": "Bulk snapshot cooldown active for /v1/bids. Retry after 30 seconds."
+                  "code": "RATE_LIMIT_STREAM_QUOTA_EXCEEDED",
+                  "detail": "Bulk stream quota exhausted for /v1/bids. Limit 300 per 24 hours."
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
@@ -2022,12 +2133,35 @@
             }
           },
           "503": {
-            "description": "Indexed bids data unavailable.",
+            "description": "Bid data is temporarily unavailable; retry shortly.",
             "content": {
               "application/json": {
                 "example": {
                   "code": "BIDS_INDEX_UNAVAILABLE",
-                  "detail": "Indexed bids data unavailable. reason=index_missing. Try again shortly."
+                  "detail": "Bids data is temporarily unavailable. Try again shortly."
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "A streaming request is already active for this API key.",
+            "headers": {
+              "Retry-After": {
+                "description": "Suggested seconds to wait before retrying.",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": "STREAM_ALREADY_ACTIVE",
+                  "detail": "A streaming request is already active for this API key."
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponse"
@@ -2227,7 +2361,7 @@
           "Sales"
         ],
         "summary": "List Recent Sales",
-        "description": "Return recent sales history from providers with recent-sales support.\n\nFilters:\n- `item_id` or `market_hash_name` is required\n- optional `phase`\n- `providers` limited to sales-capable provider keys\n- `currency` and `limit`\n\nBehavior:\n- cache misses trigger live provider fetches during the request\n- results are cached per item and provider for 1 hour\n- response is single-page only with a maximum of 50 rows\n\nResponse:\n- request metadata and providers queried\n- sales records with sticker, charm, and inspect metadata when available\n- per-provider cache status for hit, miss, error, or unavailable",
+        "description": "Return recent sales across providers with recent-sales support, newest first.\n\nWith no filters, returns the global recent-sales feed ordered by sale time (most recent first). Optional filters narrow the results:\n- `item_id` — restrict to one catalog item (its canonical market_hash_name and phase are used)\n- `market_hash_name` (+ optional `phase`) — restrict to one item by name\n- `providers` — restrict to specific sales-capable provider keys\n- `currency` — convert values to the target currency\n\nPagination:\n- `limit` sets the page size (max 100 for Pro, 1000 for Quant)\n- pass `cursor` from the previous response's `pagination.next_cursor` to page through results; `pagination.total` is `-1` (count intentionally skipped)\n\nBehavior:\n- recent-sales data refreshes roughly once every 24 hours, so results may be up to a day old\n\nResponse:\n- request metadata, providers queried, and a cursor pagination footer\n- sales records with sticker, charm, and inspect metadata when available",
         "operationId": "listRecentSales",
         "security": [
           {
@@ -2266,10 +2400,10 @@
                   "type": "null"
                 }
               ],
-              "description": "Exact market_hash_name match (required if item_id not provided). Ignored when item_id is provided.",
+              "description": "Optional market_hash_name to filter for specific item. Ignored when item_id is provided.",
               "title": "Market Hash Name"
             },
-            "description": "Exact market_hash_name match (required if item_id not provided). Ignored when item_id is provided."
+            "description": "Optional market_hash_name to filter for specific item. Ignored when item_id is provided."
           },
           {
             "name": "phase",
@@ -2284,10 +2418,10 @@
                   "type": "null"
                 }
               ],
-              "description": "Filter by phase (when applicable). Ignored when item_id is provided.",
+              "description": "Optional phase to filter (global or combined with market_hash_name). Ignored when item_id is provided.",
               "title": "Phase"
             },
-            "description": "Filter by phase (when applicable). Ignored when item_id is provided."
+            "description": "Optional phase to filter (global or combined with market_hash_name). Ignored when item_id is provided."
           },
           {
             "name": "providers",
@@ -2305,10 +2439,10 @@
                   "type": "null"
                 }
               ],
-              "description": "Providers to query (provider-key enum values with sales support). Repeat `providers` to pass multiple values.",
+              "description": "Providers to include (provider-key enum values that support recent sales). Repeat `providers` to pass multiple values.",
               "title": "Providers"
             },
-            "description": "Providers to query (provider-key enum values with sales support). Repeat `providers` to pass multiple values."
+            "description": "Providers to include (provider-key enum values that support recent sales). Repeat `providers` to pass multiple values."
           },
           {
             "name": "currency",
@@ -2336,10 +2470,28 @@
                   "type": "null"
                 }
               ],
-              "description": "Maximum number of sales to return. Defaults to the effective tier cap.",
+              "description": "Maximum number of results to return. Defaults to the effective tier cap.",
               "title": "Limit"
             },
-            "description": "Maximum number of sales to return. Defaults to the effective tier cap."
+            "description": "Maximum number of results to return. Defaults to the effective tier cap."
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Cursor for keyset pagination. Use next_cursor from previous response. When provided, offset is ignored and keyset pagination is used for O(1) seek.",
+              "title": "Cursor"
+            },
+            "description": "Cursor for keyset pagination. Use next_cursor from previous response. When provided, offset is ignored and keyset pagination is used for O(1) seek."
           }
         ],
         "responses": {
@@ -2505,15 +2657,15 @@
             }
           },
           "400": {
-            "description": "Missing required item filter or invalid provider selection.",
+            "description": "Invalid cursor or unsupported provider selection.",
             "content": {
               "application/json": {
                 "examples": {
-                  "missingItemFilter": {
-                    "summary": "Missing required item filter",
+                  "invalidCursor": {
+                    "summary": "Invalid pagination cursor",
                     "value": {
                       "code": "BAD_REQUEST",
-                      "detail": "Either item_id or market_hash_name must be provided"
+                      "detail": "invalid cursor format"
                     }
                   },
                   "unsupportedSalesProvider": {
@@ -3736,6 +3888,148 @@
             }
           }
         }
+      }
+    },
+    "/v1/images": {
+      "get": {
+        "tags": [
+          "Images"
+        ],
+        "summary": "List Game Images",
+        "description": "Return a directory of CS2 catalog display names mapped to their image URLs on the CS2Cap CDN. Names that map to multiple distinct images return all URLs.",
+        "operationId": "listGameImages",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  "type": "object",
+                  "title": "ListGameImagesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid authentication credentials.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "UNAUTHORIZED",
+                  "detail": "Missing Authorization header"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Authenticated but not permitted to access this resource.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "example": {
+                  "code": "FORBIDDEN",
+                  "detail": "Account is disabled"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded (burst or monthly quota).",
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before retrying when present.",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "X-RateLimit-Tier": {
+                "description": "Authenticated caller tier code.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-RateLimit-Limit": {
+                "description": "Request limit for the rate-limit window that was exceeded.",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 0.0
+                }
+              },
+              "X-RateLimit-Remaining": {
+                "description": "Remaining requests in the rate-limit window that was exceeded.",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 0.0
+                }
+              },
+              "X-RateLimit-Reset": {
+                "description": "Seconds until the rate-limit window resets.",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 0.0
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "burstRateLimit": {
+                    "summary": "Per-window rate limit exceeded",
+                    "value": {
+                      "code": "RATE_LIMIT_EXCEEDED",
+                      "detail": "Too Many Requests"
+                    }
+                  },
+                  "monthlyQuotaExceeded": {
+                    "summary": "Monthly quota exhausted",
+                    "value": {
+                      "code": "RATE_LIMIT_MONTHLY_QUOTA_EXCEEDED",
+                      "detail": "Monthly quota exceeded (500000/500000 requests)."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request validation failed. The detail list contains field-specific validation errors.",
+            "headers": {
+              "X-RateLimit-Tier": {
+                "description": "Authenticated caller tier code when available.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ]
       }
     },
     "/v1/account/sub-keys": {
@@ -7125,7 +7419,7 @@
           "Market Intelligence"
         ],
         "summary": "Get Arbitrage Opportunities",
-        "description": "Scan providers for cross-market arbitrage opportunities.\n\nFilters:\n- `min_spread_pct`\n- `providers_buy` and `providers_sell` (sell-side limited to buy-order providers)\n- offset pagination via `offset`\n\nResponse:\n- opportunities ranked by estimated net profit in USD with buy-side and sell-side provider context\n\nTier: Quant-only.",
+        "description": "Scan providers for cross-market arbitrage opportunities.\n\nFilters:\n- `min_spread_pct`\n- `providers_buy` and `providers_sell` (sell-side limited to buy-order providers)\n- offset pagination via `offset`\n\nResponse:\n- opportunities ranked by estimated net profit in USD with buy-side and sell-side provider context\n- pagination total reflects the capped set of ranked opportunities, not a count of all possible matches\n\nTier: Quant-only.",
         "operationId": "getArbitrageOpportunities",
         "security": [
           {
@@ -7390,7 +7684,7 @@
           "Market Intelligence"
         ],
         "summary": "Get Market Analytics Snapshot",
-        "description": "Return the full market as a cached, summary-only snapshot.\n\nIncludes:\n- one row per catalog item with the same summary fields exposed by the detail route\n- no pagination and no provider-level payloads\n- rank-ordered output using `rank asc, item_id asc`\n\nWindow selection uses preset `timeframe` only.\nThe selected timeframe affects liquidity fields only.\nTrade windows remain fixed at 24h, 7d, and 30d.\n\nTier: Pro and Quant.",
+        "description": "Return the full market as a summary-only snapshot.\n\nIncludes:\n- one row per catalog item with the same summary fields exposed by the detail route\n- no pagination and no provider-level payloads\n- rank-ordered output using `rank asc, item_id asc`\n\nLiquidity reflects the 24h horizon; trade windows are 24h, 7d, and 30d.\n\nTier: Pro and Quant.",
         "operationId": "getMarketAnalyticsSnapshot",
         "responses": {
           "200": {
@@ -7586,7 +7880,7 @@
             }
           },
           "503": {
-            "description": "Snapshot cache unavailable and initial build failed.",
+            "description": "Market data is temporarily unavailable; retry shortly.",
             "content": {
               "application/json": {
                 "schema": {
@@ -7609,7 +7903,7 @@
           "Market Intelligence"
         ],
         "summary": "Get Item Analytics",
-        "description": "Return per-item market analytics across providers.\n\nIncludes:\n- best ask, best bid, and spread summary\n- item-level liquidity summary and provider-level price/depth/volume metrics\n- coverage diagnostics showing which providers contributed data\n\nLiquidity is always scored against the 24h horizon.\nProvider volume fields remain literal trailing 24h/7d depletion metrics.\n\nTier: Pro and Quant.",
+        "description": "Return per-item market analytics across providers.\n\nIncludes:\n- best ask, best bid, and spread summary\n- item-level liquidity summary and provider-level price/depth/volume metrics\n- coverage diagnostics showing which providers contributed data\n\nLiquidity is always scored against the 24h horizon.\nProvider volume fields are trailing 24h and 7d totals.\n\nTier: Pro and Quant.",
         "operationId": "getItemAnalytics",
         "security": [
           {
@@ -7846,7 +8140,7 @@
           "Market Intelligence"
         ],
         "summary": "Get Market Cap Indexes",
-        "description": "Aggregate the cached 24h market snapshot into category-level indexes.\n\nSupports grouping by `item_type` or `weapon_type`.\nItems are excluded from market cap totals when bid/ask/marketcap data is incomplete or spread exceeds the internal spread threshold.\n\nResponse:\n- no pagination\n- groups sorted by `marketcap_usd desc`\n- totals computed from the same filtered item set\n\nTier: Quant-only.",
+        "description": "Aggregate the 24h market into category-level indexes.\n\nSupports grouping by `item_type` or `weapon_type`.\nItems are excluded from market cap totals when bid/ask/marketcap data is incomplete or spread exceeds the minimum threshold.\n\nResponse:\n- no pagination\n- groups sorted by `marketcap_usd desc`\n- totals computed from the same filtered item set\n\nTier: Quant-only.",
         "operationId": "getMarketCapIndexes",
         "security": [
           {
@@ -8021,7 +8315,7 @@
             }
           },
           "503": {
-            "description": "Snapshot cache unavailable and initial build failed.",
+            "description": "Market data is temporarily unavailable; retry shortly.",
             "content": {
               "application/json": {
                 "schema": {
@@ -8313,6 +8607,301 @@
           },
           "400": {
             "description": "Invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/market/history/chart": {
+      "get": {
+        "tags": [
+          "Market Intelligence"
+        ],
+        "summary": "Get Deep Price History Chart",
+        "description": "Per-provider daily price history.\n\nReturns one price point per provider per UTC day, spanning years of history\nup to the present. Prices are in minor units of the response currency;\n``qty`` is nullable.\n\nProviders that have shut down are excluded by default; pass\n``include_defunct=true`` to include their historical series.\n\n**Tier**: Quant-only.",
+        "operationId": "getDeepPriceHistoryChart",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "item_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Normalized catalog item ID (or use market_hash_name).",
+              "title": "Item Id"
+            },
+            "description": "Normalized catalog item ID (or use market_hash_name)."
+          },
+          {
+            "name": "market_hash_name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Market hash name (alternative to item_id).",
+              "title": "Market Hash Name"
+            },
+            "description": "Market hash name (alternative to item_id)."
+          },
+          {
+            "name": "providers",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Provider key(s). Repeatable. Omit for all providers with data.",
+              "title": "Providers"
+            },
+            "description": "Provider key(s). Repeatable. Omit for all providers with data."
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "ISO 8601 UTC start of the window.",
+              "title": "Start"
+            },
+            "description": "ISO 8601 UTC start of the window."
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "ISO 8601 UTC end of the window.",
+              "title": "End"
+            },
+            "description": "ISO 8601 UTC end of the window."
+          },
+          {
+            "name": "lookback",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Window length in days; overrides start.",
+              "title": "Lookback"
+            },
+            "description": "Window length in days; overrides start."
+          },
+          {
+            "name": "currency",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "description": "Target currency for returned prices. Default: USD.",
+              "default": "USD",
+              "title": "Currency"
+            },
+            "description": "Target currency for returned prices. Default: USD."
+          },
+          {
+            "name": "include_defunct",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "Include providers that have shut down but still have historical data (e.g. GamerPay, BitSkins). Defaults to false.",
+              "default": false,
+              "title": "Include Defunct"
+            },
+            "description": "Include providers that have shut down but still have historical data (e.g. GamerPay, BitSkins). Defaults to false."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarketHistoryChartResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid authentication credentials.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": "UNAUTHORIZED",
+                  "detail": "Missing Authorization header"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Analytics tier required to access this endpoint.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "code": "FORBIDDEN",
+                  "detail": "Analytics access requires indie tier or higher"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded (burst or monthly quota).",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "burstRateLimit": {
+                    "summary": "Per-window rate limit exceeded",
+                    "value": {
+                      "code": "RATE_LIMIT_EXCEEDED",
+                      "detail": "Too Many Requests"
+                    }
+                  },
+                  "monthlyQuotaExceeded": {
+                    "summary": "Monthly quota exhausted",
+                    "value": {
+                      "code": "RATE_LIMIT_MONTHLY_QUOTA_EXCEEDED",
+                      "detail": "Monthly quota exceeded (500000/500000 requests)."
+                    }
+                  }
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            },
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before retrying when present.",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 1
+                }
+              },
+              "X-RateLimit-Tier": {
+                "description": "Authenticated caller tier code.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-RateLimit-Limit": {
+                "description": "Request limit for the rate-limit window that was exceeded.",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "X-RateLimit-Remaining": {
+                "description": "Remaining requests in the rate-limit window that was exceeded.",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "X-RateLimit-Reset": {
+                "description": "Seconds until the rate-limit window resets.",
+                "schema": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Request validation failed. The detail list contains field-specific validation errors.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationErrorResponse"
+                }
+              }
+            },
+            "headers": {
+              "X-RateLimit-Tier": {
+                "description": "Authenticated caller tier code when available.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Item not found",
             "content": {
               "application/json": {
                 "schema": {
@@ -11495,6 +12084,18 @@
             "title": "Endpoint Label",
             "description": "Webhook destination label when this row represents a webhook delivery."
           },
+          "platform": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Platform",
+            "description": "Delivery platform key for webhook-backed deliveries."
+          },
           "attempt_count": {
             "anyOf": [
               {
@@ -11765,7 +12366,6 @@
         "type": "string",
         "enum": [
           "avanmarket",
-          "bitskins",
           "buff163",
           "buffmarket",
           "c5",
@@ -11777,7 +12377,9 @@
           "csmoney_t",
           "cstrade",
           "dmarket",
+          "dupefi",
           "ecosteam",
+          "gameboost",
           "haloskins",
           "itradegg",
           "lisskins",
@@ -11789,6 +12391,7 @@
           "shadowpay",
           "skinbaron",
           "skinflow",
+          "skinland",
           "skinout",
           "skinplace",
           "skinport",
@@ -11859,6 +12462,19 @@
             "type": "integer",
             "title": "Highest Bid",
             "description": "Money amount in minor units of the response currency (for example USD cents when currency=USD). Divide by 100 for display."
+          },
+          "highest_bid_decimal": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Highest Bid Decimal",
+            "description": "Price as a decimal string in the response currency, with precision that scales to magnitude: two decimal places at or above 1.0, eight below it. Use this field for currencies where the integer minor-units field would round to 0 (notably cryptocurrencies such as BTC, for example \"0.00041600\")."
           },
           "num_bids": {
             "type": "integer",
@@ -12097,6 +12713,19 @@
             "title": "Lowest Ask",
             "description": "Money amount in minor units of the response currency (for example USD cents when currency=USD). Divide by 100 for display."
           },
+          "lowest_ask_decimal": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lowest Ask Decimal",
+            "description": "Price as a decimal string in the response currency, with precision that scales to magnitude: two decimal places at or above 1.0, eight below it. Use this field for currencies where the integer minor-units field would round to 0 (notably cryptocurrencies such as BTC, for example \"0.00041600\")."
+          },
           "quantity": {
             "type": "integer",
             "title": "Quantity",
@@ -12280,97 +12909,10 @@
         "title": "BatchPricesResponse",
         "description": "Response envelope for POST /v1/prices/batch."
       },
-      "BidsFilterMeta": {
-        "properties": {
-          "item_id": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Item Id",
-            "description": "Normalized catalog item ID used by this API."
-          },
-          "market_hash_name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Market Hash Name",
-            "description": "Canonical Steam market hash name for the item."
-          },
-          "phase": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Phase",
-            "description": "Phased finish/variant label when applicable."
-          },
-          "requested_providers": {
-            "anyOf": [
-              {
-                "items": {
-                  "type": "string"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Requested Providers",
-            "description": "Provider keys requested for this operation."
-          }
-        },
-        "type": "object",
-        "title": "BidsFilterMeta",
-        "description": "Filter metadata for bids endpoint."
-      },
-      "BidsMeta": {
-        "properties": {
-          "currency": {
-            "type": "string",
-            "title": "Currency",
-            "description": "ISO 4217 currency code for the value context."
-          },
-          "filters": {
-            "$ref": "#/components/schemas/BidsFilterMeta",
-            "description": "Effective request filters applied to this response."
-          },
-          "providers_queried": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array",
-            "title": "Providers Queried",
-            "description": "Provider keys queried while building this response."
-          }
-        },
-        "type": "object",
-        "required": [
-          "currency",
-          "filters",
-          "providers_queried"
-        ],
-        "title": "BidsMeta",
-        "description": "Metadata for bids response."
-      },
       "BidsResponse": {
         "properties": {
           "meta": {
-            "$ref": "#/components/schemas/BidsMeta",
+            "$ref": "#/components/schemas/PricesMeta",
             "description": "Response metadata for this payload."
           },
           "items": {
@@ -12383,7 +12925,7 @@
           },
           "pagination": {
             "$ref": "#/components/schemas/PaginationMeta",
-            "description": "Pagination metadata for this response."
+            "description": "Offset pagination metadata."
           }
         },
         "type": "object",
@@ -12428,6 +12970,19 @@
             "type": "integer",
             "title": "Highest Bid",
             "description": "Money amount in minor units of the response currency (for example USD cents when currency=USD). Divide by 100 for display."
+          },
+          "highest_bid_decimal": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Highest Bid Decimal",
+            "description": "Price as a decimal string in the response currency, with precision that scales to magnitude: two decimal places at or above 1.0, eight below it. Use this field for currencies where the integer minor-units field would round to 0 (notably cryptocurrencies such as BTC, for example \"0.00041600\")."
           },
           "num_bids": {
             "type": "integer",
@@ -12480,6 +13035,7 @@
           "c5",
           "csfloat",
           "dmarket",
+          "dupefi",
           "ecosteam",
           "marketcsgo",
           "steam",
@@ -13180,7 +13736,7 @@
               }
             ],
             "title": "Item Id",
-            "description": "Internal catalog item ID used by this API."
+            "description": "Catalog item ID used by this API."
           },
           "market_hash_name": {
             "type": "string",
@@ -13307,6 +13863,18 @@
             "title": "Collection",
             "description": "Collection name the item belongs to, when known."
           },
+          "collection_image": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Collection Image",
+            "description": "Image URL for the item's collection, when known."
+          },
           "crates": {
             "anyOf": [
               {
@@ -13321,6 +13889,21 @@
             ],
             "title": "Crates",
             "description": "Case/crate sources associated with the item."
+          },
+          "crates_images": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Crates Images",
+            "description": "Image URLs for the associated cases/crates. Indexes align with the `crates` array."
           },
           "rarity_name": {
             "anyOf": [
@@ -13808,6 +14391,133 @@
         "title": "MarketArbitrageResponse",
         "description": "Response envelope for /v1/market/arbitrage."
       },
+      "MarketHistoryChartMeta": {
+        "properties": {
+          "item_id": {
+            "type": "integer",
+            "title": "Item Id",
+            "description": "Normalized catalog item ID."
+          },
+          "market_hash_name": {
+            "type": "string",
+            "title": "Market Hash Name",
+            "description": "Canonical market hash name for the item."
+          },
+          "currency": {
+            "type": "string",
+            "title": "Currency",
+            "description": "Target currency code for returned prices."
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Start",
+            "description": "ISO 8601 UTC start of the returned window."
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time",
+            "title": "End",
+            "description": "ISO 8601 UTC end of the returned window."
+          },
+          "providers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Providers",
+            "description": "Provider keys actually returned (those with >=1 point in range)."
+          }
+        },
+        "type": "object",
+        "required": [
+          "item_id",
+          "market_hash_name",
+          "currency",
+          "start",
+          "end"
+        ],
+        "title": "MarketHistoryChartMeta",
+        "description": "Metadata for /v1/market/history/chart."
+      },
+      "MarketHistoryChartPoint": {
+        "properties": {
+          "t": {
+            "type": "integer",
+            "title": "T",
+            "description": "UTC day bucket as a Unix timestamp (seconds, midnight)."
+          },
+          "price": {
+            "type": "integer",
+            "title": "Price",
+            "description": "Closing price in minor units of the response currency."
+          },
+          "qty": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Qty",
+            "description": "Listings/volume snapshot for the day. Semantics vary by provider (listings count or sales volume) and may be null."
+          }
+        },
+        "type": "object",
+        "required": [
+          "t",
+          "price"
+        ],
+        "title": "MarketHistoryChartPoint",
+        "description": "One daily price point for a provider series."
+      },
+      "MarketHistoryChartResponse": {
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/MarketHistoryChartMeta",
+            "description": "Response metadata for this payload."
+          },
+          "series": {
+            "items": {
+              "$ref": "#/components/schemas/MarketHistoryChartSeries"
+            },
+            "type": "array",
+            "title": "Series",
+            "description": "Per-provider daily price-point series."
+          }
+        },
+        "type": "object",
+        "required": [
+          "meta"
+        ],
+        "title": "MarketHistoryChartResponse",
+        "description": "Response envelope for GET /v1/market/history/chart (Quant only)."
+      },
+      "MarketHistoryChartSeries": {
+        "properties": {
+          "provider": {
+            "type": "string",
+            "title": "Provider",
+            "description": "Provider key."
+          },
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/MarketHistoryChartPoint"
+            },
+            "type": "array",
+            "title": "Data",
+            "description": "Daily points ordered by ascending bucket."
+          }
+        },
+        "type": "object",
+        "required": [
+          "provider"
+        ],
+        "title": "MarketHistoryChartSeries",
+        "description": "Per-provider daily price-point series."
+      },
       "MarketIndexGroup": {
         "properties": {
           "group": {
@@ -14139,6 +14849,19 @@
             "type": "integer",
             "title": "Lowest Ask",
             "description": "Money amount in minor units of the response currency (for example USD cents when currency=USD). Divide by 100 for display."
+          },
+          "lowest_ask_decimal": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Lowest Ask Decimal",
+            "description": "Price as a decimal string in the response currency, with precision that scales to magnitude: two decimal places at or above 1.0, eight below it. Use this field for currencies where the integer minor-units field would round to 0 (notably cryptocurrencies such as BTC, for example \"0.00041600\")."
           },
           "quantity": {
             "type": "integer",
@@ -14761,6 +15484,30 @@
             ],
             "title": "Volume Score",
             "description": "Volume component score."
+          },
+          "stability_score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stability Score",
+            "description": "Price stability component score (0-20): measures how consistently the item is observed and how stable its price has been over the last 24 hours."
+          },
+          "external_score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "External Score",
+            "description": "External confirmation component score (0-20): Steam volume + Buff163 depth."
           },
           "liquidity_last_updated": {
             "anyOf": [
@@ -15725,7 +16472,7 @@
           "v": {
             "type": "integer",
             "title": "V",
-            "description": "Non-negative depletion flow proxy for the bucket, computed from decreases in provider close-side inventory between consecutive buckets. This is not transaction volume."
+            "description": "Estimated trade volume for the bucket, derived from inventory changes rather than reported sale counts, not transaction volume."
           },
           "q": {
             "anyOf": [
@@ -15737,11 +16484,11 @@
               }
             ],
             "title": "Q",
-            "description": "Summed effective close-side inventory across providers at the end of the bucket. Null when close-side inventory is unavailable for that timeframe."
+            "description": "Total number of active listings at the end of the bucket. Null for older 1d windows."
           },
           "providers": {
             "$ref": "#/components/schemas/Providers",
-            "description": "Provider provenance for the returned low/high values in this composite candle."
+            "description": "Provider provenance for the returned open/high/low/close values in this composite candle."
           }
         },
         "type": "object",
@@ -16051,6 +16798,18 @@
       },
       "PricesFilterMeta": {
         "properties": {
+          "item_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Item Id",
+            "description": "Normalized catalog item ID used by this API."
+          },
           "market_hash_name": {
             "anyOf": [
               {
@@ -16093,7 +16852,7 @@
         },
         "type": "object",
         "title": "PricesFilterMeta",
-        "description": "Filter metadata for prices endpoint."
+        "description": "Filter metadata for prices and bids endpoints."
       },
       "PricesMeta": {
         "properties": {
@@ -16106,23 +16865,23 @@
             "$ref": "#/components/schemas/PricesFilterMeta",
             "description": "Effective request filters applied to this response."
           },
-          "returned_providers": {
+          "providers_queried": {
             "items": {
               "type": "string"
             },
             "type": "array",
-            "title": "Returned Providers",
-            "description": "Provider keys that returned data in this response."
+            "title": "Providers Queried",
+            "description": "Provider keys queried."
           }
         },
         "type": "object",
         "required": [
           "currency",
           "filters",
-          "returned_providers"
+          "providers_queried"
         ],
         "title": "PricesMeta",
-        "description": "Metadata for prices response."
+        "description": "Metadata for prices and bids responses."
       },
       "PricesPaginatedResponse_MarketItem_": {
         "properties": {
@@ -16383,6 +17142,12 @@
       },
       "Providers": {
         "properties": {
+          "o": {
+            "type": "string",
+            "title": "O",
+            "description": "Provider key that contributed the returned open value.",
+            "default": "unknown"
+          },
           "h": {
             "type": "string",
             "title": "H",
@@ -16392,6 +17157,12 @@
             "type": "string",
             "title": "L",
             "description": "Provider key that contributed the returned low value."
+          },
+          "c": {
+            "type": "string",
+            "title": "C",
+            "description": "Provider key that contributed the returned close value.",
+            "default": "unknown"
           }
         },
         "type": "object",
@@ -16400,12 +17171,11 @@
           "l"
         ],
         "title": "Providers",
-        "description": "Provider provenance for composite candle extremes."
+        "description": "Provider provenance for composite candle values."
       },
       "RecentSalesProvider": {
         "type": "string",
         "enum": [
-          "bitskins",
           "buff163",
           "c5",
           "csfloat",
@@ -16595,7 +17365,7 @@
           },
           "limit": {
             "type": "integer",
-            "maximum": 50.0,
+            "maximum": 1000.0,
             "minimum": 1.0,
             "title": "Limit",
             "description": "Maximum number of records returned per page."
@@ -16622,37 +17392,19 @@
             "title": "Items",
             "description": "List of returned items."
           },
-          "cache_status": {
-            "additionalProperties": {
-              "type": "string",
-              "enum": [
-                "hit",
-                "miss",
-                "error",
-                "unavailable"
-              ]
-            },
-            "type": "object",
-            "title": "Cache Status",
-            "description": "Per-provider cache outcome map keyed by provider key. `hit` = served from Redis sales cache; `miss` = cache miss then live fetch; `error` = live fetch failed; `unavailable` = provider requested but not available.",
-            "examples": [
-              {
-                "bitskins": "unavailable",
-                "buff163": "miss",
-                "csfloat": "hit",
-                "csgoempire": "error"
-              }
-            ]
+          "pagination": {
+            "$ref": "#/components/schemas/PaginationMeta",
+            "description": "Cursor pagination footer for this page."
           }
         },
         "type": "object",
         "required": [
           "meta",
           "items",
-          "cache_status"
+          "pagination"
         ],
         "title": "SalesHistoryResponse",
-        "description": "Recent Sales response with request metadata and cache status."
+        "description": "Recent Sales response with request metadata."
       },
       "SalesMeta": {
         "properties": {
@@ -16675,7 +17427,7 @@
           },
           "result_count": {
             "type": "integer",
-            "maximum": 50.0,
+            "maximum": 1000.0,
             "minimum": 0.0,
             "title": "Result Count",
             "description": "Number of records returned in this payload."
@@ -17541,6 +18293,12 @@
             "title": "Url",
             "description": "Destination URL. Must be HTTP or HTTPS."
           },
+          "platform": {
+            "type": "string",
+            "title": "Platform",
+            "description": "Delivery platform key: custom, discord, telegram, or google_sheets.",
+            "default": "custom"
+          },
           "is_active": {
             "type": "boolean",
             "title": "Is Active",
@@ -17670,6 +18428,11 @@
             "title": "Endpoint Url",
             "description": "Snapshot of the destination URL used for this delivery."
           },
+          "platform": {
+            "type": "string",
+            "title": "Platform",
+            "description": "Snapshot of the delivery platform used for this delivery."
+          },
           "event_type": {
             "type": "string",
             "title": "Event Type",
@@ -17763,6 +18526,7 @@
           "endpoint_id",
           "endpoint_label",
           "endpoint_url",
+          "platform",
           "event_type",
           "status",
           "attempt_count",
@@ -17799,6 +18563,11 @@
             "type": "string",
             "title": "Endpoint Url",
             "description": "Snapshot of the destination URL used for this delivery."
+          },
+          "platform": {
+            "type": "string",
+            "title": "Platform",
+            "description": "Snapshot of the delivery platform used for this delivery."
           },
           "event_type": {
             "type": "string",
@@ -17879,6 +18648,7 @@
           "endpoint_id",
           "endpoint_label",
           "endpoint_url",
+          "platform",
           "event_type",
           "status",
           "attempt_count",
@@ -17903,6 +18673,11 @@
             "type": "string",
             "title": "Url",
             "description": "Destination URL."
+          },
+          "platform": {
+            "type": "string",
+            "title": "Platform",
+            "description": "Delivery platform key for this destination."
           },
           "secret_last4": {
             "type": "string",
@@ -17970,6 +18745,7 @@
           "id",
           "label",
           "url",
+          "platform",
           "secret_last4",
           "is_active",
           "created_at",
@@ -18041,6 +18817,18 @@
             ],
             "title": "Url",
             "description": "Updated destination URL."
+          },
+          "platform": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Platform",
+            "description": "Updated delivery platform key."
           },
           "is_active": {
             "anyOf": [

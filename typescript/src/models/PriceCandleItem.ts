@@ -58,7 +58,7 @@ export interface PriceCandleItem {
      */
     c: number;
     /**
-     * Non-negative depletion flow proxy for the bucket, computed from decreases in provider close-side inventory between consecutive buckets. This is not transaction volume.
+     * Estimated trade volume for the bucket, derived from inventory changes rather than reported sale counts, not transaction volume.
      * @type {number}
      * @memberof PriceCandleItem
      */
@@ -70,7 +70,7 @@ export interface PriceCandleItem {
      */
     q?: number | null;
     /**
-     * Provider provenance for the returned low/high values in this composite candle.
+     * Provider provenance for the returned open/high/low/close values in this composite candle.
      * @type {Providers}
      * @memberof PriceCandleItem
      */

@@ -33,6 +33,12 @@ export interface WebhookUpdateRequest {
     url?: string | null;
     /**
      * 
+     * @type {string}
+     * @memberof WebhookUpdateRequest
+     */
+    platform?: string | null;
+    /**
+     * 
      * @type {boolean}
      * @memberof WebhookUpdateRequest
      */
@@ -58,6 +64,7 @@ export function WebhookUpdateRequestFromJSONTyped(json: any, ignoreDiscriminator
         
         'label': json['label'] == null ? undefined : json['label'],
         'url': json['url'] == null ? undefined : json['url'],
+        'platform': json['platform'] == null ? undefined : json['platform'],
         'isActive': json['is_active'] == null ? undefined : json['is_active'],
     };
 }
@@ -75,6 +82,7 @@ export function WebhookUpdateRequestToJSONTyped(value?: WebhookUpdateRequest | n
         
         'label': value['label'],
         'url': value['url'],
+        'platform': value['platform'],
         'is_active': value['isActive'],
     };
 }

@@ -17,8 +17,9 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr, field_validator
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Any, ClassVar, Dict, List
+from cs2cap.models.pagination_meta import PaginationMeta
 from cs2cap.models.sale_record_detail import SaleRecordDetail
 from cs2cap.models.sales_meta import SalesMeta
 from typing import Optional, Set
@@ -26,20 +27,12 @@ from typing_extensions import Self
 
 class SalesHistoryResponse(BaseModel):
     """
-    Recent Sales response with request metadata and cache status.
+    Recent Sales response with request metadata.
     """ # noqa: E501
     meta: SalesMeta = Field(description="Response metadata for this payload.")
     items: List[SaleRecordDetail] = Field(description="List of returned items.")
-    cache_status: Dict[str, StrictStr] = Field(description="Per-provider cache outcome map keyed by provider key. `hit` = served from Redis sales cache; `miss` = cache miss then live fetch; `error` = live fetch failed; `unavailable` = provider requested but not available.")
-    __properties: ClassVar[List[str]] = ["meta", "items", "cache_status"]
-
-    @field_validator('cache_status')
-    def cache_status_validate_enum(cls, value):
-        """Validates the enum"""
-        for i in value.values():
-            if i not in set(['hit', 'miss', 'error', 'unavailable']):
-                raise ValueError("dict values must be one of enum values ('hit', 'miss', 'error', 'unavailable')")
-        return value
+    pagination: PaginationMeta = Field(description="Cursor pagination footer for this page.")
+    __properties: ClassVar[List[str]] = ["meta", "items", "pagination"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -90,6 +83,9 @@ class SalesHistoryResponse(BaseModel):
                 if _item_items:
                     _items.append(_item_items.to_dict())
             _dict['items'] = _items
+        # override the default output from pydantic by calling `to_dict()` of pagination
+        if self.pagination:
+            _dict['pagination'] = self.pagination.to_dict()
         return _dict
 
     @classmethod
@@ -104,7 +100,7 @@ class SalesHistoryResponse(BaseModel):
         _obj = cls.model_validate({
             "meta": SalesMeta.from_dict(obj["meta"]) if obj.get("meta") is not None else None,
             "items": [SaleRecordDetail.from_dict(_item) for _item in obj["items"]] if obj.get("items") is not None else None,
-            "cache_status": obj.get("cache_status")
+            "pagination": PaginationMeta.from_dict(obj["pagination"]) if obj.get("pagination") is not None else None
         })
         return _obj
 

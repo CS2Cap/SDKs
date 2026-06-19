@@ -6,8 +6,6 @@ All available provider keys.  Members are generated from canonical endpoint meta
 
 * `AVANMARKET` (value: `'avanmarket'`)
 
-* `BITSKINS` (value: `'bitskins'`)
-
 * `BUFF163` (value: `'buff163'`)
 
 * `BUFFMARKET` (value: `'buffmarket'`)
@@ -30,7 +28,11 @@ All available provider keys.  Members are generated from canonical endpoint meta
 
 * `DMARKET` (value: `'dmarket'`)
 
+* `DUPEFI` (value: `'dupefi'`)
+
 * `ECOSTEAM` (value: `'ecosteam'`)
+
+* `GAMEBOOST` (value: `'gameboost'`)
 
 * `HALOSKINS` (value: `'haloskins'`)
 
@@ -53,6 +55,8 @@ All available provider keys.  Members are generated from canonical endpoint meta
 * `SKINBARON` (value: `'skinbaron'`)
 
 * `SKINFLOW` (value: `'skinflow'`)
+
+* `SKINLAND` (value: `'skinland'`)
 
 * `SKINOUT` (value: `'skinout'`)
 

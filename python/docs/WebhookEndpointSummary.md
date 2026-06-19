@@ -9,6 +9,7 @@ Name | Type | Description | Notes
 **id** | **str** | Unique webhook destination identifier. | 
 **label** | **str** | User-defined label for this destination. | 
 **url** | **str** | Destination URL. | 
+**platform** | **str** | Delivery platform key for this destination. | 
 **secret_last4** | **str** | Last four characters of the current signing secret. | 
 **is_active** | **bool** | Whether new events fan out to this destination. | 
 **last_success_at** | **datetime** |  | [optional] 

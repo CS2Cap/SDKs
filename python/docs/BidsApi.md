@@ -111,9 +111,7 @@ Filters:
 - `currency`, `limit`, and `offset`
 
 Behavior:
-- broad listings use the indexed pagination path
-- item-specific requests use direct indexed lookup
-- unsupported providers return `400`
+- requesting a provider that does not support buy orders returns `400`
 
 Response:
 - `meta` with filters and providers queried
@@ -206,7 +204,7 @@ Name | Type | Description  | Notes
 **429** | Rate limit exceeded (burst or monthly quota). |  * Retry-After - Seconds to wait before retrying when present. <br>  * X-RateLimit-Tier - Authenticated caller tier code when available. <br>  * X-RateLimit-Limit - Request limit for the rate-limit window that was exceeded. <br>  * X-RateLimit-Remaining - Remaining requests in the rate-limit window that was exceeded. <br>  * X-RateLimit-Reset - Seconds until the rate-limit window resets. <br>  |
 **422** | Request validation failed. The detail list contains field-specific validation errors. |  * X-RateLimit-Tier - Authenticated caller tier code when available. <br>  |
 **400** | Providers were specified that do not support buy orders. |  -  |
-**503** | Indexed bids data unavailable. |  -  |
+**503** | Bid data is temporarily unavailable; retry shortly. |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
@@ -219,13 +217,13 @@ Return the full live bids snapshot as an NDJSON stream.
 
 Behavior:
 - pro and quant tiers only
-- requires a real `sk_*` API key; session JWTs are not accepted
+- requires an API key (not a session token)
 - optional `providers` filter; omit to stream all providers
 - fixed USD output
 - `highest_bid` values are returned in USD minor units
 - one JSON object per line using the `BuyOrderItem` field set
-- the live index is copied into temporary Redis keys so the export is stable for the duration of the stream
-- per-API-key cooldown of 30 seconds for this POST operation
+- per-API-key rolling 24h quota of successful stream starts (pro: 50, quant: 300, per endpoint)
+- max 1 concurrent stream per API key for this endpoint (409 otherwise)
 
 ### Example
 
@@ -294,12 +292,13 @@ Name | Type | Description  | Notes
 
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-**200** | NDJSON stream of the full live bids snapshot in USD. |  * X-Snapshot-Timestamp - UTC timestamp when the snapshot stream started. <br>  * X-Snapshot-Currency - Fixed response currency for every streamed row. <br>  * X-Snapshot-Total - Total indexed rows at stream start, when known. <br>  |
+**200** | NDJSON stream of the full live bids snapshot in USD. |  * X-Snapshot-Timestamp - UTC timestamp when the snapshot stream started. <br>  * X-Snapshot-Currency - Fixed response currency for every streamed row. <br>  * X-Snapshot-Total - Total rows in the stream at start, when known. <br>  * X-RateLimit-Limit - Daily quota of successful stream starts for this endpoint. <br>  * X-RateLimit-Remaining - Remaining stream starts in the rolling 24h window. <br>  * X-RateLimit-Reset - Seconds until the oldest counted start leaves the window. <br>  |
 **401** | Missing or invalid authentication credentials. |  -  |
 **403** | Bulk snapshot access requires a tier with bulk snapshot capability. |  -  |
-**429** | Bulk snapshot cooldown active for this API key. |  * Retry-After - Seconds until this API key may request another bids snapshot. <br>  |
+**429** | Daily bulk stream quota exhausted for this API key. |  * Retry-After - Seconds until this API key may start another bids stream. <br>  * X-RateLimit-Limit - Daily quota of successful stream starts for this endpoint. <br>  * X-RateLimit-Remaining - Remaining stream starts in the rolling 24h window. <br>  * X-RateLimit-Reset - Seconds until the oldest counted start leaves the window. <br>  |
 **422** | Request validation failed. The detail list contains field-specific validation errors. |  * X-RateLimit-Tier - Authenticated caller tier code when available. <br>  |
-**503** | Indexed bids data unavailable. |  -  |
+**503** | Bid data is temporarily unavailable; retry shortly. |  -  |
+**409** | A streaming request is already active for this API key. |  * Retry-After - Seconds to wait before retrying when present. <br>  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

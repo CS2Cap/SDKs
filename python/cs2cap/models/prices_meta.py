@@ -25,12 +25,12 @@ from typing_extensions import Self
 
 class PricesMeta(BaseModel):
     """
-    Metadata for prices response.
+    Metadata for prices and bids responses.
     """ # noqa: E501
     currency: StrictStr = Field(description="ISO 4217 currency code for the value context.")
     filters: PricesFilterMeta = Field(description="Effective request filters applied to this response.")
-    returned_providers: List[StrictStr] = Field(description="Provider keys that returned data in this response.")
-    __properties: ClassVar[List[str]] = ["currency", "filters", "returned_providers"]
+    providers_queried: List[StrictStr] = Field(description="Provider keys queried.")
+    __properties: ClassVar[List[str]] = ["currency", "filters", "providers_queried"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -88,7 +88,7 @@ class PricesMeta(BaseModel):
         _obj = cls.model_validate({
             "currency": obj.get("currency"),
             "filters": PricesFilterMeta.from_dict(obj["filters"]) if obj.get("filters") is not None else None,
-            "returned_providers": obj.get("returned_providers")
+            "providers_queried": obj.get("providers_queried")
         })
         return _obj
 

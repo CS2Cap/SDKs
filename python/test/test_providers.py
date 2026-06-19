@@ -35,8 +35,10 @@ class TestProviders(unittest.TestCase):
         model = Providers()
         if include_optional:
             return Providers(
+                o = 'unknown',
                 h = '',
-                l = ''
+                l = '',
+                c = 'unknown'
             )
         else:
             return Providers(

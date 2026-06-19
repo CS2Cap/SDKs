@@ -33,6 +33,7 @@ class WebhookDeliveryDetail(BaseModel):
     endpoint_id: StrictStr = Field(description="Webhook destination identifier.")
     endpoint_label: StrictStr = Field(description="Snapshot of the destination label used for this delivery.")
     endpoint_url: StrictStr = Field(description="Snapshot of the destination URL used for this delivery.")
+    platform: StrictStr = Field(description="Snapshot of the delivery platform used for this delivery.")
     event_type: StrictStr = Field(description="Outbound event type.")
     status: StrictStr = Field(description="Current delivery status.")
     attempt_count: StrictInt = Field(description="Number of delivery attempts recorded so far.")
@@ -43,7 +44,7 @@ class WebhookDeliveryDetail(BaseModel):
     completed_at: Optional[datetime] = None
     payload: Dict[str, Any] = Field(description="Snapshot of the outbound JSON payload.")
     attempts: List[WebhookDeliveryAttemptSummary] = Field(description="HTTP delivery attempts recorded for this job.")
-    __properties: ClassVar[List[str]] = ["id", "event_id", "endpoint_id", "endpoint_label", "endpoint_url", "event_type", "status", "attempt_count", "last_http_status", "error", "next_attempt_at", "created_at", "completed_at", "payload", "attempts"]
+    __properties: ClassVar[List[str]] = ["id", "event_id", "endpoint_id", "endpoint_label", "endpoint_url", "platform", "event_type", "status", "attempt_count", "last_http_status", "error", "next_attempt_at", "created_at", "completed_at", "payload", "attempts"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -128,6 +129,7 @@ class WebhookDeliveryDetail(BaseModel):
             "endpoint_id": obj.get("endpoint_id"),
             "endpoint_label": obj.get("endpoint_label"),
             "endpoint_url": obj.get("endpoint_url"),
+            "platform": obj.get("platform"),
             "event_type": obj.get("event_type"),
             "status": obj.get("status"),
             "attempt_count": obj.get("attempt_count"),

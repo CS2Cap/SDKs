@@ -1,6 +1,6 @@
 # PricesMeta
 
-Metadata for prices response.
+Metadata for prices and bids responses.
 
 ## Properties
 
@@ -8,7 +8,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **currency** | **str** | ISO 4217 currency code for the value context. | 
 **filters** | [**PricesFilterMeta**](PricesFilterMeta.md) | Effective request filters applied to this response. | 
-**returned_providers** | **List[str]** | Provider keys that returned data in this response. | 
+**providers_queried** | **List[str]** | Provider keys queried. | 
 
 ## Example
 

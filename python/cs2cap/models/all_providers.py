@@ -27,7 +27,6 @@ class AllProviders(str, Enum):
     allowed enum values
     """
     AVANMARKET = 'avanmarket'
-    BITSKINS = 'bitskins'
     BUFF163 = 'buff163'
     BUFFMARKET = 'buffmarket'
     C5 = 'c5'
@@ -39,7 +38,9 @@ class AllProviders(str, Enum):
     CSMONEY_T = 'csmoney_t'
     CSTRADE = 'cstrade'
     DMARKET = 'dmarket'
+    DUPEFI = 'dupefi'
     ECOSTEAM = 'ecosteam'
+    GAMEBOOST = 'gameboost'
     HALOSKINS = 'haloskins'
     ITRADEGG = 'itradegg'
     LISSKINS = 'lisskins'
@@ -51,6 +52,7 @@ class AllProviders(str, Enum):
     SHADOWPAY = 'shadowpay'
     SKINBARON = 'skinbaron'
     SKINFLOW = 'skinflow'
+    SKINLAND = 'skinland'
     SKINOUT = 'skinout'
     SKINPLACE = 'skinplace'
     SKINPORT = 'skinport'

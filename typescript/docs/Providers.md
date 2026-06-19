@@ -1,14 +1,16 @@
 
 # Providers
 
-Provider provenance for composite candle extremes.
+Provider provenance for composite candle values.
 
 ## Properties
 
 Name | Type
 ------------ | -------------
+`o` | string
 `h` | string
 `l` | string
+`c` | string
 
 ## Example
 
@@ -17,8 +19,10 @@ import type { Providers } from 'cs2cap'
 
 // TODO: Update the object below with actual values
 const example = {
+  "o": null,
   "h": null,
   "l": null,
+  "c": null,
 } satisfies Providers
 
 console.log(example)

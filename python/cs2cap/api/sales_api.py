@@ -43,11 +43,12 @@ class SalesApi:
     def list_recent_sales(
         self,
         item_id: Annotated[Optional[StrictInt], Field(description="Filter by item ID. When provided, canonical market_hash_name and phase from catalog are used and take precedence over request market_hash_name/phase.")] = None,
-        market_hash_name: Annotated[Optional[StrictStr], Field(description="Exact market_hash_name match (required if item_id not provided). Ignored when item_id is provided.")] = None,
-        phase: Annotated[Optional[Any], Field(description="Filter by phase (when applicable). Ignored when item_id is provided.")] = None,
-        providers: Annotated[Optional[List[RecentSalesProvider]], Field(description="Providers to query (provider-key enum values with sales support). Repeat `providers` to pass multiple values.")] = None,
+        market_hash_name: Annotated[Optional[StrictStr], Field(description="Optional market_hash_name to filter for specific item. Ignored when item_id is provided.")] = None,
+        phase: Annotated[Optional[Any], Field(description="Optional phase to filter (global or combined with market_hash_name). Ignored when item_id is provided.")] = None,
+        providers: Annotated[Optional[List[RecentSalesProvider]], Field(description="Providers to include (provider-key enum values that support recent sales). Repeat `providers` to pass multiple values.")] = None,
         currency: Annotated[Optional[StrictStr], Field(description="Target currency. Any ISO 4217 code supported by `/v1/fx` (see `/v1/fx` for the full list). Invalid codes return a 422 validation error.")] = None,
-        limit: Annotated[Optional[Annotated[int, Field(strict=True, ge=1)]], Field(description="Maximum number of sales to return. Defaults to the effective tier cap.")] = None,
+        limit: Annotated[Optional[Annotated[int, Field(strict=True, ge=1)]], Field(description="Maximum number of results to return. Defaults to the effective tier cap.")] = None,
+        cursor: Annotated[Optional[StrictStr], Field(description="Cursor for keyset pagination. Use next_cursor from previous response. When provided, offset is ignored and keyset pagination is used for O(1) seek.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -63,20 +64,22 @@ class SalesApi:
     ) -> SalesHistoryResponse:
         """List Recent Sales
 
-        Return recent sales history from providers with recent-sales support.  Filters: - `item_id` or `market_hash_name` is required - optional `phase` - `providers` limited to sales-capable provider keys - `currency` and `limit`  Behavior: - cache misses trigger live provider fetches during the request - results are cached per item and provider for 1 hour - response is single-page only with a maximum of 50 rows  Response: - request metadata and providers queried - sales records with sticker, charm, and inspect metadata when available - per-provider cache status for hit, miss, error, or unavailable
+        Return recent sales across providers with recent-sales support, newest first.  With no filters, returns the global recent-sales feed ordered by sale time (most recent first). Optional filters narrow the results: - `item_id` — restrict to one catalog item (its canonical market_hash_name and phase are used) - `market_hash_name` (+ optional `phase`) — restrict to one item by name - `providers` — restrict to specific sales-capable provider keys - `currency` — convert values to the target currency  Pagination: - `limit` sets the page size (max 100 for Pro, 1000 for Quant) - pass `cursor` from the previous response's `pagination.next_cursor` to page through results; `pagination.total` is `-1` (count intentionally skipped)  Behavior: - recent-sales data refreshes roughly once every 24 hours, so results may be up to a day old  Response: - request metadata, providers queried, and a cursor pagination footer - sales records with sticker, charm, and inspect metadata when available
 
         :param item_id: Filter by item ID. When provided, canonical market_hash_name and phase from catalog are used and take precedence over request market_hash_name/phase.
         :type item_id: int
-        :param market_hash_name: Exact market_hash_name match (required if item_id not provided). Ignored when item_id is provided.
+        :param market_hash_name: Optional market_hash_name to filter for specific item. Ignored when item_id is provided.
         :type market_hash_name: str
-        :param phase: Filter by phase (when applicable). Ignored when item_id is provided.
+        :param phase: Optional phase to filter (global or combined with market_hash_name). Ignored when item_id is provided.
         :type phase: PhaseName
-        :param providers: Providers to query (provider-key enum values with sales support). Repeat `providers` to pass multiple values.
+        :param providers: Providers to include (provider-key enum values that support recent sales). Repeat `providers` to pass multiple values.
         :type providers: List[RecentSalesProvider]
         :param currency: Target currency. Any ISO 4217 code supported by `/v1/fx` (see `/v1/fx` for the full list). Invalid codes return a 422 validation error.
         :type currency: str
-        :param limit: Maximum number of sales to return. Defaults to the effective tier cap.
+        :param limit: Maximum number of results to return. Defaults to the effective tier cap.
         :type limit: int
+        :param cursor: Cursor for keyset pagination. Use next_cursor from previous response. When provided, offset is ignored and keyset pagination is used for O(1) seek.
+        :type cursor: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -106,6 +109,7 @@ class SalesApi:
             providers=providers,
             currency=currency,
             limit=limit,
+            cursor=cursor,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -136,11 +140,12 @@ class SalesApi:
     def list_recent_sales_with_http_info(
         self,
         item_id: Annotated[Optional[StrictInt], Field(description="Filter by item ID. When provided, canonical market_hash_name and phase from catalog are used and take precedence over request market_hash_name/phase.")] = None,
-        market_hash_name: Annotated[Optional[StrictStr], Field(description="Exact market_hash_name match (required if item_id not provided). Ignored when item_id is provided.")] = None,
-        phase: Annotated[Optional[Any], Field(description="Filter by phase (when applicable). Ignored when item_id is provided.")] = None,
-        providers: Annotated[Optional[List[RecentSalesProvider]], Field(description="Providers to query (provider-key enum values with sales support). Repeat `providers` to pass multiple values.")] = None,
+        market_hash_name: Annotated[Optional[StrictStr], Field(description="Optional market_hash_name to filter for specific item. Ignored when item_id is provided.")] = None,
+        phase: Annotated[Optional[Any], Field(description="Optional phase to filter (global or combined with market_hash_name). Ignored when item_id is provided.")] = None,
+        providers: Annotated[Optional[List[RecentSalesProvider]], Field(description="Providers to include (provider-key enum values that support recent sales). Repeat `providers` to pass multiple values.")] = None,
         currency: Annotated[Optional[StrictStr], Field(description="Target currency. Any ISO 4217 code supported by `/v1/fx` (see `/v1/fx` for the full list). Invalid codes return a 422 validation error.")] = None,
-        limit: Annotated[Optional[Annotated[int, Field(strict=True, ge=1)]], Field(description="Maximum number of sales to return. Defaults to the effective tier cap.")] = None,
+        limit: Annotated[Optional[Annotated[int, Field(strict=True, ge=1)]], Field(description="Maximum number of results to return. Defaults to the effective tier cap.")] = None,
+        cursor: Annotated[Optional[StrictStr], Field(description="Cursor for keyset pagination. Use next_cursor from previous response. When provided, offset is ignored and keyset pagination is used for O(1) seek.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -156,20 +161,22 @@ class SalesApi:
     ) -> ApiResponse[SalesHistoryResponse]:
         """List Recent Sales
 
-        Return recent sales history from providers with recent-sales support.  Filters: - `item_id` or `market_hash_name` is required - optional `phase` - `providers` limited to sales-capable provider keys - `currency` and `limit`  Behavior: - cache misses trigger live provider fetches during the request - results are cached per item and provider for 1 hour - response is single-page only with a maximum of 50 rows  Response: - request metadata and providers queried - sales records with sticker, charm, and inspect metadata when available - per-provider cache status for hit, miss, error, or unavailable
+        Return recent sales across providers with recent-sales support, newest first.  With no filters, returns the global recent-sales feed ordered by sale time (most recent first). Optional filters narrow the results: - `item_id` — restrict to one catalog item (its canonical market_hash_name and phase are used) - `market_hash_name` (+ optional `phase`) — restrict to one item by name - `providers` — restrict to specific sales-capable provider keys - `currency` — convert values to the target currency  Pagination: - `limit` sets the page size (max 100 for Pro, 1000 for Quant) - pass `cursor` from the previous response's `pagination.next_cursor` to page through results; `pagination.total` is `-1` (count intentionally skipped)  Behavior: - recent-sales data refreshes roughly once every 24 hours, so results may be up to a day old  Response: - request metadata, providers queried, and a cursor pagination footer - sales records with sticker, charm, and inspect metadata when available
 
         :param item_id: Filter by item ID. When provided, canonical market_hash_name and phase from catalog are used and take precedence over request market_hash_name/phase.
         :type item_id: int
-        :param market_hash_name: Exact market_hash_name match (required if item_id not provided). Ignored when item_id is provided.
+        :param market_hash_name: Optional market_hash_name to filter for specific item. Ignored when item_id is provided.
         :type market_hash_name: str
-        :param phase: Filter by phase (when applicable). Ignored when item_id is provided.
+        :param phase: Optional phase to filter (global or combined with market_hash_name). Ignored when item_id is provided.
         :type phase: PhaseName
-        :param providers: Providers to query (provider-key enum values with sales support). Repeat `providers` to pass multiple values.
+        :param providers: Providers to include (provider-key enum values that support recent sales). Repeat `providers` to pass multiple values.
         :type providers: List[RecentSalesProvider]
         :param currency: Target currency. Any ISO 4217 code supported by `/v1/fx` (see `/v1/fx` for the full list). Invalid codes return a 422 validation error.
         :type currency: str
-        :param limit: Maximum number of sales to return. Defaults to the effective tier cap.
+        :param limit: Maximum number of results to return. Defaults to the effective tier cap.
         :type limit: int
+        :param cursor: Cursor for keyset pagination. Use next_cursor from previous response. When provided, offset is ignored and keyset pagination is used for O(1) seek.
+        :type cursor: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -199,6 +206,7 @@ class SalesApi:
             providers=providers,
             currency=currency,
             limit=limit,
+            cursor=cursor,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -229,11 +237,12 @@ class SalesApi:
     def list_recent_sales_without_preload_content(
         self,
         item_id: Annotated[Optional[StrictInt], Field(description="Filter by item ID. When provided, canonical market_hash_name and phase from catalog are used and take precedence over request market_hash_name/phase.")] = None,
-        market_hash_name: Annotated[Optional[StrictStr], Field(description="Exact market_hash_name match (required if item_id not provided). Ignored when item_id is provided.")] = None,
-        phase: Annotated[Optional[Any], Field(description="Filter by phase (when applicable). Ignored when item_id is provided.")] = None,
-        providers: Annotated[Optional[List[RecentSalesProvider]], Field(description="Providers to query (provider-key enum values with sales support). Repeat `providers` to pass multiple values.")] = None,
+        market_hash_name: Annotated[Optional[StrictStr], Field(description="Optional market_hash_name to filter for specific item. Ignored when item_id is provided.")] = None,
+        phase: Annotated[Optional[Any], Field(description="Optional phase to filter (global or combined with market_hash_name). Ignored when item_id is provided.")] = None,
+        providers: Annotated[Optional[List[RecentSalesProvider]], Field(description="Providers to include (provider-key enum values that support recent sales). Repeat `providers` to pass multiple values.")] = None,
         currency: Annotated[Optional[StrictStr], Field(description="Target currency. Any ISO 4217 code supported by `/v1/fx` (see `/v1/fx` for the full list). Invalid codes return a 422 validation error.")] = None,
-        limit: Annotated[Optional[Annotated[int, Field(strict=True, ge=1)]], Field(description="Maximum number of sales to return. Defaults to the effective tier cap.")] = None,
+        limit: Annotated[Optional[Annotated[int, Field(strict=True, ge=1)]], Field(description="Maximum number of results to return. Defaults to the effective tier cap.")] = None,
+        cursor: Annotated[Optional[StrictStr], Field(description="Cursor for keyset pagination. Use next_cursor from previous response. When provided, offset is ignored and keyset pagination is used for O(1) seek.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -249,20 +258,22 @@ class SalesApi:
     ) -> RESTResponseType:
         """List Recent Sales
 
-        Return recent sales history from providers with recent-sales support.  Filters: - `item_id` or `market_hash_name` is required - optional `phase` - `providers` limited to sales-capable provider keys - `currency` and `limit`  Behavior: - cache misses trigger live provider fetches during the request - results are cached per item and provider for 1 hour - response is single-page only with a maximum of 50 rows  Response: - request metadata and providers queried - sales records with sticker, charm, and inspect metadata when available - per-provider cache status for hit, miss, error, or unavailable
+        Return recent sales across providers with recent-sales support, newest first.  With no filters, returns the global recent-sales feed ordered by sale time (most recent first). Optional filters narrow the results: - `item_id` — restrict to one catalog item (its canonical market_hash_name and phase are used) - `market_hash_name` (+ optional `phase`) — restrict to one item by name - `providers` — restrict to specific sales-capable provider keys - `currency` — convert values to the target currency  Pagination: - `limit` sets the page size (max 100 for Pro, 1000 for Quant) - pass `cursor` from the previous response's `pagination.next_cursor` to page through results; `pagination.total` is `-1` (count intentionally skipped)  Behavior: - recent-sales data refreshes roughly once every 24 hours, so results may be up to a day old  Response: - request metadata, providers queried, and a cursor pagination footer - sales records with sticker, charm, and inspect metadata when available
 
         :param item_id: Filter by item ID. When provided, canonical market_hash_name and phase from catalog are used and take precedence over request market_hash_name/phase.
         :type item_id: int
-        :param market_hash_name: Exact market_hash_name match (required if item_id not provided). Ignored when item_id is provided.
+        :param market_hash_name: Optional market_hash_name to filter for specific item. Ignored when item_id is provided.
         :type market_hash_name: str
-        :param phase: Filter by phase (when applicable). Ignored when item_id is provided.
+        :param phase: Optional phase to filter (global or combined with market_hash_name). Ignored when item_id is provided.
         :type phase: PhaseName
-        :param providers: Providers to query (provider-key enum values with sales support). Repeat `providers` to pass multiple values.
+        :param providers: Providers to include (provider-key enum values that support recent sales). Repeat `providers` to pass multiple values.
         :type providers: List[RecentSalesProvider]
         :param currency: Target currency. Any ISO 4217 code supported by `/v1/fx` (see `/v1/fx` for the full list). Invalid codes return a 422 validation error.
         :type currency: str
-        :param limit: Maximum number of sales to return. Defaults to the effective tier cap.
+        :param limit: Maximum number of results to return. Defaults to the effective tier cap.
         :type limit: int
+        :param cursor: Cursor for keyset pagination. Use next_cursor from previous response. When provided, offset is ignored and keyset pagination is used for O(1) seek.
+        :type cursor: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -292,6 +303,7 @@ class SalesApi:
             providers=providers,
             currency=currency,
             limit=limit,
+            cursor=cursor,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -322,6 +334,7 @@ class SalesApi:
         providers,
         currency,
         limit,
+        cursor,
         _request_auth,
         _content_type,
         _headers,
@@ -368,6 +381,10 @@ class SalesApi:
         if limit is not None:
             
             _query_params.append(('limit', limit))
+            
+        if cursor is not None:
+            
+            _query_params.append(('cursor', cursor))
             
         # process the header parameters
         # process the form parameters

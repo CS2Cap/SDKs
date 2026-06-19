@@ -18,8 +18,9 @@ import re  # noqa: F401
 import json
 
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional
+from typing_extensions import Annotated
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -32,10 +33,21 @@ class BuyOrderItem(BaseModel):
     phase: Optional[StrictStr] = None
     provider: StrictStr = Field(description="Provider key used by this API.")
     highest_bid: StrictInt = Field(description="Money amount in minor units of the response currency (for example USD cents when currency=USD). Divide by 100 for display.")
+    highest_bid_decimal: Optional[Annotated[str, Field(strict=True)]] = None
     num_bids: StrictInt = Field(description="Num bids value.")
     timestamp: Optional[datetime] = None
     last_updated: Optional[datetime] = None
-    __properties: ClassVar[List[str]] = ["item_id", "market_hash_name", "phase", "provider", "highest_bid", "num_bids", "timestamp", "last_updated"]
+    __properties: ClassVar[List[str]] = ["item_id", "market_hash_name", "phase", "provider", "highest_bid", "highest_bid_decimal", "num_bids", "timestamp", "last_updated"]
+
+    @field_validator('highest_bid_decimal')
+    def highest_bid_decimal_validate_regular_expression(cls, value):
+        """Validates the regular expression"""
+        if value is None:
+            return value
+
+        if not re.match(r"^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$", value):
+            raise ValueError(r"must validate the regular expression /^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$/")
+        return value
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -81,6 +93,11 @@ class BuyOrderItem(BaseModel):
         if self.phase is None and "phase" in self.model_fields_set:
             _dict['phase'] = None
 
+        # set to None if highest_bid_decimal (nullable) is None
+        # and model_fields_set contains the field
+        if self.highest_bid_decimal is None and "highest_bid_decimal" in self.model_fields_set:
+            _dict['highest_bid_decimal'] = None
+
         # set to None if timestamp (nullable) is None
         # and model_fields_set contains the field
         if self.timestamp is None and "timestamp" in self.model_fields_set:
@@ -108,6 +125,7 @@ class BuyOrderItem(BaseModel):
             "phase": obj.get("phase"),
             "provider": obj.get("provider"),
             "highest_bid": obj.get("highest_bid"),
+            "highest_bid_decimal": obj.get("highest_bid_decimal"),
             "num_bids": obj.get("num_bids"),
             "timestamp": obj.get("timestamp"),
             "last_updated": obj.get("last_updated")

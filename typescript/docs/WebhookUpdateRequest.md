@@ -9,6 +9,7 @@ Name | Type
 ------------ | -------------
 `label` | string
 `url` | string
+`platform` | string
 `isActive` | boolean
 
 ## Example
@@ -20,6 +21,7 @@ import type { WebhookUpdateRequest } from 'cs2cap'
 const example = {
   "label": null,
   "url": null,
+  "platform": null,
   "isActive": null,
 } satisfies WebhookUpdateRequest
 

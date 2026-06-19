@@ -7,7 +7,7 @@ Bids response with metadata and pagination.
 
 Name | Type
 ------------ | -------------
-`meta` | [BidsMeta](BidsMeta.md)
+`meta` | [PricesMeta](PricesMeta.md)
 `items` | [Array&lt;BuyOrderItem&gt;](BuyOrderItem.md)
 `pagination` | [PaginationMeta](PaginationMeta.md)
 

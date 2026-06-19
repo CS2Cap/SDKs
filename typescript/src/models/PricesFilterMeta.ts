@@ -14,11 +14,17 @@
 
 import { mapValues } from '../runtime';
 /**
- * Filter metadata for prices endpoint.
+ * Filter metadata for prices and bids endpoints.
  * @export
  * @interface PricesFilterMeta
  */
 export interface PricesFilterMeta {
+    /**
+     * 
+     * @type {number}
+     * @memberof PricesFilterMeta
+     */
+    itemId?: number | null;
     /**
      * 
      * @type {string}
@@ -56,6 +62,7 @@ export function PricesFilterMetaFromJSONTyped(json: any, ignoreDiscriminator: bo
     }
     return {
         
+        'itemId': json['item_id'] == null ? undefined : json['item_id'],
         'marketHashName': json['market_hash_name'] == null ? undefined : json['market_hash_name'],
         'phase': json['phase'] == null ? undefined : json['phase'],
         'requestedProviders': json['requested_providers'] == null ? undefined : json['requested_providers'],
@@ -73,6 +80,7 @@ export function PricesFilterMetaToJSONTyped(value?: PricesFilterMeta | null, ign
 
     return {
         
+        'item_id': value['itemId'],
         'market_hash_name': value['marketHashName'],
         'phase': value['phase'],
         'requested_providers': value['requestedProviders'],

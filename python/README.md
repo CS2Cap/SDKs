@@ -91,11 +91,13 @@ Class | Method | HTTP request | Description
 *BidsApi* | [**list_bids**](docs/BidsApi.md#list_bids) | **GET** /v1/bids | List Bids
 *BidsApi* | [**stream_full_bids_snapshot**](docs/BidsApi.md#stream_full_bids_snapshot) | **POST** /v1/bids | Stream Full Bids Snapshot
 *ForeignExchangeApi* | [**get_fx_rates**](docs/ForeignExchangeApi.md#get_fx_rates) | **GET** /v1/fx | Get Fx Rates
+*ImagesApi* | [**list_game_images**](docs/ImagesApi.md#list_game_images) | **GET** /v1/images | List Game Images
 *InventoryApi* | [**fetch_steam_inventory**](docs/InventoryApi.md#fetch_steam_inventory) | **GET** /v1/inventory/steam | Fetch Steam Inventory
 *InventoryApi* | [**fetch_steam_inventory_by_steam_id**](docs/InventoryApi.md#fetch_steam_inventory_by_steam_id) | **GET** /v1/inventory/steam/lookup | Fetch Steam Inventory by Steam ID
 *ItemsApi* | [**get_item_catalog_metadata**](docs/ItemsApi.md#get_item_catalog_metadata) | **GET** /v1/items/metadata | Get Item Catalog Metadata
 *ItemsApi* | [**list_items**](docs/ItemsApi.md#list_items) | **GET** /v1/items | List Items
 *MarketIntelligenceApi* | [**get_arbitrage_opportunities**](docs/MarketIntelligenceApi.md#get_arbitrage_opportunities) | **GET** /v1/market/arbitrage | Get Arbitrage Opportunities
+*MarketIntelligenceApi* | [**get_deep_price_history_chart**](docs/MarketIntelligenceApi.md#get_deep_price_history_chart) | **GET** /v1/market/history/chart | Get Deep Price History Chart
 *MarketIntelligenceApi* | [**get_indicators**](docs/MarketIntelligenceApi.md#get_indicators) | **GET** /v1/market/indicators | Get Indicators
 *MarketIntelligenceApi* | [**get_item_analytics**](docs/MarketIntelligenceApi.md#get_item_analytics) | **GET** /v1/market/items/{item_id} | Get Item Analytics
 *MarketIntelligenceApi* | [**get_market_analytics_snapshot**](docs/MarketIntelligenceApi.md#get_market_analytics_snapshot) | **GET** /v1/market/items | Get Market Analytics Snapshot
@@ -149,8 +151,6 @@ Class | Method | HTTP request | Description
  - [BatchPricesMeta](docs/BatchPricesMeta.md)
  - [BatchPricesRequest](docs/BatchPricesRequest.md)
  - [BatchPricesResponse](docs/BatchPricesResponse.md)
- - [BidsFilterMeta](docs/BidsFilterMeta.md)
- - [BidsMeta](docs/BidsMeta.md)
  - [BidsResponse](docs/BidsResponse.md)
  - [BuyOrderItem](docs/BuyOrderItem.md)
  - [BuyOrderProvider](docs/BuyOrderProvider.md)
@@ -180,6 +180,10 @@ Class | Method | HTTP request | Description
  - [MarketArbitrageItem](docs/MarketArbitrageItem.md)
  - [MarketArbitrageMeta](docs/MarketArbitrageMeta.md)
  - [MarketArbitrageResponse](docs/MarketArbitrageResponse.md)
+ - [MarketHistoryChartMeta](docs/MarketHistoryChartMeta.md)
+ - [MarketHistoryChartPoint](docs/MarketHistoryChartPoint.md)
+ - [MarketHistoryChartResponse](docs/MarketHistoryChartResponse.md)
+ - [MarketHistoryChartSeries](docs/MarketHistoryChartSeries.md)
  - [MarketIndexGroup](docs/MarketIndexGroup.md)
  - [MarketIndexesData](docs/MarketIndexesData.md)
  - [MarketIndexesMeta](docs/MarketIndexesMeta.md)

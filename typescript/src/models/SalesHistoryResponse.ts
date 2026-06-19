@@ -20,6 +20,13 @@ import {
     SaleRecordDetailToJSON,
     SaleRecordDetailToJSONTyped,
 } from './SaleRecordDetail';
+import type { PaginationMeta } from './PaginationMeta';
+import {
+    PaginationMetaFromJSON,
+    PaginationMetaFromJSONTyped,
+    PaginationMetaToJSON,
+    PaginationMetaToJSONTyped,
+} from './PaginationMeta';
 import type { SalesMeta } from './SalesMeta';
 import {
     SalesMetaFromJSON,
@@ -29,7 +36,7 @@ import {
 } from './SalesMeta';
 
 /**
- * Recent Sales response with request metadata and cache status.
+ * Recent Sales response with request metadata.
  * @export
  * @interface SalesHistoryResponse
  */
@@ -47,25 +54,12 @@ export interface SalesHistoryResponse {
      */
     items: Array<SaleRecordDetail>;
     /**
-     * Per-provider cache outcome map keyed by provider key. `hit` = served from Redis sales cache; `miss` = cache miss then live fetch; `error` = live fetch failed; `unavailable` = provider requested but not available.
-     * @type {{ [key: string]: SalesHistoryResponseCacheStatusEnum; }}
+     * Cursor pagination footer for this page.
+     * @type {PaginationMeta}
      * @memberof SalesHistoryResponse
      */
-    cacheStatus: { [key: string]: SalesHistoryResponseCacheStatusEnum; };
+    pagination: PaginationMeta;
 }
-
-
-/**
- * @export
- */
-export const SalesHistoryResponseCacheStatusEnum = {
-    Hit: 'hit',
-    Miss: 'miss',
-    Error: 'error',
-    Unavailable: 'unavailable'
-} as const;
-export type SalesHistoryResponseCacheStatusEnum = typeof SalesHistoryResponseCacheStatusEnum[keyof typeof SalesHistoryResponseCacheStatusEnum];
-
 
 /**
  * Check if a given object implements the SalesHistoryResponse interface.
@@ -73,7 +67,7 @@ export type SalesHistoryResponseCacheStatusEnum = typeof SalesHistoryResponseCac
 export function instanceOfSalesHistoryResponse(value: object): value is SalesHistoryResponse {
     if (!('meta' in value) || value['meta'] === undefined) return false;
     if (!('items' in value) || value['items'] === undefined) return false;
-    if (!('cacheStatus' in value) || value['cacheStatus'] === undefined) return false;
+    if (!('pagination' in value) || value['pagination'] === undefined) return false;
     return true;
 }
 
@@ -89,7 +83,7 @@ export function SalesHistoryResponseFromJSONTyped(json: any, ignoreDiscriminator
         
         'meta': SalesMetaFromJSON(json['meta']),
         'items': ((json['items'] as Array<any>).map(SaleRecordDetailFromJSON)),
-        'cacheStatus': json['cache_status'],
+        'pagination': PaginationMetaFromJSON(json['pagination']),
     };
 }
 
@@ -106,7 +100,7 @@ export function SalesHistoryResponseToJSONTyped(value?: SalesHistoryResponse | n
         
         'meta': SalesMetaToJSON(value['meta']),
         'items': ((value['items'] as Array<any>).map(SaleRecordDetailToJSON)),
-        'cache_status': value['cacheStatus'],
+        'pagination': PaginationMetaToJSON(value['pagination']),
     };
 }
 

@@ -17,20 +17,19 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr
-from typing import Any, ClassVar, Dict, List
-from cs2cap.models.bids_filter_meta import BidsFilterMeta
+from pydantic import BaseModel, ConfigDict, Field, StrictInt
+from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
 
-class BidsMeta(BaseModel):
+class MarketHistoryChartPoint(BaseModel):
     """
-    Metadata for bids response.
+    One daily price point for a provider series.
     """ # noqa: E501
-    currency: StrictStr = Field(description="ISO 4217 currency code for the value context.")
-    filters: BidsFilterMeta = Field(description="Effective request filters applied to this response.")
-    providers_queried: List[StrictStr] = Field(description="Provider keys queried while building this response.")
-    __properties: ClassVar[List[str]] = ["currency", "filters", "providers_queried"]
+    t: StrictInt = Field(description="UTC day bucket as a Unix timestamp (seconds, midnight).")
+    price: StrictInt = Field(description="Closing price in minor units of the response currency.")
+    qty: Optional[StrictInt] = None
+    __properties: ClassVar[List[str]] = ["t", "price", "qty"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -50,7 +49,7 @@ class BidsMeta(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of BidsMeta from a JSON string"""
+        """Create an instance of MarketHistoryChartPoint from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -71,14 +70,16 @@ class BidsMeta(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # override the default output from pydantic by calling `to_dict()` of filters
-        if self.filters:
-            _dict['filters'] = self.filters.to_dict()
+        # set to None if qty (nullable) is None
+        # and model_fields_set contains the field
+        if self.qty is None and "qty" in self.model_fields_set:
+            _dict['qty'] = None
+
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of BidsMeta from a dict"""
+        """Create an instance of MarketHistoryChartPoint from a dict"""
         if obj is None:
             return None
 
@@ -86,9 +87,9 @@ class BidsMeta(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "currency": obj.get("currency"),
-            "filters": BidsFilterMeta.from_dict(obj["filters"]) if obj.get("filters") is not None else None,
-            "providers_queried": obj.get("providers_queried")
+            "t": obj.get("t"),
+            "price": obj.get("price"),
+            "qty": obj.get("qty")
         })
         return _obj
 

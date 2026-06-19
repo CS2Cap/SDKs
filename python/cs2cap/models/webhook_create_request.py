@@ -28,8 +28,9 @@ class WebhookCreateRequest(BaseModel):
     """ # noqa: E501
     label: StrictStr = Field(description="User-defined label for this destination.")
     url: StrictStr = Field(description="Destination URL. Must be HTTP or HTTPS.")
+    platform: Optional[StrictStr] = Field(default='custom', description="Delivery platform key: custom, discord, telegram, or google_sheets.")
     is_active: Optional[StrictBool] = Field(default=True, description="Whether this destination should be active immediately.")
-    __properties: ClassVar[List[str]] = ["label", "url", "is_active"]
+    __properties: ClassVar[List[str]] = ["label", "url", "platform", "is_active"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -84,6 +85,7 @@ class WebhookCreateRequest(BaseModel):
         _obj = cls.model_validate({
             "label": obj.get("label"),
             "url": obj.get("url"),
+            "platform": obj.get("platform") if obj.get("platform") is not None else 'custom',
             "is_active": obj.get("is_active") if obj.get("is_active") is not None else True
         })
         return _obj

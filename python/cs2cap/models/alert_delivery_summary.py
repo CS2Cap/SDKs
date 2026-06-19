@@ -32,12 +32,13 @@ class AlertDeliverySummary(BaseModel):
     delivery_id: Optional[StrictStr] = None
     endpoint_id: Optional[StrictStr] = None
     endpoint_label: Optional[StrictStr] = None
+    platform: Optional[StrictStr] = None
     attempt_count: Optional[StrictInt] = None
     last_http_status: Optional[StrictInt] = None
     next_attempt_at: Optional[datetime] = None
     error: Optional[StrictStr] = None
     created_at: datetime = Field(description="ISO 8601 UTC timestamp when this delivery row was created.")
-    __properties: ClassVar[List[str]] = ["channel", "status", "delivery_id", "endpoint_id", "endpoint_label", "attempt_count", "last_http_status", "next_attempt_at", "error", "created_at"]
+    __properties: ClassVar[List[str]] = ["channel", "status", "delivery_id", "endpoint_id", "endpoint_label", "platform", "attempt_count", "last_http_status", "next_attempt_at", "error", "created_at"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -93,6 +94,11 @@ class AlertDeliverySummary(BaseModel):
         if self.endpoint_label is None and "endpoint_label" in self.model_fields_set:
             _dict['endpoint_label'] = None
 
+        # set to None if platform (nullable) is None
+        # and model_fields_set contains the field
+        if self.platform is None and "platform" in self.model_fields_set:
+            _dict['platform'] = None
+
         # set to None if attempt_count (nullable) is None
         # and model_fields_set contains the field
         if self.attempt_count is None and "attempt_count" in self.model_fields_set:
@@ -130,6 +136,7 @@ class AlertDeliverySummary(BaseModel):
             "delivery_id": obj.get("delivery_id"),
             "endpoint_id": obj.get("endpoint_id"),
             "endpoint_label": obj.get("endpoint_label"),
+            "platform": obj.get("platform"),
             "attempt_count": obj.get("attempt_count"),
             "last_http_status": obj.get("last_http_status"),
             "next_attempt_at": obj.get("next_attempt_at"),

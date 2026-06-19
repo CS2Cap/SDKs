@@ -37,6 +37,7 @@ class TestWebhookCreateRequest(unittest.TestCase):
             return WebhookCreateRequest(
                 label = '',
                 url = '',
+                platform = 'custom',
                 is_active = True
             )
         else:

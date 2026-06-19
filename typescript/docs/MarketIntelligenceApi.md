@@ -5,6 +5,7 @@ All URIs are relative to *https://api.cs2c.app*
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
 | [**getArbitrageOpportunities**](MarketIntelligenceApi.md#getarbitrageopportunities) | **GET** /v1/market/arbitrage | Get Arbitrage Opportunities |
+| [**getDeepPriceHistoryChart**](MarketIntelligenceApi.md#getdeeppricehistorychart) | **GET** /v1/market/history/chart | Get Deep Price History Chart |
 | [**getIndicators**](MarketIntelligenceApi.md#getindicators) | **GET** /v1/market/indicators | Get Indicators |
 | [**getItemAnalytics**](MarketIntelligenceApi.md#getitemanalytics) | **GET** /v1/market/items/{item_id} | Get Item Analytics |
 | [**getMarketAnalyticsSnapshot**](MarketIntelligenceApi.md#getmarketanalyticssnapshot) | **GET** /v1/market/items | Get Market Analytics Snapshot |
@@ -18,7 +19,7 @@ All URIs are relative to *https://api.cs2c.app*
 
 Get Arbitrage Opportunities
 
-Scan providers for cross-market arbitrage opportunities.  Filters: - &#x60;min_spread_pct&#x60; - &#x60;providers_buy&#x60; and &#x60;providers_sell&#x60; (sell-side limited to buy-order providers) - offset pagination via &#x60;offset&#x60;  Response: - opportunities ranked by estimated net profit in USD with buy-side and sell-side provider context  Tier: Quant-only.
+Scan providers for cross-market arbitrage opportunities.  Filters: - &#x60;min_spread_pct&#x60; - &#x60;providers_buy&#x60; and &#x60;providers_sell&#x60; (sell-side limited to buy-order providers) - offset pagination via &#x60;offset&#x60;  Response: - opportunities ranked by estimated net profit in USD with buy-side and sell-side provider context - pagination total reflects the capped set of ranked opportunities, not a count of all possible matches  Tier: Quant-only.
 
 ### Example
 
@@ -96,6 +97,104 @@ example().catch(console.error);
 | **429** | Rate limit exceeded (burst or monthly quota). |  * Retry-After - Seconds to wait before retrying when present. <br>  * X-RateLimit-Tier - Authenticated caller tier code. <br>  * X-RateLimit-Limit - Request limit for the rate-limit window that was exceeded. <br>  * X-RateLimit-Remaining - Remaining requests in the rate-limit window that was exceeded. <br>  * X-RateLimit-Reset - Seconds until the rate-limit window resets. <br>  |
 | **422** | Request validation failed. The detail list contains field-specific validation errors. |  * X-RateLimit-Tier - Authenticated caller tier code when available. <br>  |
 | **400** | Invalid cursor or unsupported cursor parameter. |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
+## getDeepPriceHistoryChart
+
+> MarketHistoryChartResponse getDeepPriceHistoryChart(itemId, marketHashName, providers, start, end, lookback, currency, includeDefunct)
+
+Get Deep Price History Chart
+
+Per-provider daily price history.  Returns one price point per provider per UTC day, spanning years of history up to the present. Prices are in minor units of the response currency; &#x60;&#x60;qty&#x60;&#x60; is nullable.  Providers that have shut down are excluded by default; pass &#x60;&#x60;include_defunct&#x3D;true&#x60;&#x60; to include their historical series.  **Tier**: Quant-only.
+
+### Example
+
+```ts
+import {
+  Configuration,
+  MarketIntelligenceApi,
+} from 'cs2cap';
+import type { GetDeepPriceHistoryChartRequest } from 'cs2cap';
+
+async function example() {
+  console.log("🚀 Testing cs2cap SDK...");
+  const config = new Configuration({ 
+    // Configure HTTP bearer authorization: BearerAuth
+    accessToken: "YOUR BEARER TOKEN",
+  });
+  const api = new MarketIntelligenceApi(config);
+
+  const body = {
+    // number | Normalized catalog item ID (or use market_hash_name). (optional)
+    itemId: 56,
+    // string | Market hash name (alternative to item_id). (optional)
+    marketHashName: marketHashName_example,
+    // Array<string> | Provider key(s). Repeatable. Omit for all providers with data. (optional)
+    providers: ...,
+    // Date | ISO 8601 UTC start of the window. (optional)
+    start: 2013-10-20T19:20:30+01:00,
+    // Date | ISO 8601 UTC end of the window. (optional)
+    end: 2013-10-20T19:20:30+01:00,
+    // number | Window length in days; overrides start. (optional)
+    lookback: 56,
+    // string | Target currency for returned prices. Default: USD. (optional)
+    currency: currency_example,
+    // boolean | Include providers that have shut down but still have historical data (e.g. GamerPay, BitSkins). Defaults to false. (optional)
+    includeDefunct: true,
+  } satisfies GetDeepPriceHistoryChartRequest;
+
+  try {
+    const data = await api.getDeepPriceHistoryChart(body);
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **itemId** | `number` | Normalized catalog item ID (or use market_hash_name). | [Optional] [Defaults to `undefined`] |
+| **marketHashName** | `string` | Market hash name (alternative to item_id). | [Optional] [Defaults to `undefined`] |
+| **providers** | `Array<string>` | Provider key(s). Repeatable. Omit for all providers with data. | [Optional] |
+| **start** | `Date` | ISO 8601 UTC start of the window. | [Optional] [Defaults to `undefined`] |
+| **end** | `Date` | ISO 8601 UTC end of the window. | [Optional] [Defaults to `undefined`] |
+| **lookback** | `number` | Window length in days; overrides start. | [Optional] [Defaults to `undefined`] |
+| **currency** | `string` | Target currency for returned prices. Default: USD. | [Optional] [Defaults to `&#39;USD&#39;`] |
+| **includeDefunct** | `boolean` | Include providers that have shut down but still have historical data (e.g. GamerPay, BitSkins). Defaults to false. | [Optional] [Defaults to `false`] |
+
+### Return type
+
+[**MarketHistoryChartResponse**](MarketHistoryChartResponse.md)
+
+### Authorization
+
+[BearerAuth](../README.md#BearerAuth)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: `application/json`
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | Successful Response |  -  |
+| **401** | Missing or invalid authentication credentials. |  -  |
+| **403** | Analytics tier required to access this endpoint. |  -  |
+| **429** | Rate limit exceeded (burst or monthly quota). |  * Retry-After - Seconds to wait before retrying when present. <br>  * X-RateLimit-Tier - Authenticated caller tier code. <br>  * X-RateLimit-Limit - Request limit for the rate-limit window that was exceeded. <br>  * X-RateLimit-Remaining - Remaining requests in the rate-limit window that was exceeded. <br>  * X-RateLimit-Reset - Seconds until the rate-limit window resets. <br>  |
+| **422** | Request validation failed. The detail list contains field-specific validation errors. |  * X-RateLimit-Tier - Authenticated caller tier code when available. <br>  |
+| **400** | Invalid parameters |  -  |
+| **404** | Item not found |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
@@ -194,7 +293,7 @@ example().catch(console.error);
 
 Get Item Analytics
 
-Return per-item market analytics across providers.  Includes: - best ask, best bid, and spread summary - item-level liquidity summary and provider-level price/depth/volume metrics - coverage diagnostics showing which providers contributed data  Liquidity is always scored against the 24h horizon. Provider volume fields remain literal trailing 24h/7d depletion metrics.  Tier: Pro and Quant.
+Return per-item market analytics across providers.  Includes: - best ask, best bid, and spread summary - item-level liquidity summary and provider-level price/depth/volume metrics - coverage diagnostics showing which providers contributed data  Liquidity is always scored against the 24h horizon. Provider volume fields are trailing 24h and 7d totals.  Tier: Pro and Quant.
 
 ### Example
 
@@ -270,7 +369,7 @@ example().catch(console.error);
 
 Get Market Analytics Snapshot
 
-Return the full market as a cached, summary-only snapshot.  Includes: - one row per catalog item with the same summary fields exposed by the detail route - no pagination and no provider-level payloads - rank-ordered output using &#x60;rank asc, item_id asc&#x60;  Window selection uses preset &#x60;timeframe&#x60; only. The selected timeframe affects liquidity fields only. Trade windows remain fixed at 24h, 7d, and 30d.  Tier: Pro and Quant.
+Return the full market as a summary-only snapshot.  Includes: - one row per catalog item with the same summary fields exposed by the detail route - no pagination and no provider-level payloads - rank-ordered output using &#x60;rank asc, item_id asc&#x60;  Liquidity reflects the 24h horizon; trade windows are 24h, 7d, and 30d.  Tier: Pro and Quant.
 
 ### Example
 
@@ -327,7 +426,7 @@ This endpoint does not need any parameter.
 | **403** | Analytics tier required to access this endpoint. |  -  |
 | **429** | Rate limit exceeded (burst or monthly quota). |  * Retry-After - Seconds to wait before retrying when present. <br>  * X-RateLimit-Tier - Authenticated caller tier code. <br>  * X-RateLimit-Limit - Request limit for the rate-limit window that was exceeded. <br>  * X-RateLimit-Remaining - Remaining requests in the rate-limit window that was exceeded. <br>  * X-RateLimit-Reset - Seconds until the rate-limit window resets. <br>  |
 | **422** | Request validation failed. The detail list contains field-specific validation errors. |  * X-RateLimit-Tier - Authenticated caller tier code when available. <br>  |
-| **503** | Snapshot cache unavailable and initial build failed. |  -  |
+| **503** | Market data is temporarily unavailable; retry shortly. |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
@@ -338,7 +437,7 @@ This endpoint does not need any parameter.
 
 Get Market Cap Indexes
 
-Aggregate the cached 24h market snapshot into category-level indexes.  Supports grouping by &#x60;item_type&#x60; or &#x60;weapon_type&#x60;. Items are excluded from market cap totals when bid/ask/marketcap data is incomplete or spread exceeds the internal spread threshold.  Response: - no pagination - groups sorted by &#x60;marketcap_usd desc&#x60; - totals computed from the same filtered item set  Tier: Quant-only.
+Aggregate the 24h market into category-level indexes.  Supports grouping by &#x60;item_type&#x60; or &#x60;weapon_type&#x60;. Items are excluded from market cap totals when bid/ask/marketcap data is incomplete or spread exceeds the minimum threshold.  Response: - no pagination - groups sorted by &#x60;marketcap_usd desc&#x60; - totals computed from the same filtered item set  Tier: Quant-only.
 
 ### Example
 
@@ -403,7 +502,7 @@ example().catch(console.error);
 | **403** | Analytics tier required to access this endpoint. |  -  |
 | **429** | Rate limit exceeded (burst or monthly quota). |  * Retry-After - Seconds to wait before retrying when present. <br>  * X-RateLimit-Tier - Authenticated caller tier code. <br>  * X-RateLimit-Limit - Request limit for the rate-limit window that was exceeded. <br>  * X-RateLimit-Remaining - Remaining requests in the rate-limit window that was exceeded. <br>  * X-RateLimit-Reset - Seconds until the rate-limit window resets. <br>  |
 | **422** | Request validation failed. The detail list contains field-specific validation errors. |  * X-RateLimit-Tier - Authenticated caller tier code when available. <br>  |
-| **503** | Snapshot cache unavailable and initial build failed. |  -  |
+| **503** | Market data is temporarily unavailable; retry shortly. |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 

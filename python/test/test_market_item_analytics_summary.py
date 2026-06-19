@@ -58,6 +58,8 @@ class TestMarketItemAnalyticsSummary(unittest.TestCase):
                 listing_score = 56,
                 gap_score = 56,
                 volume_score = 56,
+                stability_score = 56,
+                external_score = 56,
                 liquidity_last_updated = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f')
             )
         else:

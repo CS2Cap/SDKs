@@ -41,6 +41,7 @@ export interface ListRecentSalesRequest {
     providers?: Array<RecentSalesProvider> | null;
     currency?: string;
     limit?: number | null;
+    cursor?: string | null;
 }
 
 /**
@@ -78,6 +79,10 @@ export class SalesApi extends runtime.BaseAPI {
             queryParameters['limit'] = requestParameters['limit'];
         }
 
+        if (requestParameters['cursor'] != null) {
+            queryParameters['cursor'] = requestParameters['cursor'];
+        }
+
         const headerParameters: runtime.HTTPHeaders = {};
 
         if (this.configuration && this.configuration.accessToken) {
@@ -100,7 +105,7 @@ export class SalesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Return recent sales history from providers with recent-sales support.  Filters: - `item_id` or `market_hash_name` is required - optional `phase` - `providers` limited to sales-capable provider keys - `currency` and `limit`  Behavior: - cache misses trigger live provider fetches during the request - results are cached per item and provider for 1 hour - response is single-page only with a maximum of 50 rows  Response: - request metadata and providers queried - sales records with sticker, charm, and inspect metadata when available - per-provider cache status for hit, miss, error, or unavailable
+     * Return recent sales across providers with recent-sales support, newest first.  With no filters, returns the global recent-sales feed ordered by sale time (most recent first). Optional filters narrow the results: - `item_id` — restrict to one catalog item (its canonical market_hash_name and phase are used) - `market_hash_name` (+ optional `phase`) — restrict to one item by name - `providers` — restrict to specific sales-capable provider keys - `currency` — convert values to the target currency  Pagination: - `limit` sets the page size (max 100 for Pro, 1000 for Quant) - pass `cursor` from the previous response\'s `pagination.next_cursor` to page through results; `pagination.total` is `-1` (count intentionally skipped)  Behavior: - recent-sales data refreshes roughly once every 24 hours, so results may be up to a day old  Response: - request metadata, providers queried, and a cursor pagination footer - sales records with sticker, charm, and inspect metadata when available
      * List Recent Sales
      */
     async listRecentSalesRaw(requestParameters: ListRecentSalesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SalesHistoryResponse>> {
@@ -111,7 +116,7 @@ export class SalesApi extends runtime.BaseAPI {
     }
 
     /**
-     * Return recent sales history from providers with recent-sales support.  Filters: - `item_id` or `market_hash_name` is required - optional `phase` - `providers` limited to sales-capable provider keys - `currency` and `limit`  Behavior: - cache misses trigger live provider fetches during the request - results are cached per item and provider for 1 hour - response is single-page only with a maximum of 50 rows  Response: - request metadata and providers queried - sales records with sticker, charm, and inspect metadata when available - per-provider cache status for hit, miss, error, or unavailable
+     * Return recent sales across providers with recent-sales support, newest first.  With no filters, returns the global recent-sales feed ordered by sale time (most recent first). Optional filters narrow the results: - `item_id` — restrict to one catalog item (its canonical market_hash_name and phase are used) - `market_hash_name` (+ optional `phase`) — restrict to one item by name - `providers` — restrict to specific sales-capable provider keys - `currency` — convert values to the target currency  Pagination: - `limit` sets the page size (max 100 for Pro, 1000 for Quant) - pass `cursor` from the previous response\'s `pagination.next_cursor` to page through results; `pagination.total` is `-1` (count intentionally skipped)  Behavior: - recent-sales data refreshes roughly once every 24 hours, so results may be up to a day old  Response: - request metadata, providers queried, and a cursor pagination footer - sales records with sticker, charm, and inspect metadata when available
      * List Recent Sales
      */
     async listRecentSales(requestParameters: ListRecentSalesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SalesHistoryResponse> {

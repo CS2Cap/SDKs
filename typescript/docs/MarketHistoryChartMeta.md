@@ -1,27 +1,33 @@
 
-# BidsMeta
+# MarketHistoryChartMeta
 
-Metadata for bids response.
+Metadata for /v1/market/history/chart.
 
 ## Properties
 
 Name | Type
 ------------ | -------------
+`itemId` | number
+`marketHashName` | string
 `currency` | string
-`filters` | [BidsFilterMeta](BidsFilterMeta.md)
-`providersQueried` | Array&lt;string&gt;
+`start` | Date
+`end` | Date
+`providers` | Array&lt;string&gt;
 
 ## Example
 
 ```typescript
-import type { BidsMeta } from 'cs2cap'
+import type { MarketHistoryChartMeta } from 'cs2cap'
 
 // TODO: Update the object below with actual values
 const example = {
+  "itemId": null,
+  "marketHashName": null,
   "currency": null,
-  "filters": null,
-  "providersQueried": null,
-} satisfies BidsMeta
+  "start": null,
+  "end": null,
+  "providers": null,
+} satisfies MarketHistoryChartMeta
 
 console.log(example)
 
@@ -30,7 +36,7 @@ const exampleJSON: string = JSON.stringify(example)
 console.log(exampleJSON)
 
 // Parse the JSON string back to an object
-const exampleParsed = JSON.parse(exampleJSON) as BidsMeta
+const exampleParsed = JSON.parse(exampleJSON) as MarketHistoryChartMeta
 console.log(exampleParsed)
 ```
 

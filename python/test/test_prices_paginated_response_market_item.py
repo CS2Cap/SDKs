@@ -38,22 +38,10 @@ class TestPricesPaginatedResponseMarketItem(unittest.TestCase):
                 meta = cs2cap.models.prices_meta.PricesMeta(
                     currency = '', 
                     filters = null, 
-                    returned_providers = [
+                    providers_queried = [
                         ''
                         ], ),
-                items = [
-                    cs2cap.models.market_item.MarketItem(
-                        provider = '', 
-                        item_id = 56, 
-                        market_hash_name = '', 
-                        phase = '', 
-                        lowest_ask = 56, 
-                        quantity = 56, 
-                        link = '', 
-                        url = '', 
-                        timestamp = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
-                        last_updated = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
-                    ],
+                items = ERROR_TO_EXAMPLE_VALUE,
                 pagination = cs2cap.models.pagination_meta.PaginationMeta(
                     limit = 1.0, 
                     offset = 0.0, 
@@ -67,22 +55,10 @@ class TestPricesPaginatedResponseMarketItem(unittest.TestCase):
                 meta = cs2cap.models.prices_meta.PricesMeta(
                     currency = '', 
                     filters = null, 
-                    returned_providers = [
+                    providers_queried = [
                         ''
                         ], ),
-                items = [
-                    cs2cap.models.market_item.MarketItem(
-                        provider = '', 
-                        item_id = 56, 
-                        market_hash_name = '', 
-                        phase = '', 
-                        lowest_ask = 56, 
-                        quantity = 56, 
-                        link = '', 
-                        url = '', 
-                        timestamp = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
-                        last_updated = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
-                    ],
+                items = ERROR_TO_EXAMPLE_VALUE,
                 pagination = cs2cap.models.pagination_meta.PaginationMeta(
                     limit = 1.0, 
                     offset = 0.0, 

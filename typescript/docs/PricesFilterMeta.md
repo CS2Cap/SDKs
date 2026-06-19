@@ -1,12 +1,13 @@
 
 # PricesFilterMeta
 
-Filter metadata for prices endpoint.
+Filter metadata for prices and bids endpoints.
 
 ## Properties
 
 Name | Type
 ------------ | -------------
+`itemId` | number
 `marketHashName` | string
 `phase` | string
 `requestedProviders` | Array&lt;string&gt;
@@ -18,6 +19,7 @@ import type { PricesFilterMeta } from 'cs2cap'
 
 // TODO: Update the object below with actual values
 const example = {
+  "itemId": null,
   "marketHashName": null,
   "phase": null,
   "requestedProviders": null,

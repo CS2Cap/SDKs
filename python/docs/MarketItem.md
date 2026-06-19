@@ -11,6 +11,7 @@ Name | Type | Description | Notes
 **market_hash_name** | **str** | Canonical Steam market hash name for the item. | 
 **phase** | **str** |  | [optional] 
 **lowest_ask** | **int** | Money amount in minor units of the response currency (for example USD cents when currency&#x3D;USD). Divide by 100 for display. | 
+**lowest_ask_decimal** | **str** |  | [optional] 
 **quantity** | **int** | Quantity count for this record. | 
 **link** | **str** |  | [optional] 
 **url** | **str** |  | [optional] 

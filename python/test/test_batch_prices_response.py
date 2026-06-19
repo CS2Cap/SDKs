@@ -43,20 +43,7 @@ class TestBatchPricesResponse(unittest.TestCase):
                         ''
                         ], 
                     generated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), ),
-                items = [
-                    cs2cap.models.batch_price_item.BatchPriceItem(
-                        item_id = 56, 
-                        market_hash_name = '', 
-                        phase = '', 
-                        quotes = [
-                            cs2cap.models.batch_price_quote.BatchPriceQuote(
-                                provider = '', 
-                                lowest_ask = 56, 
-                                quantity = 56, 
-                                timestamp = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
-                                last_updated = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
-                            ], )
-                    ],
+                items = ERROR_TO_EXAMPLE_VALUE,
                 items_not_found = [
                     56
                     ],
@@ -74,20 +61,7 @@ class TestBatchPricesResponse(unittest.TestCase):
                         ''
                         ], 
                     generated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), ),
-                items = [
-                    cs2cap.models.batch_price_item.BatchPriceItem(
-                        item_id = 56, 
-                        market_hash_name = '', 
-                        phase = '', 
-                        quotes = [
-                            cs2cap.models.batch_price_quote.BatchPriceQuote(
-                                provider = '', 
-                                lowest_ask = 56, 
-                                quantity = 56, 
-                                timestamp = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
-                                last_updated = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
-                            ], )
-                    ],
+                items = ERROR_TO_EXAMPLE_VALUE,
                 items_not_found = [
                     56
                     ],

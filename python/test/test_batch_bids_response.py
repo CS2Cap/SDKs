@@ -43,20 +43,7 @@ class TestBatchBidsResponse(unittest.TestCase):
                         ''
                         ], 
                     generated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), ),
-                items = [
-                    cs2cap.models.batch_bid_item.BatchBidItem(
-                        item_id = 56, 
-                        market_hash_name = '', 
-                        phase = '', 
-                        quotes = [
-                            cs2cap.models.batch_bid_quote.BatchBidQuote(
-                                provider = '', 
-                                highest_bid = 56, 
-                                num_bids = 56, 
-                                timestamp = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
-                                last_updated = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
-                            ], )
-                    ],
+                items = ERROR_TO_EXAMPLE_VALUE,
                 items_not_found = [
                     56
                     ],
@@ -74,20 +61,7 @@ class TestBatchBidsResponse(unittest.TestCase):
                         ''
                         ], 
                     generated_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), ),
-                items = [
-                    cs2cap.models.batch_bid_item.BatchBidItem(
-                        item_id = 56, 
-                        market_hash_name = '', 
-                        phase = '', 
-                        quotes = [
-                            cs2cap.models.batch_bid_quote.BatchBidQuote(
-                                provider = '', 
-                                highest_bid = 56, 
-                                num_bids = 56, 
-                                timestamp = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
-                                last_updated = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
-                            ], )
-                    ],
+                items = ERROR_TO_EXAMPLE_VALUE,
                 items_not_found = [
                     56
                     ],

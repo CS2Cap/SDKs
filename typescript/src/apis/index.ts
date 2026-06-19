@@ -6,6 +6,7 @@ export * from './AccountWatchlistApi';
 export * from './AccountWebhooksApi';
 export * from './BidsApi';
 export * from './ForeignExchangeApi';
+export * from './ImagesApi';
 export * from './InventoryApi';
 export * from './ItemsApi';
 export * from './MarketIntelligenceApi';

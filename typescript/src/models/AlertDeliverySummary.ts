@@ -51,6 +51,12 @@ export interface AlertDeliverySummary {
     endpointLabel?: string | null;
     /**
      * 
+     * @type {string}
+     * @memberof AlertDeliverySummary
+     */
+    platform?: string | null;
+    /**
+     * 
      * @type {number}
      * @memberof AlertDeliverySummary
      */
@@ -106,6 +112,7 @@ export function AlertDeliverySummaryFromJSONTyped(json: any, ignoreDiscriminator
         'deliveryId': json['delivery_id'] == null ? undefined : json['delivery_id'],
         'endpointId': json['endpoint_id'] == null ? undefined : json['endpoint_id'],
         'endpointLabel': json['endpoint_label'] == null ? undefined : json['endpoint_label'],
+        'platform': json['platform'] == null ? undefined : json['platform'],
         'attemptCount': json['attempt_count'] == null ? undefined : json['attempt_count'],
         'lastHttpStatus': json['last_http_status'] == null ? undefined : json['last_http_status'],
         'nextAttemptAt': json['next_attempt_at'] == null ? undefined : (new Date(json['next_attempt_at'])),
@@ -130,6 +137,7 @@ export function AlertDeliverySummaryToJSONTyped(value?: AlertDeliverySummary | n
         'delivery_id': value['deliveryId'],
         'endpoint_id': value['endpointId'],
         'endpoint_label': value['endpointLabel'],
+        'platform': value['platform'],
         'attempt_count': value['attemptCount'],
         'last_http_status': value['lastHttpStatus'],
         'next_attempt_at': value['nextAttemptAt'] == null ? value['nextAttemptAt'] : value['nextAttemptAt'].toISOString(),

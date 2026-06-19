@@ -40,6 +40,7 @@ class TestMarketItem(unittest.TestCase):
                 market_hash_name = '',
                 phase = '',
                 lowest_ask = 56,
+                lowest_ask_decimal = ERROR_TO_EXAMPLE_VALUE,
                 quantity = 56,
                 link = '',
                 url = '',

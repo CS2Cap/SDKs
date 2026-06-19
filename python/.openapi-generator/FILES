@@ -12,6 +12,7 @@ cs2cap/api/account_watchlist_api.py
 cs2cap/api/account_webhooks_api.py
 cs2cap/api/bids_api.py
 cs2cap/api/foreign_exchange_api.py
+cs2cap/api/images_api.py
 cs2cap/api/inventory_api.py
 cs2cap/api/items_api.py
 cs2cap/api/market_intelligence_api.py
@@ -48,8 +49,6 @@ cs2cap/models/batch_price_quote.py
 cs2cap/models/batch_prices_meta.py
 cs2cap/models/batch_prices_request.py
 cs2cap/models/batch_prices_response.py
-cs2cap/models/bids_filter_meta.py
-cs2cap/models/bids_meta.py
 cs2cap/models/bids_response.py
 cs2cap/models/buy_order_item.py
 cs2cap/models/buy_order_provider.py
@@ -79,6 +78,10 @@ cs2cap/models/market_arbitrage_data.py
 cs2cap/models/market_arbitrage_item.py
 cs2cap/models/market_arbitrage_meta.py
 cs2cap/models/market_arbitrage_response.py
+cs2cap/models/market_history_chart_meta.py
+cs2cap/models/market_history_chart_point.py
+cs2cap/models/market_history_chart_response.py
+cs2cap/models/market_history_chart_series.py
 cs2cap/models/market_index_group.py
 cs2cap/models/market_indexes_data.py
 cs2cap/models/market_indexes_meta.py
@@ -190,8 +193,6 @@ docs/BatchPricesMeta.md
 docs/BatchPricesRequest.md
 docs/BatchPricesResponse.md
 docs/BidsApi.md
-docs/BidsFilterMeta.md
-docs/BidsMeta.md
 docs/BidsResponse.md
 docs/BuyOrderItem.md
 docs/BuyOrderProvider.md
@@ -205,6 +206,7 @@ docs/CursorPaginationMeta.md
 docs/ErrorResponse.md
 docs/FXRatesResponse.md
 docs/ForeignExchangeApi.md
+docs/ImagesApi.md
 docs/IndicatorDataCoverage.md
 docs/IndicatorMomentum.md
 docs/IndicatorSignals.md
@@ -224,6 +226,10 @@ docs/MarketArbitrageData.md
 docs/MarketArbitrageItem.md
 docs/MarketArbitrageMeta.md
 docs/MarketArbitrageResponse.md
+docs/MarketHistoryChartMeta.md
+docs/MarketHistoryChartPoint.md
+docs/MarketHistoryChartResponse.md
+docs/MarketHistoryChartSeries.md
 docs/MarketIndexGroup.md
 docs/MarketIndexesData.md
 docs/MarketIndexesMeta.md
@@ -345,8 +351,6 @@ test/test_batch_prices_meta.py
 test/test_batch_prices_request.py
 test/test_batch_prices_response.py
 test/test_bids_api.py
-test/test_bids_filter_meta.py
-test/test_bids_meta.py
 test/test_bids_response.py
 test/test_buy_order_item.py
 test/test_buy_order_provider.py
@@ -360,6 +364,7 @@ test/test_cursor_pagination_meta.py
 test/test_error_response.py
 test/test_foreign_exchange_api.py
 test/test_fx_rates_response.py
+test/test_images_api.py
 test/test_indicator_data_coverage.py
 test/test_indicator_momentum.py
 test/test_indicator_signals.py
@@ -379,6 +384,10 @@ test/test_market_arbitrage_data.py
 test/test_market_arbitrage_item.py
 test/test_market_arbitrage_meta.py
 test/test_market_arbitrage_response.py
+test/test_market_history_chart_meta.py
+test/test_market_history_chart_point.py
+test/test_market_history_chart_response.py
+test/test_market_history_chart_series.py
 test/test_market_index_group.py
 test/test_market_indexes_data.py
 test/test_market_indexes_meta.py

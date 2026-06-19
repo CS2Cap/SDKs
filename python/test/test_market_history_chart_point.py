@@ -14,10 +14,10 @@
 
 import unittest
 
-from cs2cap.models.bids_filter_meta import BidsFilterMeta
+from cs2cap.models.market_history_chart_point import MarketHistoryChartPoint
 
-class TestBidsFilterMeta(unittest.TestCase):
-    """BidsFilterMeta unit test stubs"""
+class TestMarketHistoryChartPoint(unittest.TestCase):
+    """MarketHistoryChartPoint unit test stubs"""
 
     def setUp(self):
         pass
@@ -25,30 +25,29 @@ class TestBidsFilterMeta(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def make_instance(self, include_optional) -> BidsFilterMeta:
-        """Test BidsFilterMeta
+    def make_instance(self, include_optional) -> MarketHistoryChartPoint:
+        """Test MarketHistoryChartPoint
             include_optional is a boolean, when False only required
             params are included, when True both required and
             optional params are included """
-        # uncomment below to create an instance of `BidsFilterMeta`
+        # uncomment below to create an instance of `MarketHistoryChartPoint`
         """
-        model = BidsFilterMeta()
+        model = MarketHistoryChartPoint()
         if include_optional:
-            return BidsFilterMeta(
-                item_id = 56,
-                market_hash_name = '',
-                phase = '',
-                requested_providers = [
-                    ''
-                    ]
+            return MarketHistoryChartPoint(
+                t = 56,
+                price = 56,
+                qty = 56
             )
         else:
-            return BidsFilterMeta(
+            return MarketHistoryChartPoint(
+                t = 56,
+                price = 56,
         )
         """
 
-    def testBidsFilterMeta(self):
-        """Test BidsFilterMeta"""
+    def testMarketHistoryChartPoint(self):
+        """Test MarketHistoryChartPoint"""
         # inst_req_only = self.make_instance(include_optional=False)
         # inst_req_and_optional = self.make_instance(include_optional=True)
 

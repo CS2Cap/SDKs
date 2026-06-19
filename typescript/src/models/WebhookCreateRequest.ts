@@ -32,6 +32,12 @@ export interface WebhookCreateRequest {
      */
     url: string;
     /**
+     * Delivery platform key: custom, discord, telegram, or google_sheets.
+     * @type {string}
+     * @memberof WebhookCreateRequest
+     */
+    platform?: string;
+    /**
      * Whether this destination should be active immediately.
      * @type {boolean}
      * @memberof WebhookCreateRequest
@@ -60,6 +66,7 @@ export function WebhookCreateRequestFromJSONTyped(json: any, ignoreDiscriminator
         
         'label': json['label'],
         'url': json['url'],
+        'platform': json['platform'] == null ? undefined : json['platform'],
         'isActive': json['is_active'] == null ? undefined : json['is_active'],
     };
 }
@@ -77,6 +84,7 @@ export function WebhookCreateRequestToJSONTyped(value?: WebhookCreateRequest | n
         
         'label': value['label'],
         'url': value['url'],
+        'platform': value['platform'],
         'is_active': value['isActive'],
     };
 }

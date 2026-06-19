@@ -9,6 +9,7 @@ Name | Type
 ------------ | -------------
 `provider` | string
 `highestBid` | number
+`highestBidDecimal` | string
 `numBids` | number
 `timestamp` | Date
 `lastUpdated` | Date
@@ -22,6 +23,7 @@ import type { BatchBidQuote } from 'cs2cap'
 const example = {
   "provider": null,
   "highestBid": null,
+  "highestBidDecimal": null,
   "numBids": null,
   "timestamp": null,
   "lastUpdated": null,

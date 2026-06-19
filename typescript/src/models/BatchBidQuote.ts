@@ -32,6 +32,12 @@ export interface BatchBidQuote {
      */
     highestBid: number;
     /**
+     * 
+     * @type {string}
+     * @memberof BatchBidQuote
+     */
+    highestBidDecimal?: string | null;
+    /**
      * Number of active buy orders.
      * @type {number}
      * @memberof BatchBidQuote
@@ -73,6 +79,7 @@ export function BatchBidQuoteFromJSONTyped(json: any, ignoreDiscriminator: boole
         
         'provider': json['provider'],
         'highestBid': json['highest_bid'],
+        'highestBidDecimal': json['highest_bid_decimal'] == null ? undefined : json['highest_bid_decimal'],
         'numBids': json['num_bids'],
         'timestamp': json['timestamp'] == null ? undefined : (new Date(json['timestamp'])),
         'lastUpdated': json['last_updated'] == null ? undefined : (new Date(json['last_updated'])),
@@ -92,6 +99,7 @@ export function BatchBidQuoteToJSONTyped(value?: BatchBidQuote | null, ignoreDis
         
         'provider': value['provider'],
         'highest_bid': value['highestBid'],
+        'highest_bid_decimal': value['highestBidDecimal'],
         'num_bids': value['numBids'],
         'timestamp': value['timestamp'] == null ? value['timestamp'] : value['timestamp'].toISOString(),
         'last_updated': value['lastUpdated'] == null ? value['lastUpdated'] : value['lastUpdated'].toISOString(),

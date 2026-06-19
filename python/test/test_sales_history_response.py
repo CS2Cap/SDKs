@@ -66,9 +66,13 @@ class TestSalesHistoryResponse(unittest.TestCase):
                             ], 
                         inspect = null, )
                     ],
-                cache_status = {
-                    'hit' : 'hit'
-                    }
+                pagination = cs2cap.models.pagination_meta.PaginationMeta(
+                    limit = 1.0, 
+                    offset = 0.0, 
+                    total = -1.0, 
+                    has_next = True, 
+                    has_prev = True, 
+                    next_cursor = '', )
             )
         else:
             return SalesHistoryResponse(
@@ -103,9 +107,13 @@ class TestSalesHistoryResponse(unittest.TestCase):
                             ], 
                         inspect = null, )
                     ],
-                cache_status = {
-                    'hit' : 'hit'
-                    },
+                pagination = cs2cap.models.pagination_meta.PaginationMeta(
+                    limit = 1.0, 
+                    offset = 0.0, 
+                    total = -1.0, 
+                    has_next = True, 
+                    has_prev = True, 
+                    next_cursor = '', ),
         )
         """
 

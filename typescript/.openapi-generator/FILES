@@ -31,8 +31,6 @@ docs/BatchPricesMeta.md
 docs/BatchPricesRequest.md
 docs/BatchPricesResponse.md
 docs/BidsApi.md
-docs/BidsFilterMeta.md
-docs/BidsMeta.md
 docs/BidsResponse.md
 docs/BuyOrderItem.md
 docs/BuyOrderProvider.md
@@ -46,6 +44,7 @@ docs/CursorPaginationMeta.md
 docs/ErrorResponse.md
 docs/FXRatesResponse.md
 docs/ForeignExchangeApi.md
+docs/ImagesApi.md
 docs/IndicatorDataCoverage.md
 docs/IndicatorMomentum.md
 docs/IndicatorSignals.md
@@ -65,6 +64,10 @@ docs/MarketArbitrageData.md
 docs/MarketArbitrageItem.md
 docs/MarketArbitrageMeta.md
 docs/MarketArbitrageResponse.md
+docs/MarketHistoryChartMeta.md
+docs/MarketHistoryChartPoint.md
+docs/MarketHistoryChartResponse.md
+docs/MarketHistoryChartSeries.md
 docs/MarketIndexGroup.md
 docs/MarketIndexesData.md
 docs/MarketIndexesMeta.md
@@ -157,6 +160,7 @@ src/apis/AccountWatchlistApi.ts
 src/apis/AccountWebhooksApi.ts
 src/apis/BidsApi.ts
 src/apis/ForeignExchangeApi.ts
+src/apis/ImagesApi.ts
 src/apis/InventoryApi.ts
 src/apis/ItemsApi.ts
 src/apis/MarketIntelligenceApi.ts
@@ -190,8 +194,6 @@ src/models/BatchPriceQuote.ts
 src/models/BatchPricesMeta.ts
 src/models/BatchPricesRequest.ts
 src/models/BatchPricesResponse.ts
-src/models/BidsFilterMeta.ts
-src/models/BidsMeta.ts
 src/models/BidsResponse.ts
 src/models/BuyOrderItem.ts
 src/models/BuyOrderProvider.ts
@@ -221,6 +223,10 @@ src/models/MarketArbitrageData.ts
 src/models/MarketArbitrageItem.ts
 src/models/MarketArbitrageMeta.ts
 src/models/MarketArbitrageResponse.ts
+src/models/MarketHistoryChartMeta.ts
+src/models/MarketHistoryChartPoint.ts
+src/models/MarketHistoryChartResponse.ts
+src/models/MarketHistoryChartSeries.ts
 src/models/MarketIndexGroup.ts
 src/models/MarketIndexesData.ts
 src/models/MarketIndexesMeta.ts

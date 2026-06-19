@@ -1,11 +1,12 @@
 # PricesFilterMeta
 
-Filter metadata for prices endpoint.
+Filter metadata for prices and bids endpoints.
 
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**item_id** | **int** |  | [optional] 
 **market_hash_name** | **str** |  | [optional] 
 **phase** | **str** |  | [optional] 
 **requested_providers** | **List[str]** |  | [optional] 

@@ -17,19 +17,20 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictStr
+from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
 
 class PricesFilterMeta(BaseModel):
     """
-    Filter metadata for prices endpoint.
+    Filter metadata for prices and bids endpoints.
     """ # noqa: E501
+    item_id: Optional[StrictInt] = None
     market_hash_name: Optional[StrictStr] = None
     phase: Optional[StrictStr] = None
     requested_providers: Optional[List[StrictStr]] = None
-    __properties: ClassVar[List[str]] = ["market_hash_name", "phase", "requested_providers"]
+    __properties: ClassVar[List[str]] = ["item_id", "market_hash_name", "phase", "requested_providers"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -70,6 +71,11 @@ class PricesFilterMeta(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
+        # set to None if item_id (nullable) is None
+        # and model_fields_set contains the field
+        if self.item_id is None and "item_id" in self.model_fields_set:
+            _dict['item_id'] = None
+
         # set to None if market_hash_name (nullable) is None
         # and model_fields_set contains the field
         if self.market_hash_name is None and "market_hash_name" in self.model_fields_set:
@@ -97,6 +103,7 @@ class PricesFilterMeta(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
+            "item_id": obj.get("item_id"),
             "market_hash_name": obj.get("market_hash_name"),
             "phase": obj.get("phase"),
             "requested_providers": obj.get("requested_providers")

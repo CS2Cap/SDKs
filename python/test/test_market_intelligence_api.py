@@ -33,6 +33,13 @@ class TestMarketIntelligenceApi(unittest.TestCase):
         """
         pass
 
+    def test_get_deep_price_history_chart(self) -> None:
+        """Test case for get_deep_price_history_chart
+
+        Get Deep Price History Chart
+        """
+        pass
+
     def test_get_indicators(self) -> None:
         """Test case for get_indicators
 

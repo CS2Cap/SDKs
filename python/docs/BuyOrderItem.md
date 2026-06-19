@@ -11,6 +11,7 @@ Name | Type | Description | Notes
 **phase** | **str** |  | [optional] 
 **provider** | **str** | Provider key used by this API. | 
 **highest_bid** | **int** | Money amount in minor units of the response currency (for example USD cents when currency&#x3D;USD). Divide by 100 for display. | 
+**highest_bid_decimal** | **str** |  | [optional] 
 **num_bids** | **int** | Num bids value. | 
 **timestamp** | **datetime** |  | [optional] 
 **last_updated** | **datetime** |  | [optional] 

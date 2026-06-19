@@ -118,7 +118,7 @@ Behavior:
 - If no filters are provided, returns a broad paginated listing.
 - If `market_hash_name` is Doppler and `phase` is omitted, results aggregate across phases per provider.
 - If `market_hash_name` and `phase` are both provided, only that exact phase is returned.
-- If the item resolves in the catalog but none of the queried providers currently has a
+- If the item exists in the catalog but none of the queried providers currently has a
   listing, returns `200` with an empty `items` array.
 
 Response:
@@ -213,9 +213,9 @@ Name | Type | Description  | Notes
 **200** | Successful Response |  -  |
 **401** | Missing or invalid authentication credentials. |  -  |
 **403** | Authenticated but not permitted to access this resource. |  -  |
-**429** | Rate limit exceeded (burst or monthly quota). |  * Retry-After - Seconds until this API key may request another bids snapshot. <br>  * X-RateLimit-Tier - Authenticated caller tier code when available. <br>  * X-RateLimit-Limit - Request limit for the rate-limit window that was exceeded. <br>  * X-RateLimit-Remaining - Remaining requests in the rate-limit window that was exceeded. <br>  * X-RateLimit-Reset - Seconds until the rate-limit window resets. <br>  |
+**429** | Rate limit exceeded (burst or monthly quota). |  * Retry-After - Seconds until this API key may start another bids stream. <br>  * X-RateLimit-Tier - Authenticated caller tier code when available. <br>  * X-RateLimit-Limit - Request limit for the rate-limit window that was exceeded. <br>  * X-RateLimit-Remaining - Remaining requests in the rate-limit window that was exceeded. <br>  * X-RateLimit-Reset - Seconds until the rate-limit window resets. <br>  |
 **422** | Request validation failed. The detail list contains field-specific validation errors. |  * X-RateLimit-Tier - Authenticated caller tier code when available. <br>  |
-**503** | Indexed prices data unavailable. |  -  |
+**503** | Price data is temporarily unavailable; retry shortly. |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
@@ -235,22 +235,26 @@ Parameters:
 - `currency`: Quote currency (default `USD`).
 
 Notes:
-- If both `start` and `lookback` are sent, `lookback` takes precedence.
+- If `lookback` is sent with `start` or `end`, `lookback` takes precedence.
+  Lookback requests are aligned to completed candle buckets; `1h` lookback
+  windows use a 15-minute freshness buffer before flooring to the hour.
 - Maximum lookback depends on `interval`:
   `5m` up to 7 days, `1h` up to 30 days, `1d` up to 365 days.
 - Free tiers are additionally capped by their tier restrictions and default
   to the maximum allowed window when no explicit lookback is supplied.
 
 Response:
-- `meta`: Item, provider scope, interval, phase, currency, start/end timestamps.
+- `meta`: Item, provider scope, interval, phase, currency, and effective query-window
+  start/end timestamps.
 - `data`: Candle buckets in oldest-to-newest order
   (`t`, `o`, `h`, `l`, `c`, `v`, `q`, `providers`).
-  `o`/`c` are the lowest effective provider prices, `l` is the minimum provider
-  low, `h` is capped at `median(provider_highs) * 1.5`, `v` is the non-negative depletion
-  flow between buckets, and `q` is the summed close-side inventory at bucket end when
-  available. `providers.l` and `providers.h` identify the provider keys contributing the
-  returned low/high values. For `1d` requests starting more than 30 days back, `v` falls
-  back to legacy depletion-derived `volume_qty` and `q` is `null`.
+  `o`/`c` are the best ask prices at the start/end of the bucket, `l` is the
+  lowest ask, `h` is the highest ask (capped to reduce the impact of outliers), `v`
+  is the estimated trade volume derived from inventory changes, and `q` is the total
+  active listings at bucket end when available. `providers.o`, `providers.h`,
+  `providers.l`, and `providers.c` identify the provider keys contributing the
+  returned open/high/low/close values. For `1d` requests starting more than 30 days
+  back, `v` uses an alternate volume estimate and `q` is `null`.
 
 Requirements:
 - Valid API key with access to `/v1/prices/candles`.
@@ -292,7 +296,7 @@ with cs2cap.ApiClient(configuration) as api_client:
     phase = cs2cap.PhaseName() # PhaseName | Filter by phase (e.g., Phase 1, Ruby, Sapphire) (optional)
     start = '2013-10-20T19:20:30+01:00' # datetime | Start timestamp (ISO 8601, inclusive) (optional)
     end = '2013-10-20T19:20:30+01:00' # datetime | End timestamp (ISO 8601, exclusive) (optional)
-    lookback = '7d' # str | Lookback window in days. Use `7d` or plain `7`; both mean 7 days and set start=now-lookback. Free tiers cap this at 30 days. (optional)
+    lookback = '7d' # str | Lookback window in days. Use `7d` or plain `7`; both mean 7 days and select a completed candle-bucket window. Free tiers cap this at 30 days. (optional)
     interval = 1d # str | Time bucket interval (default: `1d`) (optional) (default to 1d)
     fill = False # bool | Fill gaps with forward-filled data (default: false for sparse data) (optional) (default to False)
     currency = 'USD' # str | Target currency. Any ISO 4217 code supported by `/v1/fx` (see `/v1/fx` for the full list). Invalid codes return a 422 validation error. (optional) (default to 'USD')
@@ -318,7 +322,7 @@ Name | Type | Description  | Notes
  **phase** | [**PhaseName**](.md)| Filter by phase (e.g., Phase 1, Ruby, Sapphire) | [optional] 
  **start** | **datetime**| Start timestamp (ISO 8601, inclusive) | [optional] 
  **end** | **datetime**| End timestamp (ISO 8601, exclusive) | [optional] 
- **lookback** | **str**| Lookback window in days. Use &#x60;7d&#x60; or plain &#x60;7&#x60;; both mean 7 days and set start&#x3D;now-lookback. Free tiers cap this at 30 days. | [optional] 
+ **lookback** | **str**| Lookback window in days. Use &#x60;7d&#x60; or plain &#x60;7&#x60;; both mean 7 days and select a completed candle-bucket window. Free tiers cap this at 30 days. | [optional] 
  **interval** | **str**| Time bucket interval (default: &#x60;1d&#x60;) | [optional] [default to 1d]
  **fill** | **bool**| Fill gaps with forward-filled data (default: false for sparse data) | [optional] [default to False]
  **currency** | **str**| Target currency. Any ISO 4217 code supported by &#x60;/v1/fx&#x60; (see &#x60;/v1/fx&#x60; for the full list). Invalid codes return a 422 validation error. | [optional] [default to &#39;USD&#39;]
@@ -476,13 +480,13 @@ Return the full live prices snapshot as an NDJSON stream.
 
 Behavior:
 - pro and quant tiers only
-- requires a real `sk_*` API key; session JWTs are not accepted
+- requires an API key (not a session token)
 - optional `providers` filter; omit to stream all providers
 - fixed USD output
 - `lowest_ask` values are returned in USD minor units
 - one JSON object per line using the `MarketItem` field set
-- the live index is copied into temporary Redis keys so the export is stable for the duration of the stream
-- per-API-key cooldown of 30 seconds for this POST operation
+- per-API-key rolling 24h quota of successful stream starts (pro: 50, quant: 300, per endpoint)
+- max 1 concurrent stream per API key for this endpoint (409 otherwise)
 
 ### Example
 
@@ -551,12 +555,13 @@ Name | Type | Description  | Notes
 
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-**200** | NDJSON stream of the full live prices snapshot in USD. |  * X-Snapshot-Timestamp - UTC timestamp when the snapshot stream started. <br>  * X-Snapshot-Currency - Fixed response currency for every streamed row. <br>  * X-Snapshot-Total - Total indexed rows at stream start, when known. <br>  |
+**200** | NDJSON stream of the full live prices snapshot in USD. |  * X-Snapshot-Timestamp - UTC timestamp when the snapshot stream started. <br>  * X-Snapshot-Currency - Fixed response currency for every streamed row. <br>  * X-Snapshot-Total - Total rows in the stream at start, when known. <br>  * X-RateLimit-Limit - Daily quota of successful stream starts for this endpoint. <br>  * X-RateLimit-Remaining - Remaining stream starts in the rolling 24h window. <br>  * X-RateLimit-Reset - Seconds until the oldest counted start leaves the window. <br>  |
 **401** | Missing or invalid authentication credentials. |  -  |
 **403** | Bulk snapshot access requires a tier with bulk snapshot capability. |  -  |
-**429** | Bulk snapshot cooldown active for this API key. |  * Retry-After - Seconds until this API key may request another bids snapshot. <br>  |
+**429** | Daily bulk stream quota exhausted for this API key. |  * Retry-After - Seconds until this API key may start another bids stream. <br>  * X-RateLimit-Limit - Daily quota of successful stream starts for this endpoint. <br>  * X-RateLimit-Remaining - Remaining stream starts in the rolling 24h window. <br>  * X-RateLimit-Reset - Seconds until the oldest counted start leaves the window. <br>  |
 **422** | Request validation failed. The detail list contains field-specific validation errors. |  * X-RateLimit-Tier - Authenticated caller tier code when available. <br>  |
-**503** | Indexed prices data unavailable. |  -  |
+**503** | Price data is temporarily unavailable; retry shortly. |  -  |
+**409** | A streaming request is already active for this API key. |  * Retry-After - Seconds until this API key may start another bids stream. <br>  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

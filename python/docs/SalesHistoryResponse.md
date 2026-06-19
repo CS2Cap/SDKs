@@ -1,6 +1,6 @@
 # SalesHistoryResponse
 
-Recent Sales response with request metadata and cache status.
+Recent Sales response with request metadata.
 
 ## Properties
 
@@ -8,7 +8,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **meta** | [**SalesMeta**](SalesMeta.md) | Response metadata for this payload. | 
 **items** | [**List[SaleRecordDetail]**](SaleRecordDetail.md) | List of returned items. | 
-**cache_status** | **Dict[str, str]** | Per-provider cache outcome map keyed by provider key. &#x60;hit&#x60; &#x3D; served from Redis sales cache; &#x60;miss&#x60; &#x3D; cache miss then live fetch; &#x60;error&#x60; &#x3D; live fetch failed; &#x60;unavailable&#x60; &#x3D; provider requested but not available. | 
+**pagination** | [**PaginationMeta**](PaginationMeta.md) | Cursor pagination footer for this page. | 
 
 ## Example
 

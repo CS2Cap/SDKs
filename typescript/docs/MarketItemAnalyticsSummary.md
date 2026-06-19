@@ -30,6 +30,8 @@ Name | Type
 `listingScore` | number
 `gapScore` | number
 `volumeScore` | number
+`stabilityScore` | number
+`externalScore` | number
 `liquidityLastUpdated` | Date
 
 ## Example
@@ -62,6 +64,8 @@ const example = {
   "listingScore": null,
   "gapScore": null,
   "volumeScore": null,
+  "stabilityScore": null,
+  "externalScore": null,
   "liquidityLastUpdated": null,
 } satisfies MarketItemAnalyticsSummary
 

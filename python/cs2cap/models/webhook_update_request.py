@@ -28,8 +28,9 @@ class WebhookUpdateRequest(BaseModel):
     """ # noqa: E501
     label: Optional[StrictStr] = None
     url: Optional[StrictStr] = None
+    platform: Optional[StrictStr] = None
     is_active: Optional[StrictBool] = None
-    __properties: ClassVar[List[str]] = ["label", "url", "is_active"]
+    __properties: ClassVar[List[str]] = ["label", "url", "platform", "is_active"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -80,6 +81,11 @@ class WebhookUpdateRequest(BaseModel):
         if self.url is None and "url" in self.model_fields_set:
             _dict['url'] = None
 
+        # set to None if platform (nullable) is None
+        # and model_fields_set contains the field
+        if self.platform is None and "platform" in self.model_fields_set:
+            _dict['platform'] = None
+
         # set to None if is_active (nullable) is None
         # and model_fields_set contains the field
         if self.is_active is None and "is_active" in self.model_fields_set:
@@ -99,6 +105,7 @@ class WebhookUpdateRequest(BaseModel):
         _obj = cls.model_validate({
             "label": obj.get("label"),
             "url": obj.get("url"),
+            "platform": obj.get("platform"),
             "is_active": obj.get("is_active")
         })
         return _obj

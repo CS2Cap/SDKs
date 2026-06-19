@@ -51,8 +51,10 @@ class MarketItemAnalyticsSummary(BaseModel):
     listing_score: Optional[StrictInt] = None
     gap_score: Optional[StrictInt] = None
     volume_score: Optional[StrictInt] = None
+    stability_score: Optional[StrictInt] = None
+    external_score: Optional[StrictInt] = None
     liquidity_last_updated: Optional[datetime] = None
-    __properties: ClassVar[List[str]] = ["provider_count", "best_ask_usd", "best_bid_usd", "avg_spread_pct", "total_volume_24h", "liquidity", "supply", "rank", "marketcap", "price_rate_24h", "price_diff_24h", "price_rate_7d", "price_diff_7d", "price_rate_30d", "price_diff_30d", "sales_1d", "sales_7d", "sales_30d", "steam_sales_7d", "steam_sales_30d", "listing_score", "gap_score", "volume_score", "liquidity_last_updated"]
+    __properties: ClassVar[List[str]] = ["provider_count", "best_ask_usd", "best_bid_usd", "avg_spread_pct", "total_volume_24h", "liquidity", "supply", "rank", "marketcap", "price_rate_24h", "price_diff_24h", "price_rate_7d", "price_diff_7d", "price_rate_30d", "price_diff_30d", "sales_1d", "sales_7d", "sales_30d", "steam_sales_7d", "steam_sales_30d", "listing_score", "gap_score", "volume_score", "stability_score", "external_score", "liquidity_last_updated"]
 
     @field_validator('best_ask_usd')
     def best_ask_usd_validate_regular_expression(cls, value):
@@ -243,6 +245,16 @@ class MarketItemAnalyticsSummary(BaseModel):
         if self.volume_score is None and "volume_score" in self.model_fields_set:
             _dict['volume_score'] = None
 
+        # set to None if stability_score (nullable) is None
+        # and model_fields_set contains the field
+        if self.stability_score is None and "stability_score" in self.model_fields_set:
+            _dict['stability_score'] = None
+
+        # set to None if external_score (nullable) is None
+        # and model_fields_set contains the field
+        if self.external_score is None and "external_score" in self.model_fields_set:
+            _dict['external_score'] = None
+
         # set to None if liquidity_last_updated (nullable) is None
         # and model_fields_set contains the field
         if self.liquidity_last_updated is None and "liquidity_last_updated" in self.model_fields_set:
@@ -283,6 +295,8 @@ class MarketItemAnalyticsSummary(BaseModel):
             "listing_score": obj.get("listing_score"),
             "gap_score": obj.get("gap_score"),
             "volume_score": obj.get("volume_score"),
+            "stability_score": obj.get("stability_score"),
+            "external_score": obj.get("external_score"),
             "liquidity_last_updated": obj.get("liquidity_last_updated")
         })
         return _obj

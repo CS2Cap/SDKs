@@ -40,6 +40,7 @@ class TestAlertDeliverySummary(unittest.TestCase):
                 delivery_id = '',
                 endpoint_id = '',
                 endpoint_label = '',
+                platform = '',
                 attempt_count = 56,
                 last_http_status = 56,
                 next_attempt_at = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'),

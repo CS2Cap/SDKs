@@ -26,7 +26,6 @@ class RecentSalesProvider(str, Enum):
     """
     allowed enum values
     """
-    BITSKINS = 'bitskins'
     BUFF163 = 'buff163'
     C5 = 'c5'
     CSFLOAT = 'csfloat'

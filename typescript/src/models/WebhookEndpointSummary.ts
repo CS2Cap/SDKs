@@ -38,6 +38,12 @@ export interface WebhookEndpointSummary {
      */
     url: string;
     /**
+     * Delivery platform key for this destination.
+     * @type {string}
+     * @memberof WebhookEndpointSummary
+     */
+    platform: string;
+    /**
      * Last four characters of the current signing secret.
      * @type {string}
      * @memberof WebhookEndpointSummary
@@ -88,6 +94,7 @@ export function instanceOfWebhookEndpointSummary(value: object): value is Webhoo
     if (!('id' in value) || value['id'] === undefined) return false;
     if (!('label' in value) || value['label'] === undefined) return false;
     if (!('url' in value) || value['url'] === undefined) return false;
+    if (!('platform' in value) || value['platform'] === undefined) return false;
     if (!('secretLast4' in value) || value['secretLast4'] === undefined) return false;
     if (!('isActive' in value) || value['isActive'] === undefined) return false;
     if (!('createdAt' in value) || value['createdAt'] === undefined) return false;
@@ -108,6 +115,7 @@ export function WebhookEndpointSummaryFromJSONTyped(json: any, ignoreDiscriminat
         'id': json['id'],
         'label': json['label'],
         'url': json['url'],
+        'platform': json['platform'],
         'secretLast4': json['secret_last4'],
         'isActive': json['is_active'],
         'lastSuccessAt': json['last_success_at'] == null ? undefined : (new Date(json['last_success_at'])),
@@ -132,6 +140,7 @@ export function WebhookEndpointSummaryToJSONTyped(value?: WebhookEndpointSummary
         'id': value['id'],
         'label': value['label'],
         'url': value['url'],
+        'platform': value['platform'],
         'secret_last4': value['secretLast4'],
         'is_active': value['isActive'],
         'last_success_at': value['lastSuccessAt'] == null ? value['lastSuccessAt'] : value['lastSuccessAt'].toISOString(),

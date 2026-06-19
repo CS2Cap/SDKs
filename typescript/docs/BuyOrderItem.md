@@ -12,6 +12,7 @@ Name | Type
 `phase` | string
 `provider` | string
 `highestBid` | number
+`highestBidDecimal` | string
 `numBids` | number
 `timestamp` | Date
 `lastUpdated` | Date
@@ -28,6 +29,7 @@ const example = {
   "phase": null,
   "provider": null,
   "highestBid": null,
+  "highestBidDecimal": null,
   "numBids": null,
   "timestamp": null,
   "lastUpdated": null,

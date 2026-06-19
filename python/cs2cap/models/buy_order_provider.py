@@ -31,6 +31,7 @@ class BuyOrderProvider(str, Enum):
     C5 = 'c5'
     CSFLOAT = 'csfloat'
     DMARKET = 'dmarket'
+    DUPEFI = 'dupefi'
     ECOSTEAM = 'ecosteam'
     MARKETCSGO = 'marketcsgo'
     STEAM = 'steam'

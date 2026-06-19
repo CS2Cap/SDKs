@@ -18,7 +18,6 @@
  * @export
  */
 export const RecentSalesProvider = {
-    Bitskins: 'bitskins',
     Buff163: 'buff163',
     C5: 'c5',
     Csfloat: 'csfloat',

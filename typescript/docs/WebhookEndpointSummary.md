@@ -10,6 +10,7 @@ Name | Type
 `id` | string
 `label` | string
 `url` | string
+`platform` | string
 `secretLast4` | string
 `isActive` | boolean
 `lastSuccessAt` | Date
@@ -28,6 +29,7 @@ const example = {
   "id": null,
   "label": null,
   "url": null,
+  "platform": null,
   "secretLast4": null,
   "isActive": null,
   "lastSuccessAt": null,

@@ -49,7 +49,11 @@ class TestItemsPaginatedResponseItemOut(unittest.TestCase):
                         def_index = '', 
                         paint_index = 56, 
                         collection = '', 
+                        collection_image = '', 
                         crates = [
+                            ''
+                            ], 
+                        crates_images = [
                             ''
                             ], 
                         rarity_name = '', 
@@ -86,7 +90,11 @@ class TestItemsPaginatedResponseItemOut(unittest.TestCase):
                         def_index = '', 
                         paint_index = 56, 
                         collection = '', 
+                        collection_image = '', 
                         crates = [
+                            ''
+                            ], 
+                        crates_images = [
                             ''
                             ], 
                         rarity_name = '', 

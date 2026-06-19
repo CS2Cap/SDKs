@@ -19,9 +19,9 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field
 from typing import Any, ClassVar, Dict, List
-from cs2cap.models.bids_meta import BidsMeta
 from cs2cap.models.buy_order_item import BuyOrderItem
 from cs2cap.models.pagination_meta import PaginationMeta
+from cs2cap.models.prices_meta import PricesMeta
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -29,9 +29,9 @@ class BidsResponse(BaseModel):
     """
     Bids response with metadata and pagination.
     """ # noqa: E501
-    meta: BidsMeta = Field(description="Response metadata for this payload.")
+    meta: PricesMeta = Field(description="Response metadata for this payload.")
     items: List[BuyOrderItem] = Field(description="List of returned items.")
-    pagination: PaginationMeta = Field(description="Pagination metadata for this response.")
+    pagination: PaginationMeta = Field(description="Offset pagination metadata.")
     __properties: ClassVar[List[str]] = ["meta", "items", "pagination"]
 
     model_config = ConfigDict(
@@ -98,7 +98,7 @@ class BidsResponse(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "meta": BidsMeta.from_dict(obj["meta"]) if obj.get("meta") is not None else None,
+            "meta": PricesMeta.from_dict(obj["meta"]) if obj.get("meta") is not None else None,
             "items": [BuyOrderItem.from_dict(_item) for _item in obj["items"]] if obj.get("items") is not None else None,
             "pagination": PaginationMeta.from_dict(obj["pagination"]) if obj.get("pagination") is not None else None
         })

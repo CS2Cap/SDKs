@@ -38,27 +38,13 @@ class TestBatchBidItem(unittest.TestCase):
                 item_id = 56,
                 market_hash_name = '',
                 phase = '',
-                quotes = [
-                    cs2cap.models.batch_bid_quote.BatchBidQuote(
-                        provider = '', 
-                        highest_bid = 56, 
-                        num_bids = 56, 
-                        timestamp = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
-                        last_updated = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
-                    ]
+                quotes = ERROR_TO_EXAMPLE_VALUE
             )
         else:
             return BatchBidItem(
                 item_id = 56,
                 market_hash_name = '',
-                quotes = [
-                    cs2cap.models.batch_bid_quote.BatchBidQuote(
-                        provider = '', 
-                        highest_bid = 56, 
-                        num_bids = 56, 
-                        timestamp = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
-                        last_updated = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
-                    ],
+                quotes = ERROR_TO_EXAMPLE_VALUE,
         )
         """
 

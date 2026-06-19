@@ -40,6 +40,7 @@ class TestBuyOrderItem(unittest.TestCase):
                 phase = '',
                 provider = '',
                 highest_bid = 56,
+                highest_bid_decimal = ERROR_TO_EXAMPLE_VALUE,
                 num_bids = 56,
                 timestamp = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'),
                 last_updated = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f')

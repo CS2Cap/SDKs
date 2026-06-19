@@ -50,6 +50,12 @@ export interface BuyOrderItem {
      */
     highestBid: number;
     /**
+     * 
+     * @type {string}
+     * @memberof BuyOrderItem
+     */
+    highestBidDecimal?: string | null;
+    /**
      * Num bids value.
      * @type {number}
      * @memberof BuyOrderItem
@@ -96,6 +102,7 @@ export function BuyOrderItemFromJSONTyped(json: any, ignoreDiscriminator: boolea
         'phase': json['phase'] == null ? undefined : json['phase'],
         'provider': json['provider'],
         'highestBid': json['highest_bid'],
+        'highestBidDecimal': json['highest_bid_decimal'] == null ? undefined : json['highest_bid_decimal'],
         'numBids': json['num_bids'],
         'timestamp': json['timestamp'] == null ? undefined : (new Date(json['timestamp'])),
         'lastUpdated': json['last_updated'] == null ? undefined : (new Date(json['last_updated'])),
@@ -118,6 +125,7 @@ export function BuyOrderItemToJSONTyped(value?: BuyOrderItem | null, ignoreDiscr
         'phase': value['phase'],
         'provider': value['provider'],
         'highest_bid': value['highestBid'],
+        'highest_bid_decimal': value['highestBidDecimal'],
         'num_bids': value['numBids'],
         'timestamp': value['timestamp'] == null ? value['timestamp'] : value['timestamp'].toISOString(),
         'last_updated': value['lastUpdated'] == null ? value['lastUpdated'] : value['lastUpdated'].toISOString(),

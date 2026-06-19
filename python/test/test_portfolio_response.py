@@ -41,30 +41,7 @@ class TestPortfolioResponse(unittest.TestCase):
                     providers_queried = [
                         ''
                         ], ),
-                data = cs2cap.models.portfolio_data.PortfolioData(
-                    line_items = [
-                        cs2cap.models.portfolio_line_item.PortfolioLineItem(
-                            item_id = 56, 
-                            market_hash_name = '', 
-                            phase = '', 
-                            quantity = 56, 
-                            best_ask = 56, 
-                            best_bid = 56, 
-                            item_value = 56, 
-                            providers = [
-                                cs2cap.models.batch_price_quote.BatchPriceQuote(
-                                    provider = '', 
-                                    lowest_ask = 56, 
-                                    quantity = 56, 
-                                    timestamp = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
-                                    last_updated = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
-                                ], )
-                        ], 
-                    total_value = 56, 
-                    items_valued = 56, 
-                    items_not_found = [
-                        56
-                        ], )
+                data = ERROR_TO_EXAMPLE_VALUE
             )
         else:
             return PortfolioResponse(
@@ -74,30 +51,7 @@ class TestPortfolioResponse(unittest.TestCase):
                     providers_queried = [
                         ''
                         ], ),
-                data = cs2cap.models.portfolio_data.PortfolioData(
-                    line_items = [
-                        cs2cap.models.portfolio_line_item.PortfolioLineItem(
-                            item_id = 56, 
-                            market_hash_name = '', 
-                            phase = '', 
-                            quantity = 56, 
-                            best_ask = 56, 
-                            best_bid = 56, 
-                            item_value = 56, 
-                            providers = [
-                                cs2cap.models.batch_price_quote.BatchPriceQuote(
-                                    provider = '', 
-                                    lowest_ask = 56, 
-                                    quantity = 56, 
-                                    timestamp = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
-                                    last_updated = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
-                                ], )
-                        ], 
-                    total_value = 56, 
-                    items_valued = 56, 
-                    items_not_found = [
-                        56
-                        ], ),
+                data = ERROR_TO_EXAMPLE_VALUE,
         )
         """
 

@@ -35,23 +35,13 @@ class TestBidsResponse(unittest.TestCase):
         model = BidsResponse()
         if include_optional:
             return BidsResponse(
-                meta = cs2cap.models.bids_meta.BidsMeta(
+                meta = cs2cap.models.prices_meta.PricesMeta(
                     currency = '', 
                     filters = null, 
                     providers_queried = [
                         ''
                         ], ),
-                items = [
-                    cs2cap.models.buy_order_item.BuyOrderItem(
-                        item_id = 56, 
-                        market_hash_name = '', 
-                        phase = '', 
-                        provider = '', 
-                        highest_bid = 56, 
-                        num_bids = 56, 
-                        timestamp = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
-                        last_updated = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
-                    ],
+                items = ERROR_TO_EXAMPLE_VALUE,
                 pagination = cs2cap.models.pagination_meta.PaginationMeta(
                     limit = 1.0, 
                     offset = 0.0, 
@@ -62,23 +52,13 @@ class TestBidsResponse(unittest.TestCase):
             )
         else:
             return BidsResponse(
-                meta = cs2cap.models.bids_meta.BidsMeta(
+                meta = cs2cap.models.prices_meta.PricesMeta(
                     currency = '', 
                     filters = null, 
                     providers_queried = [
                         ''
                         ], ),
-                items = [
-                    cs2cap.models.buy_order_item.BuyOrderItem(
-                        item_id = 56, 
-                        market_hash_name = '', 
-                        phase = '', 
-                        provider = '', 
-                        highest_bid = 56, 
-                        num_bids = 56, 
-                        timestamp = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
-                        last_updated = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
-                    ],
+                items = ERROR_TO_EXAMPLE_VALUE,
                 pagination = cs2cap.models.pagination_meta.PaginationMeta(
                     limit = 1.0, 
                     offset = 0.0, 

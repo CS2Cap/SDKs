@@ -93,10 +93,22 @@ export interface ItemOut {
     collection?: string | null;
     /**
      * 
+     * @type {string}
+     * @memberof ItemOut
+     */
+    collectionImage?: string | null;
+    /**
+     * 
      * @type {Array<string>}
      * @memberof ItemOut
      */
     crates?: Array<string> | null;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof ItemOut
+     */
+    cratesImages?: Array<string> | null;
     /**
      * 
      * @type {string}
@@ -183,7 +195,9 @@ export function ItemOutFromJSONTyped(json: any, ignoreDiscriminator: boolean): I
         'defIndex': json['def_index'] == null ? undefined : json['def_index'],
         'paintIndex': json['paint_index'] == null ? undefined : json['paint_index'],
         'collection': json['collection'] == null ? undefined : json['collection'],
+        'collectionImage': json['collection_image'] == null ? undefined : json['collection_image'],
         'crates': json['crates'] == null ? undefined : json['crates'],
+        'cratesImages': json['crates_images'] == null ? undefined : json['crates_images'],
         'rarityName': json['rarity_name'] == null ? undefined : json['rarity_name'],
         'rarityColor': json['rarity_color'] == null ? undefined : json['rarity_color'],
         'styleName': json['style_name'] == null ? undefined : json['style_name'],
@@ -219,7 +233,9 @@ export function ItemOutToJSONTyped(value?: ItemOut | null, ignoreDiscriminator: 
         'def_index': value['defIndex'],
         'paint_index': value['paintIndex'],
         'collection': value['collection'],
+        'collection_image': value['collectionImage'],
         'crates': value['crates'],
+        'crates_images': value['cratesImages'],
         'rarity_name': value['rarityName'],
         'rarity_color': value['rarityColor'],
         'style_name': value['styleName'],

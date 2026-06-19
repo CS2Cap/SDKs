@@ -38,7 +38,9 @@ class ItemOut(BaseModel):
     def_index: Optional[StrictStr] = None
     paint_index: Optional[StrictInt] = None
     collection: Optional[StrictStr] = None
+    collection_image: Optional[StrictStr] = None
     crates: Optional[List[StrictStr]] = None
+    crates_images: Optional[List[StrictStr]] = None
     rarity_name: Optional[StrictStr] = None
     rarity_color: Optional[StrictStr] = None
     style_name: Optional[StrictStr] = None
@@ -48,7 +50,7 @@ class ItemOut(BaseModel):
     max_float: Optional[Union[StrictFloat, StrictInt]] = None
     image_url: Optional[StrictStr] = None
     supply: Optional[StrictInt] = None
-    __properties: ClassVar[List[str]] = ["item_id", "market_hash_name", "phase", "item_type", "item_subtype", "weapon_type", "base_name", "skin_name", "wear_name", "def_index", "paint_index", "collection", "crates", "rarity_name", "rarity_color", "style_name", "is_stattrak", "is_souvenir", "min_float", "max_float", "image_url", "supply"]
+    __properties: ClassVar[List[str]] = ["item_id", "market_hash_name", "phase", "item_type", "item_subtype", "weapon_type", "base_name", "skin_name", "wear_name", "def_index", "paint_index", "collection", "collection_image", "crates", "crates_images", "rarity_name", "rarity_color", "style_name", "is_stattrak", "is_souvenir", "min_float", "max_float", "image_url", "supply"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -144,10 +146,20 @@ class ItemOut(BaseModel):
         if self.collection is None and "collection" in self.model_fields_set:
             _dict['collection'] = None
 
+        # set to None if collection_image (nullable) is None
+        # and model_fields_set contains the field
+        if self.collection_image is None and "collection_image" in self.model_fields_set:
+            _dict['collection_image'] = None
+
         # set to None if crates (nullable) is None
         # and model_fields_set contains the field
         if self.crates is None and "crates" in self.model_fields_set:
             _dict['crates'] = None
+
+        # set to None if crates_images (nullable) is None
+        # and model_fields_set contains the field
+        if self.crates_images is None and "crates_images" in self.model_fields_set:
+            _dict['crates_images'] = None
 
         # set to None if rarity_name (nullable) is None
         # and model_fields_set contains the field
@@ -218,7 +230,9 @@ class ItemOut(BaseModel):
             "def_index": obj.get("def_index"),
             "paint_index": obj.get("paint_index"),
             "collection": obj.get("collection"),
+            "collection_image": obj.get("collection_image"),
             "crates": obj.get("crates"),
+            "crates_images": obj.get("crates_images"),
             "rarity_name": obj.get("rarity_name"),
             "rarity_color": obj.get("rarity_color"),
             "style_name": obj.get("style_name"),

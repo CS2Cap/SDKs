@@ -22,7 +22,7 @@ import {
 } from './PricesFilterMeta';
 
 /**
- * Metadata for prices response.
+ * Metadata for prices and bids responses.
  * @export
  * @interface PricesMeta
  */
@@ -40,11 +40,11 @@ export interface PricesMeta {
      */
     filters: PricesFilterMeta;
     /**
-     * Provider keys that returned data in this response.
+     * Provider keys queried.
      * @type {Array<string>}
      * @memberof PricesMeta
      */
-    returnedProviders: Array<string>;
+    providersQueried: Array<string>;
 }
 
 /**
@@ -53,7 +53,7 @@ export interface PricesMeta {
 export function instanceOfPricesMeta(value: object): value is PricesMeta {
     if (!('currency' in value) || value['currency'] === undefined) return false;
     if (!('filters' in value) || value['filters'] === undefined) return false;
-    if (!('returnedProviders' in value) || value['returnedProviders'] === undefined) return false;
+    if (!('providersQueried' in value) || value['providersQueried'] === undefined) return false;
     return true;
 }
 
@@ -69,7 +69,7 @@ export function PricesMetaFromJSONTyped(json: any, ignoreDiscriminator: boolean)
         
         'currency': json['currency'],
         'filters': PricesFilterMetaFromJSON(json['filters']),
-        'returnedProviders': json['returned_providers'],
+        'providersQueried': json['providers_queried'],
     };
 }
 
@@ -86,7 +86,7 @@ export function PricesMetaToJSONTyped(value?: PricesMeta | null, ignoreDiscrimin
         
         'currency': value['currency'],
         'filters': PricesFilterMetaToJSON(value['filters']),
-        'returned_providers': value['returnedProviders'],
+        'providers_queried': value['providersQueried'],
     };
 }
 

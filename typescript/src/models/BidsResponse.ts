@@ -13,13 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { BidsMeta } from './BidsMeta';
-import {
-    BidsMetaFromJSON,
-    BidsMetaFromJSONTyped,
-    BidsMetaToJSON,
-    BidsMetaToJSONTyped,
-} from './BidsMeta';
 import type { BuyOrderItem } from './BuyOrderItem';
 import {
     BuyOrderItemFromJSON,
@@ -34,6 +27,13 @@ import {
     PaginationMetaToJSON,
     PaginationMetaToJSONTyped,
 } from './PaginationMeta';
+import type { PricesMeta } from './PricesMeta';
+import {
+    PricesMetaFromJSON,
+    PricesMetaFromJSONTyped,
+    PricesMetaToJSON,
+    PricesMetaToJSONTyped,
+} from './PricesMeta';
 
 /**
  * Bids response with metadata and pagination.
@@ -43,10 +43,10 @@ import {
 export interface BidsResponse {
     /**
      * Response metadata for this payload.
-     * @type {BidsMeta}
+     * @type {PricesMeta}
      * @memberof BidsResponse
      */
-    meta: BidsMeta;
+    meta: PricesMeta;
     /**
      * List of returned items.
      * @type {Array<BuyOrderItem>}
@@ -54,7 +54,7 @@ export interface BidsResponse {
      */
     items: Array<BuyOrderItem>;
     /**
-     * Pagination metadata for this response.
+     * Offset pagination metadata.
      * @type {PaginationMeta}
      * @memberof BidsResponse
      */
@@ -81,7 +81,7 @@ export function BidsResponseFromJSONTyped(json: any, ignoreDiscriminator: boolea
     }
     return {
         
-        'meta': BidsMetaFromJSON(json['meta']),
+        'meta': PricesMetaFromJSON(json['meta']),
         'items': ((json['items'] as Array<any>).map(BuyOrderItemFromJSON)),
         'pagination': PaginationMetaFromJSON(json['pagination']),
     };
@@ -98,7 +98,7 @@ export function BidsResponseToJSONTyped(value?: BidsResponse | null, ignoreDiscr
 
     return {
         
-        'meta': BidsMetaToJSON(value['meta']),
+        'meta': PricesMetaToJSON(value['meta']),
         'items': ((value['items'] as Array<any>).map(BuyOrderItemToJSON)),
         'pagination': PaginationMetaToJSON(value['pagination']),
     };

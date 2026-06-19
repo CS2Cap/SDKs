@@ -12,6 +12,7 @@ Name | Type
 `marketHashName` | string
 `phase` | string
 `lowestAsk` | number
+`lowestAskDecimal` | string
 `quantity` | number
 `link` | string
 `url` | string
@@ -30,6 +31,7 @@ const example = {
   "marketHashName": null,
   "phase": null,
   "lowestAsk": null,
+  "lowestAskDecimal": null,
   "quantity": null,
   "link": null,
   "url": null,

@@ -14,6 +14,8 @@ Provider keys that support buy orders.
 
 * `DMARKET` (value: `'dmarket'`)
 
+* `DUPEFI` (value: `'dupefi'`)
+
 * `ECOSTEAM` (value: `'ecosteam'`)
 
 * `MARKETCSGO` (value: `'marketcsgo'`)

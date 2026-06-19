@@ -32,6 +32,12 @@ export interface BatchPriceQuote {
      */
     lowestAsk: number;
     /**
+     * 
+     * @type {string}
+     * @memberof BatchPriceQuote
+     */
+    lowestAskDecimal?: string | null;
+    /**
      * Available quantity at this provider.
      * @type {number}
      * @memberof BatchPriceQuote
@@ -73,6 +79,7 @@ export function BatchPriceQuoteFromJSONTyped(json: any, ignoreDiscriminator: boo
         
         'provider': json['provider'],
         'lowestAsk': json['lowest_ask'],
+        'lowestAskDecimal': json['lowest_ask_decimal'] == null ? undefined : json['lowest_ask_decimal'],
         'quantity': json['quantity'],
         'timestamp': json['timestamp'] == null ? undefined : (new Date(json['timestamp'])),
         'lastUpdated': json['last_updated'] == null ? undefined : (new Date(json['last_updated'])),
@@ -92,6 +99,7 @@ export function BatchPriceQuoteToJSONTyped(value?: BatchPriceQuote | null, ignor
         
         'provider': value['provider'],
         'lowest_ask': value['lowestAsk'],
+        'lowest_ask_decimal': value['lowestAskDecimal'],
         'quantity': value['quantity'],
         'timestamp': value['timestamp'] == null ? value['timestamp'] : value['timestamp'].toISOString(),
         'last_updated': value['lastUpdated'] == null ? value['lastUpdated'] : value['lastUpdated'].toISOString(),

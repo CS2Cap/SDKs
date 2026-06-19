@@ -6,9 +6,9 @@ Bids response with metadata and pagination.
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**meta** | [**BidsMeta**](BidsMeta.md) | Response metadata for this payload. | 
+**meta** | [**PricesMeta**](PricesMeta.md) | Response metadata for this payload. | 
 **items** | [**List[BuyOrderItem]**](BuyOrderItem.md) | List of returned items. | 
-**pagination** | [**PaginationMeta**](PaginationMeta.md) | Pagination metadata for this response. | 
+**pagination** | [**PaginationMeta**](PaginationMeta.md) | Offset pagination metadata. | 
 
 ## Example
 

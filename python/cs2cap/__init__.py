@@ -14,7 +14,7 @@
 """  # noqa: E501
 
 
-__version__ = "1.0.3"
+__version__ = "2.0"
 
 # Define package exports
 __all__ = [
@@ -24,6 +24,7 @@ __all__ = [
     "AccountWebhooksApi",
     "BidsApi",
     "ForeignExchangeApi",
+    "ImagesApi",
     "InventoryApi",
     "ItemsApi",
     "MarketIntelligenceApi",
@@ -64,8 +65,6 @@ __all__ = [
     "BatchPricesMeta",
     "BatchPricesRequest",
     "BatchPricesResponse",
-    "BidsFilterMeta",
-    "BidsMeta",
     "BidsResponse",
     "BuyOrderItem",
     "BuyOrderProvider",
@@ -95,6 +94,10 @@ __all__ = [
     "MarketArbitrageItem",
     "MarketArbitrageMeta",
     "MarketArbitrageResponse",
+    "MarketHistoryChartMeta",
+    "MarketHistoryChartPoint",
+    "MarketHistoryChartResponse",
+    "MarketHistoryChartSeries",
     "MarketIndexGroup",
     "MarketIndexesData",
     "MarketIndexesMeta",
@@ -184,6 +187,7 @@ from cs2cap.api.account_watchlist_api import AccountWatchlistApi as AccountWatch
 from cs2cap.api.account_webhooks_api import AccountWebhooksApi as AccountWebhooksApi
 from cs2cap.api.bids_api import BidsApi as BidsApi
 from cs2cap.api.foreign_exchange_api import ForeignExchangeApi as ForeignExchangeApi
+from cs2cap.api.images_api import ImagesApi as ImagesApi
 from cs2cap.api.inventory_api import InventoryApi as InventoryApi
 from cs2cap.api.items_api import ItemsApi as ItemsApi
 from cs2cap.api.market_intelligence_api import MarketIntelligenceApi as MarketIntelligenceApi
@@ -228,8 +232,6 @@ from cs2cap.models.batch_price_quote import BatchPriceQuote as BatchPriceQuote
 from cs2cap.models.batch_prices_meta import BatchPricesMeta as BatchPricesMeta
 from cs2cap.models.batch_prices_request import BatchPricesRequest as BatchPricesRequest
 from cs2cap.models.batch_prices_response import BatchPricesResponse as BatchPricesResponse
-from cs2cap.models.bids_filter_meta import BidsFilterMeta as BidsFilterMeta
-from cs2cap.models.bids_meta import BidsMeta as BidsMeta
 from cs2cap.models.bids_response import BidsResponse as BidsResponse
 from cs2cap.models.buy_order_item import BuyOrderItem as BuyOrderItem
 from cs2cap.models.buy_order_provider import BuyOrderProvider as BuyOrderProvider
@@ -259,6 +261,10 @@ from cs2cap.models.market_arbitrage_data import MarketArbitrageData as MarketArb
 from cs2cap.models.market_arbitrage_item import MarketArbitrageItem as MarketArbitrageItem
 from cs2cap.models.market_arbitrage_meta import MarketArbitrageMeta as MarketArbitrageMeta
 from cs2cap.models.market_arbitrage_response import MarketArbitrageResponse as MarketArbitrageResponse
+from cs2cap.models.market_history_chart_meta import MarketHistoryChartMeta as MarketHistoryChartMeta
+from cs2cap.models.market_history_chart_point import MarketHistoryChartPoint as MarketHistoryChartPoint
+from cs2cap.models.market_history_chart_response import MarketHistoryChartResponse as MarketHistoryChartResponse
+from cs2cap.models.market_history_chart_series import MarketHistoryChartSeries as MarketHistoryChartSeries
 from cs2cap.models.market_index_group import MarketIndexGroup as MarketIndexGroup
 from cs2cap.models.market_indexes_data import MarketIndexesData as MarketIndexesData
 from cs2cap.models.market_indexes_meta import MarketIndexesMeta as MarketIndexesMeta

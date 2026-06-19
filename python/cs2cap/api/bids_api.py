@@ -355,7 +355,7 @@ class BidsApi:
     ) -> BidsResponse:
         """List Bids
 
-        Return current highest bids from providers that support buy orders.  Filters: - `item_id` or `market_hash_name` - optional `phase` - `providers` limited to buy-order-capable provider keys - `currency`, `limit`, and `offset`  Behavior: - broad listings use the indexed pagination path - item-specific requests use direct indexed lookup - unsupported providers return `400`  Response: - `meta` with filters and providers queried - flattened per-provider bid rows - offset pagination metadata
+        Return current highest bids from providers that support buy orders.  Filters: - `item_id` or `market_hash_name` - optional `phase` - `providers` limited to buy-order-capable provider keys - `currency`, `limit`, and `offset`  Behavior: - requesting a provider that does not support buy orders returns `400`  Response: - `meta` with filters and providers queried - flattened per-provider bid rows - offset pagination metadata
 
         :param item_id: Filter by item ID. When provided, canonical market_hash_name and phase from catalog are used and take precedence over request market_hash_name/phase.
         :type item_id: int
@@ -452,7 +452,7 @@ class BidsApi:
     ) -> ApiResponse[BidsResponse]:
         """List Bids
 
-        Return current highest bids from providers that support buy orders.  Filters: - `item_id` or `market_hash_name` - optional `phase` - `providers` limited to buy-order-capable provider keys - `currency`, `limit`, and `offset`  Behavior: - broad listings use the indexed pagination path - item-specific requests use direct indexed lookup - unsupported providers return `400`  Response: - `meta` with filters and providers queried - flattened per-provider bid rows - offset pagination metadata
+        Return current highest bids from providers that support buy orders.  Filters: - `item_id` or `market_hash_name` - optional `phase` - `providers` limited to buy-order-capable provider keys - `currency`, `limit`, and `offset`  Behavior: - requesting a provider that does not support buy orders returns `400`  Response: - `meta` with filters and providers queried - flattened per-provider bid rows - offset pagination metadata
 
         :param item_id: Filter by item ID. When provided, canonical market_hash_name and phase from catalog are used and take precedence over request market_hash_name/phase.
         :type item_id: int
@@ -549,7 +549,7 @@ class BidsApi:
     ) -> RESTResponseType:
         """List Bids
 
-        Return current highest bids from providers that support buy orders.  Filters: - `item_id` or `market_hash_name` - optional `phase` - `providers` limited to buy-order-capable provider keys - `currency`, `limit`, and `offset`  Behavior: - broad listings use the indexed pagination path - item-specific requests use direct indexed lookup - unsupported providers return `400`  Response: - `meta` with filters and providers queried - flattened per-provider bid rows - offset pagination metadata
+        Return current highest bids from providers that support buy orders.  Filters: - `item_id` or `market_hash_name` - optional `phase` - `providers` limited to buy-order-capable provider keys - `currency`, `limit`, and `offset`  Behavior: - requesting a provider that does not support buy orders returns `400`  Response: - `meta` with filters and providers queried - flattened per-provider bid rows - offset pagination metadata
 
         :param item_id: Filter by item ID. When provided, canonical market_hash_name and phase from catalog are used and take precedence over request market_hash_name/phase.
         :type item_id: int
@@ -733,7 +733,7 @@ class BidsApi:
     ) -> str:
         """Stream Full Bids Snapshot
 
-        Return the full live bids snapshot as an NDJSON stream.  Behavior: - pro and quant tiers only - requires a real `sk_*` API key; session JWTs are not accepted - optional `providers` filter; omit to stream all providers - fixed USD output - `highest_bid` values are returned in USD minor units - one JSON object per line using the `BuyOrderItem` field set - the live index is copied into temporary Redis keys so the export is stable for the duration of the stream - per-API-key cooldown of 30 seconds for this POST operation
+        Return the full live bids snapshot as an NDJSON stream.  Behavior: - pro and quant tiers only - requires an API key (not a session token) - optional `providers` filter; omit to stream all providers - fixed USD output - `highest_bid` values are returned in USD minor units - one JSON object per line using the `BuyOrderItem` field set - per-API-key rolling 24h quota of successful stream starts (pro: 50, quant: 300, per endpoint) - max 1 concurrent stream per API key for this endpoint (409 otherwise)
 
         :param providers:
         :type providers: List[BuyOrderProvider]
@@ -774,6 +774,7 @@ class BidsApi:
             '429': "ErrorResponse",
             '422': "ValidationErrorResponse",
             '503': "ErrorResponse",
+            '409': "ErrorResponse",
         }
         response_data = self.api_client.call_api(
             *_param,
@@ -805,7 +806,7 @@ class BidsApi:
     ) -> ApiResponse[str]:
         """Stream Full Bids Snapshot
 
-        Return the full live bids snapshot as an NDJSON stream.  Behavior: - pro and quant tiers only - requires a real `sk_*` API key; session JWTs are not accepted - optional `providers` filter; omit to stream all providers - fixed USD output - `highest_bid` values are returned in USD minor units - one JSON object per line using the `BuyOrderItem` field set - the live index is copied into temporary Redis keys so the export is stable for the duration of the stream - per-API-key cooldown of 30 seconds for this POST operation
+        Return the full live bids snapshot as an NDJSON stream.  Behavior: - pro and quant tiers only - requires an API key (not a session token) - optional `providers` filter; omit to stream all providers - fixed USD output - `highest_bid` values are returned in USD minor units - one JSON object per line using the `BuyOrderItem` field set - per-API-key rolling 24h quota of successful stream starts (pro: 50, quant: 300, per endpoint) - max 1 concurrent stream per API key for this endpoint (409 otherwise)
 
         :param providers:
         :type providers: List[BuyOrderProvider]
@@ -846,6 +847,7 @@ class BidsApi:
             '429': "ErrorResponse",
             '422': "ValidationErrorResponse",
             '503': "ErrorResponse",
+            '409': "ErrorResponse",
         }
         response_data = self.api_client.call_api(
             *_param,
@@ -877,7 +879,7 @@ class BidsApi:
     ) -> RESTResponseType:
         """Stream Full Bids Snapshot
 
-        Return the full live bids snapshot as an NDJSON stream.  Behavior: - pro and quant tiers only - requires a real `sk_*` API key; session JWTs are not accepted - optional `providers` filter; omit to stream all providers - fixed USD output - `highest_bid` values are returned in USD minor units - one JSON object per line using the `BuyOrderItem` field set - the live index is copied into temporary Redis keys so the export is stable for the duration of the stream - per-API-key cooldown of 30 seconds for this POST operation
+        Return the full live bids snapshot as an NDJSON stream.  Behavior: - pro and quant tiers only - requires an API key (not a session token) - optional `providers` filter; omit to stream all providers - fixed USD output - `highest_bid` values are returned in USD minor units - one JSON object per line using the `BuyOrderItem` field set - per-API-key rolling 24h quota of successful stream starts (pro: 50, quant: 300, per endpoint) - max 1 concurrent stream per API key for this endpoint (409 otherwise)
 
         :param providers:
         :type providers: List[BuyOrderProvider]
@@ -918,6 +920,7 @@ class BidsApi:
             '429': "ErrorResponse",
             '422': "ValidationErrorResponse",
             '503': "ErrorResponse",
+            '409': "ErrorResponse",
         }
         response_data = self.api_client.call_api(
             *_param,

@@ -1,7 +1,7 @@
 
 # SalesHistoryResponse
 
-Recent Sales response with request metadata and cache status.
+Recent Sales response with request metadata.
 
 ## Properties
 
@@ -9,7 +9,7 @@ Name | Type
 ------------ | -------------
 `meta` | [SalesMeta](SalesMeta.md)
 `items` | [Array&lt;SaleRecordDetail&gt;](SaleRecordDetail.md)
-`cacheStatus` | { [key: string]: string; }
+`pagination` | [PaginationMeta](PaginationMeta.md)
 
 ## Example
 
@@ -20,7 +20,7 @@ import type { SalesHistoryResponse } from 'cs2cap'
 const example = {
   "meta": null,
   "items": null,
-  "cacheStatus": null,
+  "pagination": null,
 } satisfies SalesHistoryResponse
 
 console.log(example)

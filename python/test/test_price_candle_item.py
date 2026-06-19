@@ -43,8 +43,10 @@ class TestPriceCandleItem(unittest.TestCase):
                 v = 56,
                 q = 56,
                 providers = cs2cap.models.providers.Providers(
+                    o = 'unknown', 
                     h = '', 
-                    l = '', )
+                    l = '', 
+                    c = 'unknown', )
             )
         else:
             return PriceCandleItem(
@@ -55,8 +57,10 @@ class TestPriceCandleItem(unittest.TestCase):
                 c = 56,
                 v = 56,
                 providers = cs2cap.models.providers.Providers(
+                    o = 'unknown', 
                     h = '', 
-                    l = '', ),
+                    l = '', 
+                    c = 'unknown', ),
         )
         """
 

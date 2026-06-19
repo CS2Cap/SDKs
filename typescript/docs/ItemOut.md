@@ -19,7 +19,9 @@ Name | Type
 `defIndex` | string
 `paintIndex` | number
 `collection` | string
+`collectionImage` | string
 `crates` | Array&lt;string&gt;
+`cratesImages` | Array&lt;string&gt;
 `rarityName` | string
 `rarityColor` | string
 `styleName` | string
@@ -49,7 +51,9 @@ const example = {
   "defIndex": null,
   "paintIndex": null,
   "collection": null,
+  "collectionImage": null,
   "crates": null,
+  "cratesImages": null,
   "rarityName": null,
   "rarityColor": null,
   "styleName": null,

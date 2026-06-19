@@ -21,7 +21,6 @@
  */
 export const AllProviders = {
     Avanmarket: 'avanmarket',
-    Bitskins: 'bitskins',
     Buff163: 'buff163',
     Buffmarket: 'buffmarket',
     C5: 'c5',
@@ -33,7 +32,9 @@ export const AllProviders = {
     CsmoneyT: 'csmoney_t',
     Cstrade: 'cstrade',
     Dmarket: 'dmarket',
+    Dupefi: 'dupefi',
     Ecosteam: 'ecosteam',
+    Gameboost: 'gameboost',
     Haloskins: 'haloskins',
     Itradegg: 'itradegg',
     Lisskins: 'lisskins',
@@ -45,6 +46,7 @@ export const AllProviders = {
     Shadowpay: 'shadowpay',
     Skinbaron: 'skinbaron',
     Skinflow: 'skinflow',
+    Skinland: 'skinland',
     Skinout: 'skinout',
     Skinplace: 'skinplace',
     Skinport: 'skinport',

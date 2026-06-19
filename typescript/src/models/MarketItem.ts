@@ -50,6 +50,12 @@ export interface MarketItem {
      */
     lowestAsk: number;
     /**
+     * 
+     * @type {string}
+     * @memberof MarketItem
+     */
+    lowestAskDecimal?: string | null;
+    /**
      * Quantity count for this record.
      * @type {number}
      * @memberof MarketItem
@@ -108,6 +114,7 @@ export function MarketItemFromJSONTyped(json: any, ignoreDiscriminator: boolean)
         'marketHashName': json['market_hash_name'],
         'phase': json['phase'] == null ? undefined : json['phase'],
         'lowestAsk': json['lowest_ask'],
+        'lowestAskDecimal': json['lowest_ask_decimal'] == null ? undefined : json['lowest_ask_decimal'],
         'quantity': json['quantity'],
         'link': json['link'] == null ? undefined : json['link'],
         'url': json['url'] == null ? undefined : json['url'],
@@ -132,6 +139,7 @@ export function MarketItemToJSONTyped(value?: MarketItem | null, ignoreDiscrimin
         'market_hash_name': value['marketHashName'],
         'phase': value['phase'],
         'lowest_ask': value['lowestAsk'],
+        'lowest_ask_decimal': value['lowestAskDecimal'],
         'quantity': value['quantity'],
         'link': value['link'],
         'url': value['url'],

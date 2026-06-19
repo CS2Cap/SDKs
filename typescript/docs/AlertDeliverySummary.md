@@ -12,6 +12,7 @@ Name | Type
 `deliveryId` | string
 `endpointId` | string
 `endpointLabel` | string
+`platform` | string
 `attemptCount` | number
 `lastHttpStatus` | number
 `nextAttemptAt` | Date
@@ -30,6 +31,7 @@ const example = {
   "deliveryId": null,
   "endpointId": null,
   "endpointLabel": null,
+  "platform": null,
   "attemptCount": null,
   "lastHttpStatus": null,
   "nextAttemptAt": null,

@@ -17,20 +17,23 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, StrictInt, StrictStr
+from datetime import datetime
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
 
-class BidsFilterMeta(BaseModel):
+class MarketHistoryChartMeta(BaseModel):
     """
-    Filter metadata for bids endpoint.
+    Metadata for /v1/market/history/chart.
     """ # noqa: E501
-    item_id: Optional[StrictInt] = None
-    market_hash_name: Optional[StrictStr] = None
-    phase: Optional[StrictStr] = None
-    requested_providers: Optional[List[StrictStr]] = None
-    __properties: ClassVar[List[str]] = ["item_id", "market_hash_name", "phase", "requested_providers"]
+    item_id: StrictInt = Field(description="Normalized catalog item ID.")
+    market_hash_name: StrictStr = Field(description="Canonical market hash name for the item.")
+    currency: StrictStr = Field(description="Target currency code for returned prices.")
+    start: datetime = Field(description="ISO 8601 UTC start of the returned window.")
+    end: datetime = Field(description="ISO 8601 UTC end of the returned window.")
+    providers: Optional[List[StrictStr]] = Field(default=None, description="Provider keys actually returned (those with >=1 point in range).")
+    __properties: ClassVar[List[str]] = ["item_id", "market_hash_name", "currency", "start", "end", "providers"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -50,7 +53,7 @@ class BidsFilterMeta(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of BidsFilterMeta from a JSON string"""
+        """Create an instance of MarketHistoryChartMeta from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -71,31 +74,11 @@ class BidsFilterMeta(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
-        # set to None if item_id (nullable) is None
-        # and model_fields_set contains the field
-        if self.item_id is None and "item_id" in self.model_fields_set:
-            _dict['item_id'] = None
-
-        # set to None if market_hash_name (nullable) is None
-        # and model_fields_set contains the field
-        if self.market_hash_name is None and "market_hash_name" in self.model_fields_set:
-            _dict['market_hash_name'] = None
-
-        # set to None if phase (nullable) is None
-        # and model_fields_set contains the field
-        if self.phase is None and "phase" in self.model_fields_set:
-            _dict['phase'] = None
-
-        # set to None if requested_providers (nullable) is None
-        # and model_fields_set contains the field
-        if self.requested_providers is None and "requested_providers" in self.model_fields_set:
-            _dict['requested_providers'] = None
-
         return _dict
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of BidsFilterMeta from a dict"""
+        """Create an instance of MarketHistoryChartMeta from a dict"""
         if obj is None:
             return None
 
@@ -105,8 +88,10 @@ class BidsFilterMeta(BaseModel):
         _obj = cls.model_validate({
             "item_id": obj.get("item_id"),
             "market_hash_name": obj.get("market_hash_name"),
-            "phase": obj.get("phase"),
-            "requested_providers": obj.get("requested_providers")
+            "currency": obj.get("currency"),
+            "start": obj.get("start"),
+            "end": obj.get("end"),
+            "providers": obj.get("providers")
         })
         return _obj
 

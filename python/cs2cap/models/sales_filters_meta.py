@@ -31,7 +31,7 @@ class SalesFiltersMeta(BaseModel):
     market_hash_name: Optional[StrictStr] = None
     phase: Optional[StrictStr] = None
     requested_providers: Optional[List[StrictStr]] = None
-    limit: Annotated[int, Field(le=50, strict=True, ge=1)] = Field(description="Maximum number of records returned per page.")
+    limit: Annotated[int, Field(le=1000, strict=True, ge=1)] = Field(description="Maximum number of records returned per page.")
     __properties: ClassVar[List[str]] = ["item_id", "market_hash_name", "phase", "requested_providers", "limit"]
 
     model_config = ConfigDict(

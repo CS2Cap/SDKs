@@ -37,6 +37,7 @@ class TestBatchPriceQuote(unittest.TestCase):
             return BatchPriceQuote(
                 provider = '',
                 lowest_ask = 56,
+                lowest_ask_decimal = ERROR_TO_EXAMPLE_VALUE,
                 quantity = 56,
                 timestamp = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'),
                 last_updated = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f')

@@ -1,13 +1,15 @@
 # Providers
 
-Provider provenance for composite candle extremes.
+Provider provenance for composite candle values.
 
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**o** | **str** | Provider key that contributed the returned open value. | [optional] [default to 'unknown']
 **h** | **str** | Provider key that contributed the returned high value. | 
 **l** | **str** | Provider key that contributed the returned low value. | 
+**c** | **str** | Provider key that contributed the returned close value. | [optional] [default to 'unknown']
 
 ## Example
 

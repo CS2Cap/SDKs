@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **provider** | **str** | Provider key. | 
 **lowest_ask** | **int** | Money amount in minor units of the response currency (for example USD cents when currency&#x3D;USD). Divide by 100 for display. | 
+**lowest_ask_decimal** | **str** |  | [optional] 
 **quantity** | **int** | Available quantity at this provider. | 
 **timestamp** | **datetime** |  | [optional] 
 **last_updated** | **datetime** |  | [optional] 

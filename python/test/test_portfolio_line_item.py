@@ -42,14 +42,7 @@ class TestPortfolioLineItem(unittest.TestCase):
                 best_ask = 56,
                 best_bid = 56,
                 item_value = 56,
-                providers = [
-                    cs2cap.models.batch_price_quote.BatchPriceQuote(
-                        provider = '', 
-                        lowest_ask = 56, 
-                        quantity = 56, 
-                        timestamp = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), 
-                        last_updated = datetime.datetime.strptime('2013-10-20 19:20:30.00', '%Y-%m-%d %H:%M:%S.%f'), )
-                    ]
+                providers = ERROR_TO_EXAMPLE_VALUE
             )
         else:
             return PortfolioLineItem(

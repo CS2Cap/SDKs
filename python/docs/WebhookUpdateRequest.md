@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **label** | **str** |  | [optional] 
 **url** | **str** |  | [optional] 
+**platform** | **str** |  | [optional] 
 **is_active** | **bool** |  | [optional] 
 
 ## Example

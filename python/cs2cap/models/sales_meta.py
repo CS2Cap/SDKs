@@ -31,7 +31,7 @@ class SalesMeta(BaseModel):
     currency: StrictStr = Field(description="ISO 4217 currency code for the value context.")
     filters: SalesFiltersMeta = Field(description="Effective request filters applied to this response.")
     providers_queried: List[StrictStr] = Field(description="Provider keys queried while building this response.")
-    result_count: Annotated[int, Field(le=50, strict=True, ge=0)] = Field(description="Number of records returned in this payload.")
+    result_count: Annotated[int, Field(le=1000, strict=True, ge=0)] = Field(description="Number of records returned in this payload.")
     __properties: ClassVar[List[str]] = ["currency", "filters", "providers_queried", "result_count"]
 
     model_config = ConfigDict(

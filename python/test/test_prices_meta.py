@@ -37,12 +37,13 @@ class TestPricesMeta(unittest.TestCase):
             return PricesMeta(
                 currency = '',
                 filters = cs2cap.models.prices_filter_meta.PricesFilterMeta(
+                    item_id = 56, 
                     market_hash_name = '', 
                     phase = '', 
                     requested_providers = [
                         ''
                         ], ),
-                returned_providers = [
+                providers_queried = [
                     ''
                     ]
             )
@@ -50,12 +51,13 @@ class TestPricesMeta(unittest.TestCase):
             return PricesMeta(
                 currency = '',
                 filters = cs2cap.models.prices_filter_meta.PricesFilterMeta(
+                    item_id = 56, 
                     market_hash_name = '', 
                     phase = '', 
                     requested_providers = [
                         ''
                         ], ),
-                returned_providers = [
+                providers_queried = [
                     ''
                     ],
         )

@@ -37,6 +37,7 @@ class TestWebhookUpdateRequest(unittest.TestCase):
             return WebhookUpdateRequest(
                 label = '',
                 url = '',
+                platform = '',
                 is_active = True
             )
         else:

@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **provider** | **str** | Provider key. | 
 **highest_bid** | **int** | Money amount in minor units of the response currency (for example USD cents when currency&#x3D;USD). Divide by 100 for display. | 
+**highest_bid_decimal** | **str** |  | [optional] 
 **num_bids** | **int** | Number of active buy orders. | 
 **timestamp** | **datetime** |  | [optional] 
 **last_updated** | **datetime** |  | [optional] 

@@ -1,7 +1,7 @@
 
 # PricesMeta
 
-Metadata for prices response.
+Metadata for prices and bids responses.
 
 ## Properties
 
@@ -9,7 +9,7 @@ Name | Type
 ------------ | -------------
 `currency` | string
 `filters` | [PricesFilterMeta](PricesFilterMeta.md)
-`returnedProviders` | Array&lt;string&gt;
+`providersQueried` | Array&lt;string&gt;
 
 ## Example
 
@@ -20,7 +20,7 @@ import type { PricesMeta } from 'cs2cap'
 const example = {
   "currency": null,
   "filters": null,
-  "returnedProviders": null,
+  "providersQueried": null,
 } satisfies PricesMeta
 
 console.log(example)

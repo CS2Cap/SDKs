@@ -7,6 +7,7 @@ from cs2cap.api.account_watchlist_api import AccountWatchlistApi
 from cs2cap.api.account_webhooks_api import AccountWebhooksApi
 from cs2cap.api.bids_api import BidsApi
 from cs2cap.api.foreign_exchange_api import ForeignExchangeApi
+from cs2cap.api.images_api import ImagesApi
 from cs2cap.api.inventory_api import InventoryApi
 from cs2cap.api.items_api import ItemsApi
 from cs2cap.api.market_intelligence_api import MarketIntelligenceApi

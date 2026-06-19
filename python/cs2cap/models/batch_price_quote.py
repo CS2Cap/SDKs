@@ -18,8 +18,9 @@ import re  # noqa: F401
 import json
 
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictInt, StrictStr, field_validator
 from typing import Any, ClassVar, Dict, List, Optional
+from typing_extensions import Annotated
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -29,10 +30,21 @@ class BatchPriceQuote(BaseModel):
     """ # noqa: E501
     provider: StrictStr = Field(description="Provider key.")
     lowest_ask: StrictInt = Field(description="Money amount in minor units of the response currency (for example USD cents when currency=USD). Divide by 100 for display.")
+    lowest_ask_decimal: Optional[Annotated[str, Field(strict=True)]] = None
     quantity: StrictInt = Field(description="Available quantity at this provider.")
     timestamp: Optional[datetime] = None
     last_updated: Optional[datetime] = None
-    __properties: ClassVar[List[str]] = ["provider", "lowest_ask", "quantity", "timestamp", "last_updated"]
+    __properties: ClassVar[List[str]] = ["provider", "lowest_ask", "lowest_ask_decimal", "quantity", "timestamp", "last_updated"]
+
+    @field_validator('lowest_ask_decimal')
+    def lowest_ask_decimal_validate_regular_expression(cls, value):
+        """Validates the regular expression"""
+        if value is None:
+            return value
+
+        if not re.match(r"^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$", value):
+            raise ValueError(r"must validate the regular expression /^(?!^[-+.]*$)[+-]?0*\d*\.?\d*$/")
+        return value
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -73,6 +85,11 @@ class BatchPriceQuote(BaseModel):
             exclude=excluded_fields,
             exclude_none=True,
         )
+        # set to None if lowest_ask_decimal (nullable) is None
+        # and model_fields_set contains the field
+        if self.lowest_ask_decimal is None and "lowest_ask_decimal" in self.model_fields_set:
+            _dict['lowest_ask_decimal'] = None
+
         # set to None if timestamp (nullable) is None
         # and model_fields_set contains the field
         if self.timestamp is None and "timestamp" in self.model_fields_set:
@@ -97,6 +114,7 @@ class BatchPriceQuote(BaseModel):
         _obj = cls.model_validate({
             "provider": obj.get("provider"),
             "lowest_ask": obj.get("lowest_ask"),
+            "lowest_ask_decimal": obj.get("lowest_ask_decimal"),
             "quantity": obj.get("quantity"),
             "timestamp": obj.get("timestamp"),
             "last_updated": obj.get("last_updated")

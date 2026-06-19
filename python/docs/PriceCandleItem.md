@@ -11,9 +11,9 @@ Name | Type | Description | Notes
 **h** | **int** | Money amount in minor units of the response currency (for example USD cents when currency&#x3D;USD). Divide by 100 for display. | 
 **l** | **int** | Money amount in minor units of the response currency (for example USD cents when currency&#x3D;USD). Divide by 100 for display. | 
 **c** | **int** | Money amount in minor units of the response currency (for example USD cents when currency&#x3D;USD). Divide by 100 for display. | 
-**v** | **int** | Non-negative depletion flow proxy for the bucket, computed from decreases in provider close-side inventory between consecutive buckets. This is not transaction volume. | 
+**v** | **int** | Estimated trade volume for the bucket, derived from inventory changes rather than reported sale counts, not transaction volume. | 
 **q** | **int** |  | [optional] 
-**providers** | [**Providers**](Providers.md) | Provider provenance for the returned low/high values in this composite candle. | 
+**providers** | [**Providers**](Providers.md) | Provider provenance for the returned open/high/low/close values in this composite candle. | 
 
 ## Example
 

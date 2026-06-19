@@ -1,29 +1,25 @@
 
-# BidsFilterMeta
+# MarketHistoryChartSeries
 
-Filter metadata for bids endpoint.
+Per-provider daily price-point series.
 
 ## Properties
 
 Name | Type
 ------------ | -------------
-`itemId` | number
-`marketHashName` | string
-`phase` | string
-`requestedProviders` | Array&lt;string&gt;
+`provider` | string
+`data` | [Array&lt;MarketHistoryChartPoint&gt;](MarketHistoryChartPoint.md)
 
 ## Example
 
 ```typescript
-import type { BidsFilterMeta } from 'cs2cap'
+import type { MarketHistoryChartSeries } from 'cs2cap'
 
 // TODO: Update the object below with actual values
 const example = {
-  "itemId": null,
-  "marketHashName": null,
-  "phase": null,
-  "requestedProviders": null,
-} satisfies BidsFilterMeta
+  "provider": null,
+  "data": null,
+} satisfies MarketHistoryChartSeries
 
 console.log(example)
 
@@ -32,7 +28,7 @@ const exampleJSON: string = JSON.stringify(example)
 console.log(exampleJSON)
 
 // Parse the JSON string back to an object
-const exampleParsed = JSON.parse(exampleJSON) as BidsFilterMeta
+const exampleParsed = JSON.parse(exampleJSON) as MarketHistoryChartSeries
 console.log(exampleParsed)
 ```
 

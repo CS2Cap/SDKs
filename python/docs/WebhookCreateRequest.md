@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **label** | **str** | User-defined label for this destination. | 
 **url** | **str** | Destination URL. Must be HTTP or HTTPS. | 
+**platform** | **str** | Delivery platform key: custom, discord, telegram, or google_sheets. | [optional] [default to 'custom']
 **is_active** | **bool** | Whether this destination should be active immediately. | [optional] [default to True]
 
 ## Example

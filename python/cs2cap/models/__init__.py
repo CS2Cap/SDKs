@@ -37,8 +37,6 @@ from cs2cap.models.batch_price_quote import BatchPriceQuote
 from cs2cap.models.batch_prices_meta import BatchPricesMeta
 from cs2cap.models.batch_prices_request import BatchPricesRequest
 from cs2cap.models.batch_prices_response import BatchPricesResponse
-from cs2cap.models.bids_filter_meta import BidsFilterMeta
-from cs2cap.models.bids_meta import BidsMeta
 from cs2cap.models.bids_response import BidsResponse
 from cs2cap.models.buy_order_item import BuyOrderItem
 from cs2cap.models.buy_order_provider import BuyOrderProvider
@@ -68,6 +66,10 @@ from cs2cap.models.market_arbitrage_data import MarketArbitrageData
 from cs2cap.models.market_arbitrage_item import MarketArbitrageItem
 from cs2cap.models.market_arbitrage_meta import MarketArbitrageMeta
 from cs2cap.models.market_arbitrage_response import MarketArbitrageResponse
+from cs2cap.models.market_history_chart_meta import MarketHistoryChartMeta
+from cs2cap.models.market_history_chart_point import MarketHistoryChartPoint
+from cs2cap.models.market_history_chart_response import MarketHistoryChartResponse
+from cs2cap.models.market_history_chart_series import MarketHistoryChartSeries
 from cs2cap.models.market_index_group import MarketIndexGroup
 from cs2cap.models.market_indexes_data import MarketIndexesData
 from cs2cap.models.market_indexes_meta import MarketIndexesMeta

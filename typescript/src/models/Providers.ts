@@ -14,11 +14,17 @@
 
 import { mapValues } from '../runtime';
 /**
- * Provider provenance for composite candle extremes.
+ * Provider provenance for composite candle values.
  * @export
  * @interface Providers
  */
 export interface Providers {
+    /**
+     * Provider key that contributed the returned open value.
+     * @type {string}
+     * @memberof Providers
+     */
+    o?: string;
     /**
      * Provider key that contributed the returned high value.
      * @type {string}
@@ -31,6 +37,12 @@ export interface Providers {
      * @memberof Providers
      */
     l: string;
+    /**
+     * Provider key that contributed the returned close value.
+     * @type {string}
+     * @memberof Providers
+     */
+    c?: string;
 }
 
 /**
@@ -52,8 +64,10 @@ export function ProvidersFromJSONTyped(json: any, ignoreDiscriminator: boolean):
     }
     return {
         
+        'o': json['o'] == null ? undefined : json['o'],
         'h': json['h'],
         'l': json['l'],
+        'c': json['c'] == null ? undefined : json['c'],
     };
 }
 
@@ -68,8 +82,10 @@ export function ProvidersToJSONTyped(value?: Providers | null, ignoreDiscriminat
 
     return {
         
+        'o': value['o'],
         'h': value['h'],
         'l': value['l'],
+        'c': value['c'],
     };
 }
 
