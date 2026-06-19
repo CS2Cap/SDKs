@@ -1,6 +1,6 @@
 [project]
 name = "cs2cap"
-version = "2.0"
+version = "2.0.0"
 description = "CS2Cap market data API client"
 authors = [
   {name = "CS2Cap", email = "support@cs2c.app"},
