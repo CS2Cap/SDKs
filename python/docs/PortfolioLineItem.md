@@ -13,6 +13,9 @@ Name | Type | Description | Notes
 **best_ask** | **int** |  | [optional] 
 **best_bid** | **int** |  | [optional] 
 **item_value** | **int** |  | [optional] 
+**image_url** | **str** |  | [optional] 
+**rarity_name** | **str** |  | [optional] 
+**rarity_color** | **str** |  | [optional] 
 **providers** | [**List[BatchPriceQuote]**](BatchPriceQuote.md) | Per-provider price quotes. | [optional] 
 
 ## Example

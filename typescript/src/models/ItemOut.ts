@@ -111,6 +111,12 @@ export interface ItemOut {
     cratesImages?: Array<string> | null;
     /**
      * 
+     * @type {Date}
+     * @memberof ItemOut
+     */
+    releaseDate?: Date | null;
+    /**
+     * 
      * @type {string}
      * @memberof ItemOut
      */
@@ -198,6 +204,7 @@ export function ItemOutFromJSONTyped(json: any, ignoreDiscriminator: boolean): I
         'collectionImage': json['collection_image'] == null ? undefined : json['collection_image'],
         'crates': json['crates'] == null ? undefined : json['crates'],
         'cratesImages': json['crates_images'] == null ? undefined : json['crates_images'],
+        'releaseDate': json['release_date'] == null ? undefined : (new Date(json['release_date'])),
         'rarityName': json['rarity_name'] == null ? undefined : json['rarity_name'],
         'rarityColor': json['rarity_color'] == null ? undefined : json['rarity_color'],
         'styleName': json['style_name'] == null ? undefined : json['style_name'],
@@ -236,6 +243,7 @@ export function ItemOutToJSONTyped(value?: ItemOut | null, ignoreDiscriminator: 
         'collection_image': value['collectionImage'],
         'crates': value['crates'],
         'crates_images': value['cratesImages'],
+        'release_date': value['releaseDate'] == null ? value['releaseDate'] : value['releaseDate'].toISOString().substring(0,10),
         'rarity_name': value['rarityName'],
         'rarity_color': value['rarityColor'],
         'style_name': value['styleName'],

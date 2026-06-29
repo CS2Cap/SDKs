@@ -33,7 +33,7 @@ class PortfolioHistoryMeta(BaseModel):
     start_date: date = Field(description="Inclusive UTC start date for the requested window.")
     end_date: date = Field(description="Inclusive UTC end date for the requested window.")
     interval: Optional[StrictStr] = Field(default='1d', description="History interval. Always `1d`.")
-    holdings_basis: Optional[StrictStr] = Field(default='ledger_close', description="Holdings replay basis. Always `ledger_close`.")
+    holdings_basis: Optional[StrictStr] = Field(default='ledger_close', description="Holdings basis. `ledger_close` replays holdings from the transaction ledger; `current_holdings` values the portfolio's current holdings flat across the window (no transactions required).")
     valuation_basis: Optional[StrictStr] = Field(default='best_provider_close', description="Valuation basis. Always `best_provider_close`.")
     __properties: ClassVar[List[str]] = ["portfolio_id", "currency", "providers_queried", "start_date", "end_date", "interval", "holdings_basis", "valuation_basis"]
 
@@ -53,8 +53,8 @@ class PortfolioHistoryMeta(BaseModel):
         if value is None:
             return value
 
-        if value not in set(['ledger_close']):
-            raise ValueError("must be one of enum values ('ledger_close')")
+        if value not in set(['ledger_close', 'current_holdings']):
+            raise ValueError("must be one of enum values ('ledger_close', 'current_holdings')")
         return value
 
     @field_validator('valuation_basis')

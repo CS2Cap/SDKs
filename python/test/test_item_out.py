@@ -54,6 +54,7 @@ class TestItemOut(unittest.TestCase):
                 crates_images = [
                     ''
                     ],
+                release_date = datetime.datetime.strptime('1975-12-30', '%Y-%m-%d').date(),
                 rarity_name = '',
                 rarity_color = '',
                 style_name = '',

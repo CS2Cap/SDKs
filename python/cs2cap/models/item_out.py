@@ -17,6 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
+from datetime import date
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictFloat, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional, Union
 from typing import Optional, Set
@@ -41,6 +42,7 @@ class ItemOut(BaseModel):
     collection_image: Optional[StrictStr] = None
     crates: Optional[List[StrictStr]] = None
     crates_images: Optional[List[StrictStr]] = None
+    release_date: Optional[date] = None
     rarity_name: Optional[StrictStr] = None
     rarity_color: Optional[StrictStr] = None
     style_name: Optional[StrictStr] = None
@@ -50,7 +52,7 @@ class ItemOut(BaseModel):
     max_float: Optional[Union[StrictFloat, StrictInt]] = None
     image_url: Optional[StrictStr] = None
     supply: Optional[StrictInt] = None
-    __properties: ClassVar[List[str]] = ["item_id", "market_hash_name", "phase", "item_type", "item_subtype", "weapon_type", "base_name", "skin_name", "wear_name", "def_index", "paint_index", "collection", "collection_image", "crates", "crates_images", "rarity_name", "rarity_color", "style_name", "is_stattrak", "is_souvenir", "min_float", "max_float", "image_url", "supply"]
+    __properties: ClassVar[List[str]] = ["item_id", "market_hash_name", "phase", "item_type", "item_subtype", "weapon_type", "base_name", "skin_name", "wear_name", "def_index", "paint_index", "collection", "collection_image", "crates", "crates_images", "release_date", "rarity_name", "rarity_color", "style_name", "is_stattrak", "is_souvenir", "min_float", "max_float", "image_url", "supply"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -161,6 +163,11 @@ class ItemOut(BaseModel):
         if self.crates_images is None and "crates_images" in self.model_fields_set:
             _dict['crates_images'] = None
 
+        # set to None if release_date (nullable) is None
+        # and model_fields_set contains the field
+        if self.release_date is None and "release_date" in self.model_fields_set:
+            _dict['release_date'] = None
+
         # set to None if rarity_name (nullable) is None
         # and model_fields_set contains the field
         if self.rarity_name is None and "rarity_name" in self.model_fields_set:
@@ -233,6 +240,7 @@ class ItemOut(BaseModel):
             "collection_image": obj.get("collection_image"),
             "crates": obj.get("crates"),
             "crates_images": obj.get("crates_images"),
+            "release_date": obj.get("release_date"),
             "rarity_name": obj.get("rarity_name"),
             "rarity_color": obj.get("rarity_color"),
             "style_name": obj.get("style_name"),

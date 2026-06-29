@@ -16,7 +16,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 from typing_extensions import Annotated
 
 from datetime import date
-from pydantic import Field, StrictStr
+from pydantic import Field, StrictStr, field_validator
 from typing import List, Optional
 from typing_extensions import Annotated
 from uuid import UUID
@@ -1533,6 +1533,7 @@ class PortfolioApi:
         providers: Annotated[Optional[List[StrictStr]], Field(description="Provider keys to include. Repeat to pass multiple, e.g. providers=steam&providers=skinport. Omit for all providers.")] = None,
         limit: Annotated[Optional[Annotated[int, Field(strict=True, ge=1)]], Field(description="Maximum number of daily points to return.")] = None,
         cursor: Annotated[Optional[StrictStr], Field(description="Opaque cursor from `pagination.next_cursor`.")] = None,
+        basis: Annotated[Optional[StrictStr], Field(description="Holdings basis. `ledger` (default) replays holdings from the transaction ledger and requires recorded transactions. `holdings` values the portfolio's current holdings flat across the window, so history is available without any transactions.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1566,6 +1567,8 @@ class PortfolioApi:
         :type limit: int
         :param cursor: Opaque cursor from `pagination.next_cursor`.
         :type cursor: str
+        :param basis: Holdings basis. `ledger` (default) replays holdings from the transaction ledger and requires recorded transactions. `holdings` values the portfolio's current holdings flat across the window, so history is available without any transactions.
+        :type basis: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1597,6 +1600,7 @@ class PortfolioApi:
             providers=providers,
             limit=limit,
             cursor=cursor,
+            basis=basis,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1634,6 +1638,7 @@ class PortfolioApi:
         providers: Annotated[Optional[List[StrictStr]], Field(description="Provider keys to include. Repeat to pass multiple, e.g. providers=steam&providers=skinport. Omit for all providers.")] = None,
         limit: Annotated[Optional[Annotated[int, Field(strict=True, ge=1)]], Field(description="Maximum number of daily points to return.")] = None,
         cursor: Annotated[Optional[StrictStr], Field(description="Opaque cursor from `pagination.next_cursor`.")] = None,
+        basis: Annotated[Optional[StrictStr], Field(description="Holdings basis. `ledger` (default) replays holdings from the transaction ledger and requires recorded transactions. `holdings` values the portfolio's current holdings flat across the window, so history is available without any transactions.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1667,6 +1672,8 @@ class PortfolioApi:
         :type limit: int
         :param cursor: Opaque cursor from `pagination.next_cursor`.
         :type cursor: str
+        :param basis: Holdings basis. `ledger` (default) replays holdings from the transaction ledger and requires recorded transactions. `holdings` values the portfolio's current holdings flat across the window, so history is available without any transactions.
+        :type basis: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1698,6 +1705,7 @@ class PortfolioApi:
             providers=providers,
             limit=limit,
             cursor=cursor,
+            basis=basis,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1735,6 +1743,7 @@ class PortfolioApi:
         providers: Annotated[Optional[List[StrictStr]], Field(description="Provider keys to include. Repeat to pass multiple, e.g. providers=steam&providers=skinport. Omit for all providers.")] = None,
         limit: Annotated[Optional[Annotated[int, Field(strict=True, ge=1)]], Field(description="Maximum number of daily points to return.")] = None,
         cursor: Annotated[Optional[StrictStr], Field(description="Opaque cursor from `pagination.next_cursor`.")] = None,
+        basis: Annotated[Optional[StrictStr], Field(description="Holdings basis. `ledger` (default) replays holdings from the transaction ledger and requires recorded transactions. `holdings` values the portfolio's current holdings flat across the window, so history is available without any transactions.")] = None,
         _request_timeout: Union[
             None,
             Annotated[StrictFloat, Field(gt=0)],
@@ -1768,6 +1777,8 @@ class PortfolioApi:
         :type limit: int
         :param cursor: Opaque cursor from `pagination.next_cursor`.
         :type cursor: str
+        :param basis: Holdings basis. `ledger` (default) replays holdings from the transaction ledger and requires recorded transactions. `holdings` values the portfolio's current holdings flat across the window, so history is available without any transactions.
+        :type basis: str
         :param _request_timeout: timeout setting for this request. If one
                                  number provided, it will be total request
                                  timeout. It can also be a pair (tuple) of
@@ -1799,6 +1810,7 @@ class PortfolioApi:
             providers=providers,
             limit=limit,
             cursor=cursor,
+            basis=basis,
             _request_auth=_request_auth,
             _content_type=_content_type,
             _headers=_headers,
@@ -1831,6 +1843,7 @@ class PortfolioApi:
         providers,
         limit,
         cursor,
+        basis,
         _request_auth,
         _content_type,
         _headers,
@@ -1901,6 +1914,10 @@ class PortfolioApi:
         if cursor is not None:
             
             _query_params.append(('cursor', cursor))
+            
+        if basis is not None:
+            
+            _query_params.append(('basis', basis))
             
         # process the header parameters
         # process the form parameters

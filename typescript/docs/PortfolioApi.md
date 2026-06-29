@@ -414,7 +414,7 @@ example().catch(console.error);
 
 ## historicalSavedPortfolioValuation
 
-> PortfolioHistoryPage historicalSavedPortfolioValuation(portfolioId, startDate, endDate, lookback, currency, providers, limit, cursor)
+> PortfolioHistoryPage historicalSavedPortfolioValuation(portfolioId, startDate, endDate, lookback, currency, providers, limit, cursor, basis)
 
 Historical Saved Portfolio Valuation
 
@@ -454,6 +454,8 @@ async function example() {
     limit: 56,
     // string | Opaque cursor from `pagination.next_cursor`. (optional)
     cursor: cursor_example,
+    // 'ledger' | 'holdings' | Holdings basis. `ledger` (default) replays holdings from the transaction ledger and requires recorded transactions. `holdings` values the portfolio\'s current holdings flat across the window, so history is available without any transactions. (optional)
+    basis: basis_example,
   } satisfies HistoricalSavedPortfolioValuationRequest;
 
   try {
@@ -481,6 +483,7 @@ example().catch(console.error);
 | **providers** | `Array<string>` | Provider keys to include. Repeat to pass multiple, e.g. providers&#x3D;steam&amp;providers&#x3D;skinport. Omit for all providers. | [Optional] |
 | **limit** | `number` | Maximum number of daily points to return. | [Optional] [Defaults to `undefined`] |
 | **cursor** | `string` | Opaque cursor from &#x60;pagination.next_cursor&#x60;. | [Optional] [Defaults to `undefined`] |
+| **basis** | `ledger`, `holdings` | Holdings basis. &#x60;ledger&#x60; (default) replays holdings from the transaction ledger and requires recorded transactions. &#x60;holdings&#x60; values the portfolio\&#39;s current holdings flat across the window, so history is available without any transactions. | [Optional] [Defaults to `&#39;ledger&#39;`] [Enum: ledger, holdings] |
 
 ### Return type
 

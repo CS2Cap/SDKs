@@ -26,7 +26,7 @@ from cs2cap.models.price_candles_page import PriceCandlesPage
 from cs2cap.models.price_snapshot_page import PriceSnapshotPage
 from cs2cap.models.prices_paginated_response_market_item import PricesPaginatedResponseMarketItem
 
-from cs2cap.api_client import ApiClient, RequestSerialized
+from cs2cap.api_client import ApiClient, RequestSerialized, _enum_value
 from cs2cap.api_response import ApiResponse
 from cs2cap.rest import RESTResponseType
 
@@ -659,7 +659,7 @@ class PricesApi:
             
         if phase is not None:
             
-            _query_params.append(('phase', phase.value))
+            _query_params.append(('phase', _enum_value(phase)))
             
         if providers is not None:
             
@@ -1065,7 +1065,7 @@ class PricesApi:
             
         if phase is not None:
             
-            _query_params.append(('phase', phase.value))
+            _query_params.append(('phase', _enum_value(phase)))
             
         if start is not None:
             if isinstance(start, datetime):
@@ -1497,11 +1497,11 @@ class PricesApi:
             
         if phase is not None:
             
-            _query_params.append(('phase', phase.value))
+            _query_params.append(('phase', _enum_value(phase)))
             
         if provider is not None:
             
-            _query_params.append(('provider', provider.value))
+            _query_params.append(('provider', _enum_value(provider)))
             
         if start is not None:
             if isinstance(start, datetime):

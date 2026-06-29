@@ -10848,6 +10848,22 @@
               "title": "Cursor"
             },
             "description": "Opaque cursor from `pagination.next_cursor`."
+          },
+          {
+            "name": "basis",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "ledger",
+                "holdings"
+              ],
+              "type": "string",
+              "description": "Holdings basis. `ledger` (default) replays holdings from the transaction ledger and requires recorded transactions. `holdings` values the portfolio's current holdings flat across the window, so history is available without any transactions.",
+              "default": "ledger",
+              "title": "Basis"
+            },
+            "description": "Holdings basis. `ledger` (default) replays holdings from the transaction ledger and requires recorded transactions. `holdings` values the portfolio's current holdings flat across the window, so history is available without any transactions."
           }
         ],
         "responses": {
@@ -13905,6 +13921,19 @@
             "title": "Crates Images",
             "description": "Image URLs for the associated cases/crates. Indexes align with the `crates` array."
           },
+          "release_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Release Date",
+            "description": "Item release date inferred from direct item, collection, or crate metadata."
+          },
           "rarity_name": {
             "anyOf": [
               {
@@ -15890,9 +15919,12 @@
           },
           "holdings_basis": {
             "type": "string",
-            "const": "ledger_close",
+            "enum": [
+              "ledger_close",
+              "current_holdings"
+            ],
             "title": "Holdings Basis",
-            "description": "Holdings replay basis. Always `ledger_close`.",
+            "description": "Holdings basis. `ledger_close` replays holdings from the transaction ledger; `current_holdings` values the portfolio's current holdings flat across the window (no transactions required).",
             "default": "ledger_close"
           },
           "valuation_basis": {
@@ -16251,6 +16283,42 @@
             ],
             "title": "Item Value",
             "description": "best_ask * quantity. Money amount in minor units of the response currency (for example USD cents when currency=USD). Divide by 100 for display."
+          },
+          "image_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Image Url",
+            "description": "Item image URL from the catalog, if known."
+          },
+          "rarity_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rarity Name",
+            "description": "Item rarity name from the catalog (e.g. 'Covert'), if known."
+          },
+          "rarity_color": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rarity Color",
+            "description": "Item rarity hex color from the catalog, if known."
           },
           "providers": {
             "items": {

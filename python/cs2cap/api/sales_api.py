@@ -21,7 +21,7 @@ from typing_extensions import Annotated
 from cs2cap.models.recent_sales_provider import RecentSalesProvider
 from cs2cap.models.sales_history_response import SalesHistoryResponse
 
-from cs2cap.api_client import ApiClient, RequestSerialized
+from cs2cap.api_client import ApiClient, RequestSerialized, _enum_value
 from cs2cap.api_response import ApiResponse
 from cs2cap.rest import RESTResponseType
 
@@ -368,7 +368,7 @@ class SalesApi:
             
         if phase is not None:
             
-            _query_params.append(('phase', phase.value))
+            _query_params.append(('phase', _enum_value(phase)))
             
         if providers is not None:
             

@@ -22,6 +22,7 @@ Name | Type
 `collectionImage` | string
 `crates` | Array&lt;string&gt;
 `cratesImages` | Array&lt;string&gt;
+`releaseDate` | Date
 `rarityName` | string
 `rarityColor` | string
 `styleName` | string
@@ -54,6 +55,7 @@ const example = {
   "collectionImage": null,
   "crates": null,
   "cratesImages": null,
+  "releaseDate": null,
   "rarityName": null,
   "rarityColor": null,
   "styleName": null,

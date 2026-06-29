@@ -12,7 +12,7 @@ Name | Type | Description | Notes
 **start_date** | **date** | Inclusive UTC start date for the requested window. | 
 **end_date** | **date** | Inclusive UTC end date for the requested window. | 
 **interval** | **str** | History interval. Always &#x60;1d&#x60;. | [optional] [default to '1d']
-**holdings_basis** | **str** | Holdings replay basis. Always &#x60;ledger_close&#x60;. | [optional] [default to 'ledger_close']
+**holdings_basis** | **str** | Holdings basis. &#x60;ledger_close&#x60; replays holdings from the transaction ledger; &#x60;current_holdings&#x60; values the portfolio&#39;s current holdings flat across the window (no transactions required). | [optional] [default to 'ledger_close']
 **valuation_basis** | **str** | Valuation basis. Always &#x60;best_provider_close&#x60;. | [optional] [default to 'best_provider_close']
 
 ## Example

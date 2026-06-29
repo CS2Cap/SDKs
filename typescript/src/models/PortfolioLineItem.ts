@@ -70,6 +70,24 @@ export interface PortfolioLineItem {
      */
     itemValue?: number | null;
     /**
+     * 
+     * @type {string}
+     * @memberof PortfolioLineItem
+     */
+    imageUrl?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PortfolioLineItem
+     */
+    rarityName?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof PortfolioLineItem
+     */
+    rarityColor?: string | null;
+    /**
      * Per-provider price quotes.
      * @type {Array<BatchPriceQuote>}
      * @memberof PortfolioLineItem
@@ -104,6 +122,9 @@ export function PortfolioLineItemFromJSONTyped(json: any, ignoreDiscriminator: b
         'bestAsk': json['best_ask'] == null ? undefined : json['best_ask'],
         'bestBid': json['best_bid'] == null ? undefined : json['best_bid'],
         'itemValue': json['item_value'] == null ? undefined : json['item_value'],
+        'imageUrl': json['image_url'] == null ? undefined : json['image_url'],
+        'rarityName': json['rarity_name'] == null ? undefined : json['rarity_name'],
+        'rarityColor': json['rarity_color'] == null ? undefined : json['rarity_color'],
         'providers': json['providers'] == null ? undefined : ((json['providers'] as Array<any>).map(BatchPriceQuoteFromJSON)),
     };
 }
@@ -126,6 +147,9 @@ export function PortfolioLineItemToJSONTyped(value?: PortfolioLineItem | null, i
         'best_ask': value['bestAsk'],
         'best_bid': value['bestBid'],
         'item_value': value['itemValue'],
+        'image_url': value['imageUrl'],
+        'rarity_name': value['rarityName'],
+        'rarity_color': value['rarityColor'],
         'providers': value['providers'] == null ? undefined : ((value['providers'] as Array<any>).map(BatchPriceQuoteToJSON)),
     };
 }

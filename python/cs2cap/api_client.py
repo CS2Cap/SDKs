@@ -52,6 +52,11 @@ def _parse_datetime(value: str) -> datetime.datetime:
     return datetime.datetime.fromisoformat(normalized)
 
 
+def _enum_value(value):
+    """Return the wire value for generated enum query params."""
+    return value.value if isinstance(value, Enum) else value
+
+
 RequestSerialized = Tuple[str, str, Dict[str, str], Optional[str], List[str]]
 
 class ApiClient:
@@ -102,7 +107,7 @@ class ApiClient:
             self.default_headers[header_name] = header_value
         self.cookie = cookie
         # Set default User-Agent.
-        self.user_agent = 'OpenAPI-Generator/2.0.0/python'
+        self.user_agent = 'OpenAPI-Generator/2.0.1/python'
         self.client_side_validation = configuration.client_side_validation
 
     def __enter__(self):

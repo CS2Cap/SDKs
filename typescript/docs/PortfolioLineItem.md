@@ -14,6 +14,9 @@ Name | Type
 `bestAsk` | number
 `bestBid` | number
 `itemValue` | number
+`imageUrl` | string
+`rarityName` | string
+`rarityColor` | string
 `providers` | [Array&lt;BatchPriceQuote&gt;](BatchPriceQuote.md)
 
 ## Example
@@ -30,6 +33,9 @@ const example = {
   "bestAsk": null,
   "bestBid": null,
   "itemValue": null,
+  "imageUrl": null,
+  "rarityName": null,
+  "rarityColor": null,
   "providers": null,
 } satisfies PortfolioLineItem
 

@@ -56,7 +56,7 @@ export interface PortfolioHistoryMeta {
      */
     interval?: PortfolioHistoryMetaIntervalEnum;
     /**
-     * Holdings replay basis. Always `ledger_close`.
+     * Holdings basis. `ledger_close` replays holdings from the transaction ledger; `current_holdings` values the portfolio's current holdings flat across the window (no transactions required).
      * @type {PortfolioHistoryMetaHoldingsBasisEnum}
      * @memberof PortfolioHistoryMeta
      */
@@ -82,7 +82,8 @@ export type PortfolioHistoryMetaIntervalEnum = typeof PortfolioHistoryMetaInterv
  * @export
  */
 export const PortfolioHistoryMetaHoldingsBasisEnum = {
-    LedgerClose: 'ledger_close'
+    LedgerClose: 'ledger_close',
+    CurrentHoldings: 'current_holdings'
 } as const;
 export type PortfolioHistoryMetaHoldingsBasisEnum = typeof PortfolioHistoryMetaHoldingsBasisEnum[keyof typeof PortfolioHistoryMetaHoldingsBasisEnum];
 

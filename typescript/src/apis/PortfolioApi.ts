@@ -96,6 +96,7 @@ export interface HistoricalSavedPortfolioValuationRequest {
     providers?: Array<string> | null;
     limit?: number | null;
     cursor?: string | null;
+    basis?: HistoricalSavedPortfolioValuationBasisEnum;
 }
 
 export interface ImportSteamInventoryRequest {
@@ -479,6 +480,10 @@ export class PortfolioApi extends runtime.BaseAPI {
 
         if (requestParameters['cursor'] != null) {
             queryParameters['cursor'] = requestParameters['cursor'];
+        }
+
+        if (requestParameters['basis'] != null) {
+            queryParameters['basis'] = requestParameters['basis'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -1001,3 +1006,12 @@ export class PortfolioApi extends runtime.BaseAPI {
     }
 
 }
+
+/**
+ * @export
+ */
+export const HistoricalSavedPortfolioValuationBasisEnum = {
+    Ledger: 'ledger',
+    Holdings: 'holdings'
+} as const;
+export type HistoricalSavedPortfolioValuationBasisEnum = typeof HistoricalSavedPortfolioValuationBasisEnum[keyof typeof HistoricalSavedPortfolioValuationBasisEnum];

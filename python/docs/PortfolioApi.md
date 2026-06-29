@@ -441,7 +441,7 @@ void (empty response body)
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **historical_saved_portfolio_valuation**
-> PortfolioHistoryPage historical_saved_portfolio_valuation(portfolio_id, start_date=start_date, end_date=end_date, lookback=lookback, currency=currency, providers=providers, limit=limit, cursor=cursor)
+> PortfolioHistoryPage historical_saved_portfolio_valuation(portfolio_id, start_date=start_date, end_date=end_date, lookback=lookback, currency=currency, providers=providers, limit=limit, cursor=cursor, basis=basis)
 
 Historical Saved Portfolio Valuation
 
@@ -485,10 +485,11 @@ with cs2cap.ApiClient(configuration) as api_client:
     providers = ['providers_example'] # List[str] | Provider keys to include. Repeat to pass multiple, e.g. providers=steam&providers=skinport. Omit for all providers. (optional)
     limit = 56 # int | Maximum number of daily points to return. (optional)
     cursor = 'cursor_example' # str | Opaque cursor from `pagination.next_cursor`. (optional)
+    basis = ledger # str | Holdings basis. `ledger` (default) replays holdings from the transaction ledger and requires recorded transactions. `holdings` values the portfolio's current holdings flat across the window, so history is available without any transactions. (optional) (default to ledger)
 
     try:
         # Historical Saved Portfolio Valuation
-        api_response = api_instance.historical_saved_portfolio_valuation(portfolio_id, start_date=start_date, end_date=end_date, lookback=lookback, currency=currency, providers=providers, limit=limit, cursor=cursor)
+        api_response = api_instance.historical_saved_portfolio_valuation(portfolio_id, start_date=start_date, end_date=end_date, lookback=lookback, currency=currency, providers=providers, limit=limit, cursor=cursor, basis=basis)
         print("The response of PortfolioApi->historical_saved_portfolio_valuation:\n")
         pprint(api_response)
     except Exception as e:
@@ -510,6 +511,7 @@ Name | Type | Description  | Notes
  **providers** | [**List[str]**](str.md)| Provider keys to include. Repeat to pass multiple, e.g. providers&#x3D;steam&amp;providers&#x3D;skinport. Omit for all providers. | [optional] 
  **limit** | **int**| Maximum number of daily points to return. | [optional] 
  **cursor** | **str**| Opaque cursor from &#x60;pagination.next_cursor&#x60;. | [optional] 
+ **basis** | **str**| Holdings basis. &#x60;ledger&#x60; (default) replays holdings from the transaction ledger and requires recorded transactions. &#x60;holdings&#x60; values the portfolio&#39;s current holdings flat across the window, so history is available without any transactions. | [optional] [default to ledger]
 
 ### Return type
 

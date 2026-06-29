@@ -42,6 +42,9 @@ class TestPortfolioLineItem(unittest.TestCase):
                 best_ask = 56,
                 best_bid = 56,
                 item_value = 56,
+                image_url = '',
+                rarity_name = '',
+                rarity_color = '',
                 providers = ERROR_TO_EXAMPLE_VALUE
             )
         else:

@@ -21,6 +21,7 @@ Name | Type | Description | Notes
 **collection_image** | **str** |  | [optional] 
 **crates** | **List[str]** |  | [optional] 
 **crates_images** | **List[str]** |  | [optional] 
+**release_date** | **date** |  | [optional] 
 **rarity_name** | **str** |  | [optional] 
 **rarity_color** | **str** |  | [optional] 
 **style_name** | **str** |  | [optional] 

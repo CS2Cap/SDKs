@@ -34,8 +34,11 @@ class PortfolioLineItem(BaseModel):
     best_ask: Optional[StrictInt] = None
     best_bid: Optional[StrictInt] = None
     item_value: Optional[StrictInt] = None
+    image_url: Optional[StrictStr] = None
+    rarity_name: Optional[StrictStr] = None
+    rarity_color: Optional[StrictStr] = None
     providers: Optional[List[BatchPriceQuote]] = Field(default=None, description="Per-provider price quotes.")
-    __properties: ClassVar[List[str]] = ["item_id", "market_hash_name", "phase", "quantity", "best_ask", "best_bid", "item_value", "providers"]
+    __properties: ClassVar[List[str]] = ["item_id", "market_hash_name", "phase", "quantity", "best_ask", "best_bid", "item_value", "image_url", "rarity_name", "rarity_color", "providers"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -103,6 +106,21 @@ class PortfolioLineItem(BaseModel):
         if self.item_value is None and "item_value" in self.model_fields_set:
             _dict['item_value'] = None
 
+        # set to None if image_url (nullable) is None
+        # and model_fields_set contains the field
+        if self.image_url is None and "image_url" in self.model_fields_set:
+            _dict['image_url'] = None
+
+        # set to None if rarity_name (nullable) is None
+        # and model_fields_set contains the field
+        if self.rarity_name is None and "rarity_name" in self.model_fields_set:
+            _dict['rarity_name'] = None
+
+        # set to None if rarity_color (nullable) is None
+        # and model_fields_set contains the field
+        if self.rarity_color is None and "rarity_color" in self.model_fields_set:
+            _dict['rarity_color'] = None
+
         return _dict
 
     @classmethod
@@ -122,6 +140,9 @@ class PortfolioLineItem(BaseModel):
             "best_ask": obj.get("best_ask"),
             "best_bid": obj.get("best_bid"),
             "item_value": obj.get("item_value"),
+            "image_url": obj.get("image_url"),
+            "rarity_name": obj.get("rarity_name"),
+            "rarity_color": obj.get("rarity_color"),
             "providers": [BatchPriceQuote.from_dict(_item) for _item in obj["providers"]] if obj.get("providers") is not None else None
         })
         return _obj
